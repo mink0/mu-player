@@ -1,6 +1,6 @@
 export default {
   top: 1,
-  bottom: 1,
+  //bottom: '5',
   tags: true,
   padding: {
     left: 1,
@@ -11,16 +11,18 @@ export default {
   keys: true,
   vi: true,
   mouse: true,
-  alwaysScroll: true,
+  //alwaysScroll: true,
   scrollbar: {
     ch: ' ',
     inverse: true,
-    fg: 'red'
+    fg: '#fabd2f'
   },
   style: {
+    bg: '#282828',
+    fg: '#d5c4a1',
     selected: {
-      fg: 'grey',
-      bg: 'white'
+      fg: '#fbf1c7',
+      bg: '#665c54'
     }
   }
 };

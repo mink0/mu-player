@@ -4,6 +4,7 @@ import HelpBox from './../tui/help-box';
 
 import LeftPane from './../tui/left-pane';
 import RightPane from './../tui/right-pane';
+import BottomPane from './../tui/bottom-pane.js';
 
 import LeftMenu from './left-menu';
 import RightMenu from './right-menu';
@@ -11,6 +12,7 @@ import RightMenu from './right-menu';
 let screen = null;
 let leftPane = null;
 let rightPane = null;
+let bottomPane = null;
 
 import * as player from './../player/player-control';
 import playlist from './../playlist';
@@ -20,9 +22,12 @@ export default (_screen) => {
 
   leftPane = new LeftPane(screen);
   rightPane = new RightPane(screen);
+  bottomPane = new BottomPane(screen);
 
   LeftMenu(screen, leftPane.box);
   RightMenu(screen, rightPane.box);
+
+  Logger.bottom = bottomPane.logger;
 
   storage.emit(FOCUS_RIGHT_PANE);
 };

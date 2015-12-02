@@ -4,8 +4,12 @@ import style from './list-style';
 export default (parent) => {
   let box = blessed.list({
     ...style,
-    left: '30%',
+    right: '0',
     width: '70%',
+    bottom: 2,
+    // style: {
+    //   fg: '#fe8019'
+    // },
     items: ['{bold}Loading{/bold}, please wait']
   });
 
@@ -17,7 +21,7 @@ export default (parent) => {
     width: '70%-3',
     top: 0,
     style: {
-      fg: 'green'
+      fg: '#fb4934'
     }
   });
 

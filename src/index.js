@@ -28,6 +28,7 @@ setupCredentials(cli.flags.setup).then(() => {
 
   screen.key(['left'], () => storage.emit(FOCUS_LEFT_PANE));
   screen.key(['right'], () => storage.emit(FOCUS_RIGHT_PANE));
+  screen.key(['tab'], () => storage.emit(SWITCH_PANE));
 
   screen.key(['/', '?', '.', ','], () => storage.emit(SHOW_HELP));
 

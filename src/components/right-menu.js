@@ -28,9 +28,11 @@ let playCurrent = () => {
       if (url) {
         (typeof url === 'function' ? url() : Promise.resolve(url)).then((url) => {
           player.play(url);
-          Logger.info(url);
+          global.Logger.info(url);
+          global.Logger.bottom.log(url);
         }).catch((err) => {
-          Logger.error(err);
+          global.Logger.error(err);
+          global.Logger.bottom.log(err);
         });
 
         rightPane.select(playlist.getCurrentIndex());
@@ -75,14 +77,14 @@ let loadAudio = (audio) => {
   setAudio(audio);
 
   playlist.setPlaylist(audio);
-  playCurrent();
+  // playCurrent();
 };
 
 storage.on(LOCAL_SEARCH, (data) => {
   prompt(screen, 'Search', '').then((query) => {
     setAudio(playlist.filter(query));
     playlist.setCurrent(0);
-    
+
     playCurrent();
   });
 });
