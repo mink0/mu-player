@@ -27,7 +27,7 @@ export default (_screen) => {
   LeftMenu(screen, leftPane.box);
   RightMenu(screen, rightPane.box);
 
-  Logger.bottom = bottomPane.logger;
+  global.Logger.bottom = bottomPane.logger;
 
   storage.emit(FOCUS_RIGHT_PANE);
 };
@@ -36,15 +36,16 @@ storage.on(PAUSE, () => player.pause());
 storage.on(SHOW_HELP, () => HelpBox(screen));
 
 let focusPane = (pane1, pane2) => {
-  pane1.line.show();
+  pane1.hHover.show();
   pane1.box.focus();
+  screen.render();
 
-  pane2.line.hide();
+  pane2.hHover.hide();
   screen.render();
 };
 
 storage.on(SWITCH_PANE, () => {
-  if (leftPane.line.hidden) {
+  if (leftPane.hHover.hidden) {
     focusPane(leftPane, rightPane);
   } else {
     focusPane(rightPane, leftPane);

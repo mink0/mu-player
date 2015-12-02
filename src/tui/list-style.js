@@ -21,8 +21,8 @@ export default {
     bg: '#282828',
     fg: '#d5c4a1',
     selected: {
-      fg: '#fbf1c7',
-      bg: '#665c54'
+      fg: '#ebdbb2',
+      bg: '#3c3836'
     }
   }
 };

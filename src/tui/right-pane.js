@@ -1,10 +1,11 @@
 import blessed from 'blessed';
-import style from './list-style';
+import listStyle from './list-style';
+import headerStyle from './header-style';
 
 export default (parent) => {
   let box = blessed.list({
-    ...style,
-    right: '0',
+    ...listStyle,
+    right: 0,
     width: '70%',
     bottom: 2,
     // style: {
@@ -13,22 +14,40 @@ export default (parent) => {
     items: ['{bold}Loading{/bold}, please wait']
   });
 
-  let line = blessed.line({
-    parent: parent,
-    type: 'line',
-    orientation: 'horizontal',
-    left: '30%+1',
-    width: '70%-3',
+  let h = blessed.text({
+    ...headerStyle,
+    //parent: box,
     top: 0,
+    right: 0,
+    height: 1,
+    width: '70%',
+    align: 'center',
+    content: 'Playlist'
+  });
+
+  let hHover = blessed.text({
+    ...headerStyle,
+    //parent: parent,
+    top: 0,
+    right: 0,
+    height: 1,
+    width: '70%',
+    align: 'center',
+    content: 'Playlist',
     style: {
-      fg: '#fb4934'
+      fg: '#fffffe',
+      bg: '#d65d0e',
     }
   });
 
+  //line.setText('Pla')
   parent.append(box);
+  parent.append(h);
+  parent.append(hHover);
 
   return {
     box,
-    line
+    h,
+    hHover
   };
 };

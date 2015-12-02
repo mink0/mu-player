@@ -10,7 +10,7 @@ export default (parent) => {
       height: 2,
       style: {
         fg: '#928374',
-        bg: '#000000',
+        bg: 'black',
       },
       items: ['Loading']
   });
