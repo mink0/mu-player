@@ -17,7 +17,7 @@ export default (parent) => {
 
   parent.append(logger);
 
-  logger.log('Logger initialized');
+  logger.log('Initialized..');
 
   return {
     logger: logger

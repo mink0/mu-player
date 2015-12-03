@@ -40,14 +40,35 @@ export default (parent) => {
     }
   });
 
+  let qsearch = blessed.textbox({
+    //parent: parent,
+    top: 0,
+    right: 0,
+    height: 1,
+    width: '35%',
+    align: 'right',
+    label: 'qsearch:',
+    content: 'qsearch:',
+    inputOnFocus: true,
+    style: {
+      fg: '#fffffe',
+      bg: '#d65d0e',
+      label: {
+        bg: 'red'
+      }
+    }
+  });
+
   //line.setText('Pla')
   parent.append(box);
   parent.append(h);
   parent.append(hHover);
+  parent.append(qsearch);
 
   return {
     box,
     h,
-    hHover
+    hHover,
+    qsearch
   };
 };

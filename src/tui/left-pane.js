@@ -5,11 +5,25 @@ import headerStyle from './header-style';
 export default (parent) => {
   let box = blessed.list({
     ...listStyle,
+    top: 1,
     left: '0',
     width: '30%',
     bottom: 2,
     items: ['Loading']
   });
+
+  // let qsearch = blessed.textbox({
+  //   //parent: parent,
+  //   top: 1,
+  //   left: 0,
+  //   height: 2,
+  //   width: '30%',
+  //   align: 'right',
+  //   label: 'qsearch:',
+  //   content: 'qsearch:',
+  //   inputOnFocus: true
+  // });
+
 
   let h = blessed.text({
     ...headerStyle,
@@ -43,6 +57,6 @@ export default (parent) => {
   return {
     box,
     h,
-    hHover
+    hHover,
   };
 };

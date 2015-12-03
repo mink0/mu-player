@@ -54,6 +54,7 @@ storage.on(SWITCH_PANE, () => {
 
 storage.on(FOCUS_LEFT_PANE, () => {
   focusPane(leftPane, rightPane);
+  //rightPane.qsearch.focus();
 });
 
 storage.on(FOCUS_RIGHT_PANE, () => {

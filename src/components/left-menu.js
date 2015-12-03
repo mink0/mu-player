@@ -44,6 +44,11 @@ let selectOrSearch = (labels, onLabel, onSearch) => {
   }, () => console.log('SelectList closed by esc'));
 };
 
+// let vkSearch = () => {
+
+
+// };
+
 let vkMenu = () => {
   if (!storage.vkHasData()) {
     return [];
@@ -178,6 +183,7 @@ let gmMenu = () => {
 };
 
 let renderLeftPane = () => {
+
   let leftMenuRaw = vkMenu().concat(gmMenu()).concat([
     {
       name: nameWithCount('{bold}FS{/bold} Play folder', storage.data.fs),
