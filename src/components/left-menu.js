@@ -24,7 +24,11 @@ export default (_screen, _leftPane) => {
 
 let emitVkAudio = (payload) => storage.emit(OPEN_VK, payload);
 
-let searchFn = () => vkSearchPrompt(screen).then((query) => emitVkAudio({ type: 'search', query: query }));
+let searchFn = (data) => {
+  //console.log('Log message', data);
+  emitVkAudio({ type: 'search', query: data });
+};
+
 storage.on(SEARCH_VK, searchFn);
 
 let selectLeftPane = (item, index) => {

@@ -1,4 +1,6 @@
 import tui from './tui/screen';
+import drawLayout from './tui/layout';
+
 import setupCredentials from './helpers/credentials';
 import startApp from './components/main';
 import meow from 'meow';
@@ -17,7 +19,9 @@ let cli = meow(`
 
 setupCredentials(cli.flags.setup).then(() => {
   let screen = tui();
-  startApp(screen);
+  let layout = drawLayout(screen);
+  
+  startApp(screen, layout);
 
   screen.key(['C-f'], () => storage.emit(SEARCH_VK));
   screen.key(['f'], () => storage.emit(LOCAL_SEARCH));

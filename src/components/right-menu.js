@@ -1,4 +1,5 @@
-import storage, { OPEN_VK, ADD_TO_PROFILE, OPEN_FS, FOCUS_RIGHT_PANE, MOVE_TO_PLAYING, OPEN_GM_ALBUM, OPEN_GM_THUMBS_UP, OPEN_GM_ALL_TRACKS, LOCAL_SEARCH } from './../storage';
+import storage, { OPEN_VK, ADD_TO_PROFILE, OPEN_FS, FOCUS_RIGHT_PANE, MOVE_TO_PLAYING, 
+  OPEN_GM_ALBUM, OPEN_GM_THUMBS_UP, OPEN_GM_ALL_TRACKS, LOCAL_SEARCH } from './../storage';
 
 import * as vkActions from './../actions/vk-actions';
 import * as fsActions from './../actions/fs-actions';
@@ -74,6 +75,7 @@ let setAudio = (audio) => {
 };
 
 let loadAudio = (audio) => {
+  Logger.bottom.log(audio);
   setAudio(audio);
 
   playlist.setPlaylist(audio);

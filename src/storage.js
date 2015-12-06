@@ -2,6 +2,9 @@ var storage = require('dot-file-config')('.badtaste-npm', {
   cloudSync: false
 });
 
+// console.log(storage);
+// process.exit(1)
+
 storage.data.vkLinks = storage.data.vkLinks || [];
 storage.data.gmLinks = storage.data.gmLinks || [];
 storage.data.fs = storage.data.fs || [];
@@ -27,5 +30,6 @@ export const OPEN_GM_ALBUM = 'OPEN_GM_ALBUM';
 export const OPEN_GM_THUMBS_UP = 'OPEN_GM_THUMBS_UP';
 export const OPEN_GM_ALL_TRACKS = 'OPEN_GM_ALL_TRACKS';
 export const LOCAL_SEARCH = 'LOCAL_SEARCH';
+export const LASTFM_SEARCH = 'LASTFM_SEARCH';
 
 export default storage;

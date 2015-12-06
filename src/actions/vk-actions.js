@@ -43,7 +43,7 @@ export let getGroupAudio = (groupId, albumId) => {
 };
 
 export let getWallAudio = (id) => {
-  Logger.bottom.log('getWallAudio => ', id);
+  Logger.bottom.log('getWallAudio(%s)', id);
   let request = vk.method('wall.getById', { posts: [id] }, { transformResponse: false });
   return request.then((result) => {
     let attachments = result.body.response[0].attachments.filter(a => a.type === 'audio').map(a => a.audio);
@@ -52,23 +52,23 @@ export let getWallAudio = (id) => {
 };
 
 export let getRecommendations = () => {
-  Logger.bottom.log('getRecommendations => ');
+  Logger.bottom.log('getRecommendations()');
   return vk.method('audio.getRecommendations').then((response) => handleData(response.items));
 };
 
 export let getAlbums = () => {
-  Logger.bottom.log('getAlbums => ');
+  Logger.bottom.log('getAlbums()');
   return vk.method('audio.getAlbums').then((response) => response.items);
 };
 
 export let getSearch = (query) => {
-  Logger.bottom.log('getSearch => ', query);
+  Logger.bottom.log('getSearch(', query, ')');
   let request = vk.method('audio.search', { need_user: 1, count: count, offset: offset * count, q: query });
   return request.then(response => handleData(response.items));
 };
 
 export let getBatchSearch = (text, onTrack) => {
-  Logger.bottom.log('getBatchSearch => ', text, onTrack);
+  Logger.bottom.log('getBatchSearch(%s, %s)', text, onTrack);
   var tracklist = splitTracklist(text);
   return Promise.reduce(tracklist, (total, current, index) => {
     let delay = Promise.delay(300);
@@ -99,7 +99,7 @@ export let getBatchSearch = (text, onTrack) => {
 };
 
 export let addToProfile = (selected) => {
-  Logger.bottom.log('addToProfile => ', selected);
+  Logger.bottom.log('addToProfile(%s)', selected);
   return vk.method('audio.add', { audio_id: selected.aid , owner_id: selected.owner_id }).then((track) => {
     selected.isAdded = true;
     selected.trackTitleFull = formatTrackFull(selected);
@@ -109,7 +109,7 @@ export let addToProfile = (selected) => {
 };
 
 export let addOnTop = (selected) => {
-  Logger.bottom.log('addOnTop => ', selected);
+  Logger.bottom.log('addOnTop(%s)', selected);
   return vk.method('audio.get', { need_user: 1, count: 1 }).then((result) => {
     let currentTopTrack = result.items[0];
     return vk.method('audio.reorder', { audio_id: selected.aid, before: currentTopTrack.aid });
