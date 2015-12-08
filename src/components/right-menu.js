@@ -1,4 +1,4 @@
-import storage, { OPEN_VK, ADD_TO_PROFILE, OPEN_FS, FOCUS_RIGHT_PANE, MOVE_TO_PLAYING, 
+import storage, { OPEN_VK, ADD_TO_PROFILE, OPEN_FS, FOCUS_RIGHT_PANE, MOVE_TO_PLAYING,
   OPEN_GM_ALBUM, OPEN_GM_THUMBS_UP, OPEN_GM_ALL_TRACKS, LOCAL_SEARCH } from './../storage';
 
 import * as vkActions from './../actions/vk-actions';
@@ -99,7 +99,11 @@ storage.on(OPEN_VK, (payload) => {
   } else if (payload.type === 'wall') {
     vkActions.getWallAudio(payload.id).then(loadAudio).catch((err) => Logger.error(err));
   } else if (payload.type === 'search') {
-    vkActions.getSearch(payload.query).then(loadAudio).catch((err) => Logger.error(err));
+    vkActions.getSearch(payload.query, payload.opts).then(loadAudio).catch((err) => Logger.error(err));
+  } else if (payload.type === 'searchWithArtist') {
+    vkActions.getSearchWithArtist(payload.track, payload.artist).then(loadAudio).catch((err) => Logger.error(err));
+  } else if (payload.type === 'list') {
+    vkActions.getSearchList(payload.track, payload.artist).then(loadAudio).catch((err) => Logger.error(err));
   } else if (payload.type === 'recommendations') {
     vkActions.getRecommendations().then(loadAudio).catch((err) => Logger.error(err));
   } else if (payload.type === 'tracklist') {

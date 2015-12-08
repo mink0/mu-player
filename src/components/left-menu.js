@@ -25,7 +25,6 @@ export default (_screen, _leftPane) => {
 let emitVkAudio = (payload) => storage.emit(OPEN_VK, payload);
 
 let searchFn = (data) => {
-  //console.log('Log message', data);
   emitVkAudio({ type: 'search', query: data });
 };
 

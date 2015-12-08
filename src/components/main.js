@@ -35,32 +35,27 @@ export default (screen, layout) => {
   storage.on(PAUSE, () => player.pause());
   storage.on(SHOW_HELP, () => HelpBox(screen));
 
+  layout.qsearch.setValue('murcof');
+  layout.mediaTree.focus();
 
-  layout.qsearch.focus();
-  
   // FIXME:
   //layout.qsearch.submit();
   //storage.emit(SEARCH_VK, layout.qsearch.value);
   storage.emit(LASTFM_SEARCH, { type: 'search', query: layout.qsearch.value });
 
   layout.qsearch.on('submit', () => {
-    storage.emit(SEARCH_VK, layout.qsearch.value);
-    storage.emit(LASTFM_SEARCH, layout.qsearch.value);
+    storage.emit(SEARCH_VK, { type: 'search', query: layout.qsearch.value });
+    storage.emit(LASTFM_SEARCH, { type: 'search', query: layout.qsearch.value });
   });
 
   storage.on(SWITCH_PANE, () => {
     layout.qsearch.focus();
   });
 
-
-  // let focusPane = (pane1, pane2) => {
-  //   pane1.hHover.show();
-  //   pane1.box.focus();
-  //   screen.render();
-   
-  //   pane2.hHover.hide();
-  //   screen.render();
-  // };
+  let focusPane = (pane1, pane2) => {
+    pane1.focus();
+    screen.render();
+  };
 
   // storage.on(SWITCH_PANE, () => {
   //   if (leftPane.hHover.hidden) {
@@ -70,12 +65,11 @@ export default (screen, layout) => {
   //   }
   // });
 
-  // storage.on(FOCUS_LEFT_PANE, () => {
-  //   focusPane(layout.leftPane, rightPane);
-  //   //rightPane.qsearch.focus();
-  // });
+  storage.on(FOCUS_LEFT_PANE, () => {
+    focusPane(layout.mediaTree, layout.playlist);
+  });
 
-  // storage.on(FOCUS_RIGHT_PANE, () => {
-  //   focusPane(rightPane, leftPane);
-  // });
+  storage.on(FOCUS_RIGHT_PANE, () => {
+    focusPane(layout.playlist, layout.mediaTree);
+  });
 };

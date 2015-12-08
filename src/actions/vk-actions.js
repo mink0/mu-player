@@ -61,14 +61,48 @@ export let getAlbums = () => {
   return vk.method('audio.getAlbums').then((response) => response.items);
 };
 
-export let getSearch = (query) => {
-  Logger.bottom.log('getSearch(', query, ')');
-  let request = vk.method('audio.search', { need_user: 1, count: count, offset: offset * count, q: query });
+// export let getSearch = (query) => {
+//   Logger.bottom.log('getSearch(', query, ')');
+//   let request = vk.method('audio.search', { need_user: 1, count: count, offset: offset * count, q: query });
+//   return request.then(response => handleData(response.items));
+// };
+
+export let getSearch = (query, opts) => {
+  Logger.bottom.log('vkSearch(', query, ')');
+  let queryOpts = { need_user: 1, count: count, offset: offset * count, q: query, sort: 2 };
+  if (opts && opts.strict) {
+    queryOpts.need_user = 0;
+    queryOpts.auto_complete = 0;
+  }
+  let request = vk.method('audio.search', queryOpts);
   return request.then(response => handleData(response.items));
 };
 
+export let getSearchWithArtist = (track, artist) => {
+  Logger.bottom.log('vkSearchWArtist(', track, artist, ')');
+  let request = vk.method('audio.search', {
+    count: count,
+    offset: offset * count,
+    performer_only: 1,
+    q: artist
+  });
+  return request.then(response => {
+   let items = [];
+    response.items.forEach((item) => {
+      if (item.title === track) {
+        items.push(item);
+        //Logger.bottom.log(item);
+      }
+    });
+    if (items.length === 0) throw new Error('Not Found');
+    Logger.bottom.log('vkFound: ' + items.length + ' track(s)');
+
+    return handleData(items);
+  });
+};
+
 export let getBatchSearch = (text, onTrack) => {
-  Logger.bottom.log('getBatchSearch(%s, %s)', text, onTrack);
+  Logger.bottom.log('getBatchSearch(', text, ')');
   var tracklist = splitTracklist(text);
   return Promise.reduce(tracklist, (total, current, index) => {
     let delay = Promise.delay(300);
