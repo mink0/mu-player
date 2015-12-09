@@ -79,6 +79,14 @@ export let getTopTracks = (artist) => {
   });
 };
 
+export let getSimilar = (artist) => {
+  Logger.bottom.log('lfmGetSimilar(', artist, ')');
+  return lfm.artistAsync.getSimilarAsync({
+    artist: artist,
+    //limit: 50
+  });
+};
+
 export let getSearchTag = (query) => {
   Logger.bottom.log('lfmSearchTag(', query, ')');
   return lfm.tagAsync.searchAsync({

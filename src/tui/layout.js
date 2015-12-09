@@ -123,7 +123,7 @@ export default (screen) => {
     style: {
       fg: 'cyan',
       selected: {
-        fg: 'white',
+        //fg: 'white',
         bg: 'cyan'
       }
     }

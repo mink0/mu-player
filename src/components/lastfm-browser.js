@@ -5,12 +5,15 @@ import storage, {
 from './../storage';
 
 import Toast from './../tui/toast';
+import SimilarPrompt from './../tui/similar-prompt.js';
 
 import * as vkActions from './../actions/vk-actions';
 import * as lfmActions from './../actions/lastfm-actions';
 
+
 let screen = null;
 let menuPane = null;
+let treeData = {};
 //let lfmMenu = {};
 
 export default (_screen, _menuPane) => {
@@ -20,13 +23,20 @@ export default (_screen, _menuPane) => {
 
   storage.on(SEARCH_VK, vkSearchFn);
   storage.on(LASTFM_SEARCH, lfmSearchFn);
-  menuPane.on('select', mediaTreeSelect);
+  menuPane.on('select', function(item, index) {
+    //console.log(index);
+    Logger.bottom.log(item);
+    if (item.fn) item.fn();
+  });
+  // menuPane.key('enter', function(data){
+  //   //console.log(data);
+  // });
 };
 
-let mediaTreeSelect = (node) => {
-  //Logger.bottom.log(node.data);
-  if (node.fn) node.fn();
-};
+// let mediaTreeSelect = (node) => {
+//   //Logger.bottom.log(node.data);
+//   if (node.fn) node.fn();
+// };
 
 let vkSearchFn = (data) => {
   storage.emit(OPEN_VK, {
@@ -89,20 +99,19 @@ let lfmSearchFn = (data) => {
             });
           }
         },
-        // 'similar': {
-        //   name: 'Similar tracks for ' + this.artist, // all nodes must have unique names for tree
-        //   artist: this.artist, // save link for fn
-        //   fn: function() {
-        //     let self = this;
-        //     storage.emit(OPEN_VK, {
-        //       type: 'search',
-        //       query: self.artist,
-        //       opts: {
-        //         strict: true
-        //       }
-        //     });
-        //   }
-        // },
+        'similar': {
+          name: 'Similar artists for ' + this.artist,
+          artist: this.artist, // save link for fn
+          fn: function() {
+            let self = this;
+            SimilarPrompt(screen, self.artist).then((artist) => {
+              storage.emit(OPEN_VK, {
+                type: 'search',
+                query: artist,
+              });
+            });
+          }
+        },
       };
     }
 
@@ -131,11 +140,13 @@ let lfmSearchFn = (data) => {
       });
     }
 
-    renderPane(menu);
+    treeData = menu;
+    renderPane();
+
   });
 };
 
-let renderPane = (lfmMenu) => {
+let renderPane = () => {
   // let lfmMenu = {
   //   extended: true,
   //   children: {
@@ -153,6 +164,6 @@ let renderPane = (lfmMenu) => {
 
   //console.log(lfmMenu);
 
-  menuPane.setData(lfmMenu);
+  menuPane.setData(treeData);
   screen.render();
 };

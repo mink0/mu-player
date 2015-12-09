@@ -1,6 +1,6 @@
-var blessed = require('blessed')
-   , Node = blessed.Node
-   , Box = blessed.Box
+var blessed = require('blessed'),
+  Node = blessed.Node,
+  Box = blessed.Box
 
 function Tree(options) {
 
@@ -18,7 +18,7 @@ function Tree(options) {
   Box.call(this, options);
 
   options.extended = options.extended || false;
-  options.keys = options.keys || ['+','space','enter'];
+  options.keys = options.keys || ['+', 'space', 'enter'];
 
   options.template = options.template || {};
   options.template.extend = options.template.extend || ' [+]';
@@ -26,28 +26,28 @@ function Tree(options) {
   options.template.lines = options.template.lines || false;
 
   this.rows = blessed.list({
-          // Do not set height, since this create a bug where the first line is not always displayed
-          top: 1,
-          width: 0,
-          left: 1,
-          selectedFg: options.style.selected.fg,
-          selectedBg: options.style.selected.bg,
-          fg: options.style.fg,
-          keys: true
-        });
+    // Do not set height, since this create a bug where the first line is not always displayed
+    top: 1,
+    width: 0,
+    left: 1,
+    selectedFg: options.style.selected.fg,
+    selectedBg: options.style.selected.bg,
+    fg: options.style.fg,
+    keys: true
+  });
 
-  this.rows.key(options.keys,function(){
+  this.rows.key(options.keys, function() {
     self.nodeLines[this.getItemIndex(this.selected)].extended = !self.nodeLines[this.getItemIndex(this.selected)].extended;
     self.setData(self.data);
     self.screen.render();
 
-    self.emit('select',self.nodeLines[this.getItemIndex(this.selected)]);
+    self.emit('select', self.nodeLines[this.getItemIndex(this.selected)], this.getItemIndex(this.selected));
   });
 
-  this.append(this.rows)
+  this.append(this.rows);
 }
 
-Tree.prototype.walk = function (node,treeDepth) {
+Tree.prototype.walk = function(node, treeDepth) {
 
   var lines = [];
 
@@ -61,7 +61,7 @@ Tree.prototype.walk = function (node,treeDepth) {
     treeDepth = ' ';
   }
 
-  node.depth = treeDepth.length-1;
+  node.depth = treeDepth.length - 1;
 
   if (node.children && node.extended) {
 
@@ -70,12 +70,12 @@ Tree.prototype.walk = function (node,treeDepth) {
     if (typeof node.children == 'function')
       node.childrenContent = node.children(node);
 
-    if(!node.childrenContent)
+    if (!node.childrenContent)
       node.childrenContent = node.children;
 
     for (var child in node.childrenContent) {
 
-      if(!node.childrenContent[child].name)
+      if (!node.childrenContent[child].name)
         node.childrenContent[child].name = child;
 
       var childIndex = child;
@@ -83,7 +83,7 @@ Tree.prototype.walk = function (node,treeDepth) {
       child.parent = node;
       child.position = i++;
 
-      if(typeof child.extended == 'undefined')
+      if (typeof child.extended == 'undefined')
         child.extended = this.options.extended;
 
       if (typeof child.children == 'function')
@@ -99,9 +99,9 @@ Tree.prototype.walk = function (node,treeDepth) {
       } else {
         tree = '├';
       }
-      if (!child.childrenContent || Object.keys(child.childrenContent).length == 0){
+      if (!child.childrenContent || Object.keys(child.childrenContent).length == 0) {
         tree += '─';
-      } else if(child.extended) {
+      } else if (child.extended) {
         tree += '┬';
         suffix = this.options.template.retract;
       } else {
@@ -109,12 +109,12 @@ Tree.prototype.walk = function (node,treeDepth) {
         suffix = this.options.template.extend;
       }
 
-      if (!this.options.template.lines){
+      if (!this.options.template.lines) {
         tree = '|-';
       }
 
-      if (this.options.template.spaces){
-        tree = ' ';
+      if (this.options.template.spaces) {
+        tree = '  ';
       }
 
       lines.push(treeDepth + tree + child.name + suffix);
@@ -122,10 +122,10 @@ Tree.prototype.walk = function (node,treeDepth) {
       this.nodeLines[this.lineNbr++] = child;
 
       var parentTree;
-      if (isLastChild || !this.options.template.lines){
-        parentTree = treeDepth+" ";
+      if (isLastChild || !this.options.template.lines) {
+        parentTree = treeDepth + " ";
       } else {
-        parentTree = treeDepth+"│";
+        parentTree = treeDepth + "│";
       }
       lines = lines.concat(this.walk(child, parentTree));
     }
@@ -133,23 +133,23 @@ Tree.prototype.walk = function (node,treeDepth) {
   return lines;
 }
 
-Tree.prototype.focus = function(){
+Tree.prototype.focus = function() {
   this.rows.focus();
 }
 
 Tree.prototype.render = function() {
-  if(this.screen.focused == this.rows)
+  if (this.screen.focused == this.rows)
     this.rows.focus()
 
-  this.rows.width = this.width-3;
-  this.rows.height = this.height-3;
+  this.rows.width = this.width - 3;
+  this.rows.height = this.height - 3;
   Box.prototype.render.call(this);
 }
 
 Tree.prototype.setData = function(data) {
 
   var formatted = [];
-  formatted = this.walk(data,'');
+  formatted = this.walk(data, '');
 
   this.data = data;
   this.rows.setItems(formatted);
