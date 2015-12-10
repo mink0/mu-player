@@ -33,7 +33,8 @@ function Tree(options) {
     selectedFg: options.style.selected.fg,
     selectedBg: options.style.selected.bg,
     fg: options.style.fg,
-    keys: true
+    keys: true,
+    tags: true
   });
 
   this.rows.key(options.keys, function() {
@@ -114,7 +115,7 @@ Tree.prototype.walk = function(node, treeDepth) {
       }
 
       if (this.options.template.spaces) {
-        tree = '  ';
+        tree = ' ';
       }
 
       lines.push(treeDepth + tree + child.name + suffix);

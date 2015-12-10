@@ -4,11 +4,6 @@ import storage, {
 from './../storage';
 
 import HelpBox from './../tui/help-box';
-
-//import LeftPane from './../tui/left-pane';
-// import RightPane from './../tui/right-pane';
-// import BottomPane from './../tui/bottom-pane.js';
-
 import LeftMenu from './lastfm-browser.js';
 import RightMenu from './right-menu';
 
@@ -40,7 +35,7 @@ export default (screen, layout) => {
 
   // FIXME:
   //layout.qsearch.submit();
-  //storage.emit(SEARCH_VK, layout.qsearch.value);
+  storage.emit(SEARCH_VK, { type: 'search', query: layout.qsearch.value });
   storage.emit(LASTFM_SEARCH, { type: 'search', query: layout.qsearch.value });
 
   layout.qsearch.on('submit', () => {
@@ -54,6 +49,12 @@ export default (screen, layout) => {
 
   let focusPane = (pane1, pane2) => {
     pane1.focus();
+    pane1.style.selected.bg = 'yellow';
+    pane2.style.selected.bg = 'default';
+
+    if (pane1.rows) pane1.rows.style.selected.bg = 'yellow';
+    if (pane2.rows) pane2.rows.style.selected.bg = 'default';
+
     screen.render();
   };
 

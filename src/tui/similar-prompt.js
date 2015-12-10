@@ -33,14 +33,13 @@ export default (screen, artist) => {
     scrollbar: {
       ch: ' ',
       inverse: true,
-      fg: 'red'
+      fg: 'gray'
     },
     style: {
-      bg: 'brown',
-      fg: 'cyan',
+      //bg: 'brightblack',
       selected: {
-        //fg: 'white',
-        bg: 'cyan'
+        bg: 'gray',
+        fg: 'brightyellow'
       }
     }
   });

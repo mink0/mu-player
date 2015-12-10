@@ -23,20 +23,11 @@ export default (_screen, _menuPane) => {
 
   storage.on(SEARCH_VK, vkSearchFn);
   storage.on(LASTFM_SEARCH, lfmSearchFn);
-  menuPane.on('select', function(item, index) {
-    //console.log(index);
-    Logger.bottom.log(item);
+  menuPane.on('select', function(item) {
+    Logger.bottom.log(item.content);
     if (item.fn) item.fn();
   });
-  // menuPane.key('enter', function(data){
-  //   //console.log(data);
-  // });
 };
-
-// let mediaTreeSelect = (node) => {
-//   //Logger.bottom.log(node.data);
-//   if (node.fn) node.fn();
-// };
 
 let vkSearchFn = (data) => {
   storage.emit(OPEN_VK, {
@@ -51,7 +42,7 @@ let lfmSearchFn = (data) => {
     function TrackItem(track, artist) {
       this.track = track;
       this.artist = artist;
-      this.name = '[' + artist + '] ' + track;
+      this.name = '{bold}[' + artist + ']{/bold} ' + track;
     }
     TrackItem.prototype.fn = function() {
       storage.emit(OPEN_VK, {
@@ -63,7 +54,7 @@ let lfmSearchFn = (data) => {
 
     function ArtistItem(artist) {
       this.artist = artist;
-      this.name = '[' + artist + ']';
+      this.name = '{bold}[' + artist + ']{/bold}';
       this.extended = true;
       this.children = {
         'alltracks': {
@@ -81,7 +72,7 @@ let lfmSearchFn = (data) => {
           }
         },
         'top10': {
-          name: 'Top tracks for ' + this.artist,
+          name: 'Top tracks for ' + this.artist ,
           artist: this.artist,
           fn: function() {
             let self = this;
@@ -132,6 +123,7 @@ let lfmSearchFn = (data) => {
     for (var key in searchData) {
       rootKey = key.charAt(0).toUpperCase() + key.slice(1);
       menu.children[rootKey] = {
+        name: '{bold}{light-white-fg}' + rootKey + '{/light-white-fg}{/bold}',
         extended: true,
         children: {}
       };

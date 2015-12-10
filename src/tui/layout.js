@@ -15,10 +15,8 @@ export default (screen) => {
     label: 'Media',
     style: {
       border: {
-        fg: 'magenta'
-      },
-      fg: 'white',
-      bg: 'brown',
+        fg: 'brightblack'
+      }
     },
   };
 
@@ -26,10 +24,8 @@ export default (screen) => {
     label: 'Playlist',
     style: {
       border: {
-        fg: 'magenta'
-      },
-      fg: 'white',
-      bg: 'brown',
+        fg: 'brightblack'
+      }
     },
   };
 
@@ -38,10 +34,9 @@ export default (screen) => {
     inputOnFocus: true,
     style: {
       border: {
-        fg: 'magenta'
+        fg: 'brightblack'
       },
-      fg: 'white',
-      bg: 'brown',
+      //fg: 'white'
     },
   };
 
@@ -65,7 +60,7 @@ export default (screen) => {
     style: {
       bold: true,
       border: {
-        fg: 'magenta'
+        fg: 'brightblack'
       },
     }
   };
@@ -74,7 +69,6 @@ export default (screen) => {
     top: 0,
     tags: true,
     width: '98%',
-    //border: 'line',
     padding: {
       left: 1,
       right: 1
@@ -87,14 +81,13 @@ export default (screen) => {
     scrollbar: {
       ch: ' ',
       inverse: true,
-      fg: 'red'
+      fg: 'gray'
     },
     style: {
-      bg: 'brown',
       fg: 'white',
       selected: {
-        fg: 'yellow',
-        bg: 'magenta'
+        bg: 'yellow',
+        fg: 'ligthwhite'
       }
     }
   };
@@ -107,12 +100,9 @@ export default (screen) => {
       right: 1
     },
     input: true,
-    // scrollable: true,
-    // keys: true,
     vi: true,
     mouse: true,
     template: {
-      //lines: false,
       spaces: true
     },
     scrollbar: {
@@ -121,10 +111,10 @@ export default (screen) => {
       fg: 'yellow'
     },
     style: {
-      fg: 'cyan',
+      fg: 'white',
       selected: {
-        //fg: 'white',
-        bg: 'cyan'
+        bg: 'yellow',
+        fg: 'ligthwhite'
       }
     }
   };
