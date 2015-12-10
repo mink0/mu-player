@@ -75,7 +75,7 @@ let setAudio = (audio) => {
 };
 
 let loadAudio = (audio) => {
-  Logger.bottom.log(audio);
+  //Logger.bottom.log(audio);
   setAudio(audio);
 
   playlist.setPlaylist(audio);
