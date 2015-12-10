@@ -139,23 +139,6 @@ let lfmSearchFn = (data) => {
 };
 
 let renderPane = () => {
-  // let lfmMenu = {
-  //   extended: true,
-  //   children: {
-  //     'Albums': {
-  //       extended: true,
-  //     },
-  //     'Tracks': {
-  //       extended: true,
-  //     },
-  //     'Tags': {
-  //       extended: true,
-  //     }
-  //   }
-  // };
-
-  //console.log(lfmMenu);
-
   menuPane.setData(treeData);
   screen.render();
 };

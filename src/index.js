@@ -20,7 +20,7 @@ let cli = meow(`
 setupCredentials(cli.flags.setup).then(() => {
   let screen = tui();
   let layout = drawLayout(screen);
-  
+
   startApp(screen, layout);
 
   screen.key(['C-f'], () => storage.emit(SEARCH_VK));
@@ -30,17 +30,23 @@ setupCredentials(cli.flags.setup).then(() => {
   screen.key(['m', 'ь'], () => storage.emit(SWITCH_PANE));
   screen.key(['d', 'в'], () => storage.emit(MOVE_TO_PLAYING));
 
-  screen.key(['left'], () => storage.emit(FOCUS_LEFT_PANE));
-  screen.key(['right'], () => storage.emit(FOCUS_RIGHT_PANE));
-  screen.key(['tab'], () => storage.emit(SWITCH_PANE));
+  screen.key(['left'], () => layout.mediaTree.focus());
+  screen.key(['right'], () => layout.playlist.focus());
 
   screen.key(['/', '?', '.', ','], () => storage.emit(SHOW_HELP));
+
+  layout.qsearch.key(['left'], () => { layout.mediaTree.focus(); screen.render(); });
+  layout.qsearch.key(['right'], () => { layout.playlist.focus(); screen.render(); });
+  layout.qsearch.key(['tab'], () => { layout.mediaTree.focus(); screen.render(); });
+  layout.mediaTree.rows.key(['tab'], () => { layout.playlist.focus(); screen.render(); });
+  layout.playlist.key(['tab'], () => { layout.qsearch.focus(); screen.render() });
 
   screen.key(['escape', 'q', 'C-c'], () => {
     if (!screen.blockEsc) {
       process.exit(0);
     }
   });
+
 
   screen.title = 'badtaste';
   screen.render();

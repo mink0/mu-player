@@ -86,7 +86,7 @@ export default (screen) => {
     style: {
       fg: 'white',
       selected: {
-        bg: 'yellow',
+        //bg: 'yellow',
         fg: 'ligthwhite'
       }
     }
@@ -113,7 +113,7 @@ export default (screen) => {
     style: {
       fg: 'white',
       selected: {
-        bg: 'yellow',
+        //bg: 'yellow',
         fg: 'ligthwhite'
       }
     }
@@ -133,5 +133,17 @@ export default (screen) => {
   screen.append(layout.qprefix);
   screen.append(layout.qsearch);
 
+  // Focus events:
+  layout.playlist.on('focus', () => layout.playlist.style.selected.bg = 'yellow');
+  layout.playlist.on('blur', () => layout.playlist.style.selected.bg = 'default');
+
+  layout.mediaTree.rows.on('focus', () => layout.mediaTree.rows.style.selected.bg = 'yellow');
+  layout.mediaTree.rows.on('blur', () => layout.mediaTree.rows.style.selected.bg = 'default');
+
+  layout.qsearch.on('focus', () => {
+    layout.qsearch.style.fg = 'brightyellow';
+    layout.qsearch.setValue(layout.qsearch.value.trim());
+  });
+  layout.qsearch.on('blur', () => layout.qsearch.style.fg = 'brightwhite');
   return layout;
 };
