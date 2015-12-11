@@ -22,17 +22,20 @@ function Tree(options) {
   options.template.retract = options.template.retract || ' [-]';
   options.template.lines = options.template.lines || false;
 
+  // Do not set height, since this create a bug where the first line is not always displayed
   this.rows = blessed.list({
-    // Do not set height, since this create a bug where the first line is not always displayed
     top: 1,
     width: 0,
     left: 1,
     style: options.style,
-    // selectedFg: options.style.selected.fg,
-    // selectedBg: options.style.selected.bg,
-    // fg: options.style.fg,
+    padding: options.padding,
     keys: true,
-    tags: true
+    tags: options.tags,
+    input: options.input,
+    vi: options.vi,
+    ignoreKeys: options.ignoreKeys,
+    scrollable: options.scrollable,
+    mouse: options.mouse
   });
 
   this.append(this.rows);

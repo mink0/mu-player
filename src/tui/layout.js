@@ -93,15 +93,15 @@ export default (screen) => {
   };
 
   let mediaTreeOpts = {
-    top: 0,
+    //top: 0,
     tags: true,
-    padding: {
-      left: 1,
-      right: 1
-    },
-    input: true,
-    vi: true,
-    mouse: true,
+    // padding: {
+    //   left: 1,
+    //   right: 1
+    // },
+    // input: true,
+    // vi: true,
+    // mouse: true,
     template: {
       spaces: true
     },
