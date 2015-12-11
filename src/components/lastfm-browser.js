@@ -24,7 +24,7 @@ export default (_screen, _menuPane) => {
   storage.on(SEARCH_VK, vkSearchFn);
   storage.on(LASTFM_SEARCH, lfmSearchFn);
   menuPane.on('select', function(item) {
-    Logger.bottom.log(menuPane.selected);
+    //Logger.bottom.log(item.content);
     if (item.fn) item.fn();
   });
 };
