@@ -21,8 +21,8 @@ export default (screen, layout) => {
   storage.on(PAUSE, () => player.pause());
   storage.on(SHOW_HELP, () => HelpBox(screen));
 
+  //layout.qsearch.focus();
   // FIXME:
-  //layout.qsearch.submit();
   layout.qsearch.setValue('murcof');
   layout.mediaTree.focus();
 

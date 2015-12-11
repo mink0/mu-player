@@ -44,7 +44,15 @@ export default (screen, artist) => {
     }
   });
 
+  screen.blockEsc = true;
+  list.key(['escape'], () => {
+    screen.remove(layout);
+    screen.blockEsc = false;
+    // screen.render();
+  });
+
   layout.append(list);
+  list.focus();
 
   list.on('action', () => screen.render());
 
