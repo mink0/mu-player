@@ -30,16 +30,20 @@ let playCurrent = () => {
         (typeof url === 'function' ? url() : Promise.resolve(url)).then((url) => {
           player.play(url);
           global.Logger.info(url);
-          global.Logger.bottom.log(url);
+          global.Logger.bottom.log('Playing:', url);
         }).catch((err) => {
           global.Logger.error(err);
-          global.Logger.bottom.log(err);
+          global.Logger.bottom.log('Playback Error:', err);
         });
 
         rightPane.select(playlist.getCurrentIndex());
         storage.emit(FOCUS_RIGHT_PANE);
 
         urlFinded = true;
+        // current playing
+        rightPane.setItem(playlist.getCurrentIndex(), 
+          '{yellow-fg}' + playlist.getCurrentItem().trackTitleFull + '{/yellow-fg}');
+        rightPane.setItem(playlist.getPreviousIndex(), playlist.getPreviousItem().trackTitleFull);
       } else {
         playlist.moveNext();
       }
@@ -75,7 +79,6 @@ let setAudio = (audio) => {
 };
 
 let loadAudio = (audio) => {
-  //Logger.bottom.log(audio);
   setAudio(audio);
 
   playlist.setPlaylist(audio);

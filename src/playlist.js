@@ -1,6 +1,7 @@
 let originalPlaylist = [];
 let playlist = [];
 let current = 0;
+let previous = 0;
 
 export default {
   setPlaylist: (_playlist) => {
@@ -27,6 +28,11 @@ export default {
   getCurrent: () => playlist[current % playlist.length].url,
   getCurrentItem: () => playlist[current % playlist.length],
   getCurrentIndex: () => current,
-  setCurrent: (index) => current = index,
+  getPreviousItem: () => playlist[previous % playlist.length],
+  getPreviousIndex: () => previous,
+  setCurrent: (index) => {
+    previous = current;
+    current = index;
+  },
   moveNext: () => current = (current + 1) % playlist.length
 };
