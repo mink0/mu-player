@@ -48,8 +48,8 @@ setupCredentials(cli.flags.setup).then(() => {
   });
 
 
-  screen.title = 'badtaste';
+  screen.title = ':mu';
   screen.render();
 
-  process.title = 'badtaste';
+  process.title = ':mu';
 });

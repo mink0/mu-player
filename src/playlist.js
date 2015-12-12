@@ -34,5 +34,5 @@ export default {
     previous = current;
     current = index;
   },
-  moveNext: () => current = (current + 1) % playlist.length
+  moveNext: () => this.setCurrent((current + 1) % playlist.length)
 };

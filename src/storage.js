@@ -1,4 +1,4 @@
-var storage = require('dot-file-config')('.badtaste-npm', {
+var storage = require('dot-file-config')('.murc', {
   cloudSync: false
 });
 

@@ -23,6 +23,10 @@ let rightPane = null;
 let playCurrent = () => {
   let urlFinded = false;
   if (playlist.getLength() > 0) {
+    // display current playing
+    rightPane.setItem(playlist.getCurrentIndex(), 
+      '{yellow-fg}' + playlist.getCurrentItem().trackTitleFull + '{/yellow-fg}');
+    rightPane.setItem(playlist.getPreviousIndex(), playlist.getPreviousItem().trackTitleFull);
     while (!urlFinded) {
       let url = playlist.getCurrent();
 
@@ -40,10 +44,6 @@ let playCurrent = () => {
         storage.emit(FOCUS_RIGHT_PANE);
 
         urlFinded = true;
-        // current playing
-        rightPane.setItem(playlist.getCurrentIndex(), 
-          '{yellow-fg}' + playlist.getCurrentItem().trackTitleFull + '{/yellow-fg}');
-        rightPane.setItem(playlist.getPreviousIndex(), playlist.getPreviousItem().trackTitleFull);
       } else {
         playlist.moveNext();
       }
