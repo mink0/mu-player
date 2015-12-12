@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
 export let formatTrack = (track) => {
-	if (track.label) {
-		return `{blue-fg}${track.label}{/blue-fg}`;
+  if (track.label) {
+		return `{light-red-fg}${track.label}{/light-red-fg}`;
 	}
 
   let result = `{bold}${track.artist}{/bold}`;
