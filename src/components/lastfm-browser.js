@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import storage, {
-  LASTFM_SEARCH, SEARCH_VK, OPEN_VK
+  LASTFM_SEARCH, VK_SEARCH, OPEN_VK
 }
 from './../storage';
 
@@ -16,23 +16,15 @@ let menuPane = null;
 let treeData = {};
 //let lfmMenu = {};
 
-export default (_screen, _menuPane) => {
+export let init = (_screen, _menuPane) => {
   screen = _screen;
   menuPane = _menuPane;
   //renderPane();
 
-  storage.on(SEARCH_VK, vkSearchFn);
   storage.on(LASTFM_SEARCH, lfmSearchFn);
   menuPane.on('select', function(item) {
     //Logger.bottom.log(item.content);
     if (item.fn) item.fn();
-  });
-};
-
-let vkSearchFn = (data) => {
-  storage.emit(OPEN_VK, {
-    type: 'search',
-    query: data.query
   });
 };
 

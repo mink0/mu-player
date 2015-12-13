@@ -15,7 +15,7 @@ let formatTrackFull = (track) => formatTrack(track);
 let handleData = (result) => {
   return result.filter(obj => obj.artist && obj.title).map(obj => {
     //obj.isAdded = typeof profileAudious[obj.artist + obj.title] !== 'undefined';
-
+    obj.source = 'vk';
     obj.artist = obj.artist.replace(/&amp;/g, '&');
     obj.title = obj.title.replace(/&amp;/g, '&');
 
@@ -60,12 +60,6 @@ export let getAlbums = () => {
   Logger.bottom.log('getAlbums()');
   return vk.method('audio.getAlbums').then((response) => response.items);
 };
-
-// export let getSearch = (query) => {
-//   Logger.bottom.log('getSearch(', query, ')');
-//   let request = vk.method('audio.search', { need_user: 1, count: count, offset: offset * count, q: query });
-//   return request.then(response => handleData(response.items));
-// };
 
 export let getSearch = (query, opts) => {
   Logger.bottom.log('vkSearch(', query, ')');

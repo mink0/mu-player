@@ -18,7 +18,7 @@ storage.emit = emitter.emit.bind(emitter);
 storage.on = emitter.on.bind(emitter);
 
 export const OPEN_VK = 'OPEN_VK';
-export const SEARCH_VK = 'SEARCH_VK';
+export const VK_SEARCH = 'VK_SEARCH';
 export const PAUSE = 'PAUSE';
 export const ADD_TO_PROFILE = 'ADD_TO_PROFILE';
 export const SWITCH_PANE = 'SWITCH_PANE';
@@ -31,5 +31,6 @@ export const OPEN_GM_THUMBS_UP = 'OPEN_GM_THUMBS_UP';
 export const OPEN_GM_ALL_TRACKS = 'OPEN_GM_ALL_TRACKS';
 export const LOCAL_SEARCH = 'LOCAL_SEARCH';
 export const LASTFM_SEARCH = 'LASTFM_SEARCH';
+export const SC_SEARCH = 'SC_SEARCH';
 
 export default storage;

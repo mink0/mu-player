@@ -15,6 +15,10 @@ process.stdin.on('data', function(chunk) {
     // player.on('playend',function(data) {
     //   process.exit(0);
     // });
+    
+    // player.on('playing', function(song) {
+    //   console.log((song.meta));
+    // });
 
     player.on('error', function(err) {
       process.stderr.write(err);

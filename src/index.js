@@ -5,7 +5,7 @@ import setupCredentials from './helpers/credentials';
 import startApp from './components/main';
 import meow from 'meow';
 
-import storage, { SEARCH_VK, PAUSE, ADD_TO_PROFILE, SHOW_HELP, SWITCH_PANE, MOVE_TO_PLAYING, FOCUS_LEFT_PANE, FOCUS_RIGHT_PANE, LOCAL_SEARCH } from './storage';
+import storage, { VK_SEARCH, PAUSE, ADD_TO_PROFILE, SHOW_HELP, SWITCH_PANE, MOVE_TO_PLAYING, FOCUS_LEFT_PANE, FOCUS_RIGHT_PANE, LOCAL_SEARCH } from './storage';
 
 let cli = meow(`
   Usage
@@ -23,7 +23,7 @@ setupCredentials(cli.flags.setup).then(() => {
 
   startApp(screen, layout);
 
-  screen.key(['C-f'], () => storage.emit(SEARCH_VK));
+  screen.key(['C-f'], () => storage.emit(VK_SEARCH));
   screen.key(['f'], () => storage.emit(LOCAL_SEARCH));
   screen.key(['space'], () => storage.emit(PAUSE));
   screen.key(['x'], () => storage.emit(ADD_TO_PROFILE));

@@ -5,11 +5,15 @@ export let formatTrack = (track) => {
 		return `{light-red-fg}${track.label}{/light-red-fg}`;
 	}
 
-  let result = `{bold}${track.artist}{/bold}`;
+  let result = `[${track.source}] {bold}${track.artist}{/bold}`;
 
 	if (track.title) {
 		result += ` - ${track.title}`;
 	}
+
+  // if (track.source) {
+  //   result += ` - [${track.source}] -`;
+  // }
 
   if (track.duration) {
     let duration = _.padLeft(track.duration / 60 | 0, 2, '0') + ':' + _.padLeft(track.duration % 60, 2, '0');

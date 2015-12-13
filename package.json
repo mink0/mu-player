@@ -39,6 +39,7 @@
     "lastfmapi": "0.0.6",
     "lodash": "^3.10.1",
     "meow": "^3.4.1",
+    "node-soundcloud": "0.0.4",
     "player": "^0.6.1",
     "playmusic": "^2.1.0",
     "split-tracklist": "^1.1.1",
