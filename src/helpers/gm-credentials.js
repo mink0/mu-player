@@ -1,5 +1,5 @@
 import inquirer from 'inquirer-question';
-import storage from './../storage';
+import storage from './../storage/storage';
 import Promise from 'bluebird';
 
 import * as gmActions from './../actions/gm-actions';

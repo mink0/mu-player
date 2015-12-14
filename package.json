@@ -1,10 +1,10 @@
 {
-  "name": "badtaste",
+  "name": "mu",
   "version": "0.6.1",
-  "description": "Play audio from vk.com in your terminal",
+  "description": "Play audio from vk.com and soundcloud.com in your terminal",
   "main": "cli.js",
   "bin": {
-    "badtaste": "cli.js"
+    "mu": "cli.js"
   },
   "scripts": {
     "start": "node cli.js",

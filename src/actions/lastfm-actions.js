@@ -2,7 +2,7 @@ import LastfmAPI from 'lastfmapi';
 import storage, {
   LASTFM_SEARCH
 }
-from './../storage';
+from './../storage/storage';
 
 import Promise from 'bluebird';
 import {

@@ -1,6 +1,6 @@
 import blessed from 'blessed';
 import _ from 'lodash';
-import storage from './../storage';
+import storage from './../storage/storage';
 
 export default (screen) => {
   var msg = blessed.message({

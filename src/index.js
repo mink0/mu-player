@@ -5,7 +5,8 @@ import setupCredentials from './helpers/credentials';
 import startApp from './components/main';
 import meow from 'meow';
 
-import storage, { VK_SEARCH, PAUSE, ADD_TO_PROFILE, SHOW_HELP, SWITCH_PANE, MOVE_TO_PLAYING, FOCUS_LEFT_PANE, FOCUS_RIGHT_PANE, LOCAL_SEARCH } from './storage';
+import storage, { VK_SEARCH, PAUSE, ADD_TO_PROFILE, SHOW_HELP, SWITCH_PANE, 
+  MOVE_TO_PLAYING, FOCUS_LEFT_PANE, FOCUS_RIGHT_PANE, LOCAL_SEARCH } from './storage/storage';
 
 let cli = meow(`
   Usage
