@@ -32,6 +32,7 @@ export default (screen) => {
   let loggerOpts = {
     label: 'Logger',
     inputOnFocus: true,
+    tags: true,
     style: {
       border: {
         fg: 'brightblack'

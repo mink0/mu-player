@@ -8,7 +8,7 @@ import * as leftPane from './media-browser-ctrl';
 import * as rightPane from './playlist-ctrl';
 
 import * as player from './../player/player-control';
-import playlist from './../storage/playlist';
+//import playlist from './../storage/playlist';
 
 export default (screen, layout) => {
   leftPane.init(screen, layout.mediaTree);
@@ -31,7 +31,7 @@ export default (screen, layout) => {
 
   //layout.qsearch.focus();
   // FIXME:
-  layout.qsearch.setValue('murcof');
+  layout.qsearch.setValue('mantra gulf');
   layout.mediaTree.focus();
 
   rightPane.search({ type: 'search', query: layout.qsearch.value });

@@ -15,9 +15,9 @@ process.stdin.on('data', function(chunk) {
     // player.on('playend',function(data) {
     //   process.exit(0);
     // });
-    
+
     // player.on('playing', function(song) {
-    //   console.log((song.meta));
+    //   console.log((song));
     // });
 
     player.on('error', function(err) {
@@ -27,6 +27,6 @@ process.stdin.on('data', function(chunk) {
   }
 });
 
-process.once('SIGTERM', function () {
+process.once('SIGTERM', function() {
   process.exit(0);
 });

@@ -6,9 +6,9 @@ let createProcess = (url) => {
 
   ls.stdin.write(url);
 
-  ls.stdout.on('data', function (data) {
-    // Logger.info('stdout: ' + data);
-  });
+  // ls.stdout.on('data', function (data) {
+  //   //Logger.info('stdout: ' + data);
+  // });
 
   ls.stderr.on('data', function (data) {
     data = data.toString();
