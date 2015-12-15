@@ -22,16 +22,16 @@ export default (screen, layout) => {
   storage.on(SHOW_HELP, () => HelpBox(screen));
 
   //FIXME:
-  storage.on(VK_SEARCH, (data) => {
-    rightPane.search({
-      type: 'search',
-      query: data.query
-    });
-  });
+  // storage.on(VK_SEARCH, (data) => {
+  //   rightPane.search({
+  //     type: 'search',
+  //     query: data.query
+  //   });
+  // });
 
   //layout.qsearch.focus();
   // FIXME:
-  layout.qsearch.setValue('mantra gulf');
+  layout.qsearch.setValue('rod modell');
   layout.mediaTree.focus();
 
   rightPane.search({ type: 'search', query: layout.qsearch.value });

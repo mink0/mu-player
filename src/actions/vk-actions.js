@@ -4,10 +4,8 @@ import splitTracklist from 'split-tracklist';
 import Promise from 'bluebird';
 
 import { formatTrack } from './music-actions';
-//let logger = require();
 
-let count = 1000;
-let offset = 0;
+const SEARCH_LIMIT = 1000;
 
 let profileAudious = {};
 let formatTrackFull = (track) => formatTrack(track);
@@ -62,8 +60,12 @@ export let getAlbums = () => {
 };
 
 export let getSearch = (query, opts) => {
+  var opts = opts || {};
+  opts.limit = opts.limit || SEARCH_LIMIT;
+  opts.offset = opts.offset || 0;
+
   Logger.bottom.log('vkSearch(', query, ')');
-  let queryOpts = { need_user: 1, count: count, offset: offset * count, q: query, sort: 2 };
+  let queryOpts = { count: opts.limit, offset: opts.offset * opts.limit, q: query, sort: 2 };
   if (opts && opts.strict) {
     queryOpts.need_user = 0;
     queryOpts.auto_complete = 0;
@@ -75,20 +77,20 @@ export let getSearch = (query, opts) => {
 export let getSearchWithArtist = (track, artist) => {
   Logger.bottom.log('vkSearchWArtist(', track, artist, ')');
   let request = vk.method('audio.search', {
-    count: count,
-    offset: offset * count,
+    count: SEARCH_LIMIT,
+    offset: 0,
     performer_only: 1,
     q: artist
   });
   return request.then(response => {
    let items = [];
     response.items.forEach((item) => {
-      if (item.title === track) {
-        items.push(item);
-        //Logger.bottom.log(item);
-      }
+      if (item.title === track) items.push(item);
     });
-    if (items.length === 0) throw new Error('Not Found');
+    if (items.length === 0) {
+      Logger.bottom.log('vkNotFound', track, artist);
+      return undefined;
+    }
     Logger.bottom.log('vkFound: ' + items.length + ' track(s)');
 
     return handleData(items);
@@ -100,10 +102,11 @@ export let getBatchSearch = (text, onTrack) => {
   var tracklist = splitTracklist(text);
   return Promise.reduce(tracklist, (total, current, index) => {
     let delay = Promise.delay(300);
-    let apiSearch = () => vk.method('audio.search', { need_user: 1, q: current.track });
+    let apiSearch = () => vk.method('audio.search', { q: current.track, sort: 2, limit: 1, offset: 0 });
 
     return delay.then(apiSearch).then((response) => {
-      var track = response.items[0];
+      let track = response.items[0];
+      track.source = 'vk';
       return track;
     }, (err) => {
       Logger.error(err);
