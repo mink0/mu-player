@@ -3,16 +3,17 @@ import * as vk from 'vk-universal-api';
 import splitTracklist from 'split-tracklist';
 import Promise from 'bluebird';
 
-import { formatTrack } from './music-actions';
+import {
+  formatTrack
+}
+from './music-actions';
 
 const SEARCH_LIMIT = 1000;
 
-let profileAudious = {};
 let formatTrackFull = (track) => formatTrack(track);
 
 let handleData = (result) => {
   return result.filter(obj => obj.artist && obj.title).map(obj => {
-    //obj.isAdded = typeof profileAudious[obj.artist + obj.title] !== 'undefined';
     obj.source = 'vk';
     obj.artist = obj.artist.replace(/&amp;/g, '&');
     obj.title = obj.title.replace(/&amp;/g, '&');
@@ -22,6 +23,48 @@ let handleData = (result) => {
   });
 };
 
+export let getSearch = (query, opts) => {
+  var opts = opts || {};
+  opts.limit = opts.limit || SEARCH_LIMIT;
+  opts.offset = opts.offset || 0;
+
+  global.Logger.bottom.log('vkSearch(', query, ')');
+  let queryOpts = {
+    count: opts.limit,
+    offset: opts.offset * opts.limit,
+    q: query,
+    sort: 2
+  };
+
+  let request = vk.method('audio.search', queryOpts);
+  return request.then(response => handleData(response.items));
+};
+
+export let getSearchWithArtist = (track, artist) => {
+  Logger.bottom.log('vkSearchWArtist(', track, artist, ')');
+  let request = vk.method('audio.search', {
+    count: SEARCH_LIMIT,
+    offset: 0,
+    performer_only: 1,
+    q: artist
+  });
+  return request.then(response => {
+    let items = [];
+    response.items.forEach((item) => {
+      if (item.title.indexOf(track) > 0) items.push(item);
+    });
+    if (items.length === 0) {
+      Logger.bottom.log('vkNotFound', track, artist);
+      return undefined;
+    }
+    Logger.bottom.log('vkFound: ' + items.length + ' track(s)');
+
+    return handleData(items);
+  });
+};
+
+
+/*
 export let getProfileAudio = () => {
   Logger.bottom.log('getProfileAudio => ');
   let request = vk.method('audio.get', { need_user: 1, count: count, offset: offset * count });
@@ -59,75 +102,6 @@ export let getAlbums = () => {
   return vk.method('audio.getAlbums').then((response) => response.items);
 };
 
-export let getSearch = (query, opts) => {
-  var opts = opts || {};
-  opts.limit = opts.limit || SEARCH_LIMIT;
-  opts.offset = opts.offset || 0;
-
-  Logger.bottom.log('vkSearch(', query, ')');
-  let queryOpts = { count: opts.limit, offset: opts.offset * opts.limit, q: query, sort: 2 };
-  if (opts && opts.strict) {
-    queryOpts.need_user = 0;
-    queryOpts.auto_complete = 0;
-  }
-  let request = vk.method('audio.search', queryOpts);
-  return request.then(response => handleData(response.items));
-};
-
-export let getSearchWithArtist = (track, artist) => {
-  Logger.bottom.log('vkSearchWArtist(', track, artist, ')');
-  let request = vk.method('audio.search', {
-    count: SEARCH_LIMIT,
-    offset: 0,
-    performer_only: 1,
-    q: artist
-  });
-  return request.then(response => {
-   let items = [];
-    response.items.forEach((item) => {
-      if (item.title === track) items.push(item);
-    });
-    if (items.length === 0) {
-      Logger.bottom.log('vkNotFound', track, artist);
-      return undefined;
-    }
-    Logger.bottom.log('vkFound: ' + items.length + ' track(s)');
-
-    return handleData(items);
-  });
-};
-
-export let getBatchSearch = (text, onTrack) => {
-  Logger.bottom.log('getBatchSearch(', text, ')');
-  var tracklist = splitTracklist(text);
-  return Promise.reduce(tracklist, (total, current, index) => {
-    let delay = Promise.delay(300);
-    let apiSearch = () => vk.method('audio.search', { q: current.track, sort: 2, limit: 1, offset: 0 });
-
-    return delay.then(apiSearch).then((response) => {
-      let track = response.items[0];
-      track.source = 'vk';
-      return track;
-    }, (err) => {
-      Logger.error(err);
-      return undefined;
-    }).then((track) => {
-      if (!track) {
-        track = {
-          artist: current.artist,
-          title: current.title
-        };
-      }
-
-      track.trackTitle = formatTrack(track);
-      track.isAdded = typeof profileAudious[track.trackTitle] !== 'undefined';
-      track.trackTitleFull = formatTrackFull(track);
-
-      onTrack(track, index, tracklist.length);
-      return total;
-    });
-  }, {});
-};
 
 export let addToProfile = (selected) => {
   Logger.bottom.log('addToProfile(%s)', selected);
@@ -180,3 +154,4 @@ export let detectUrlType = (url) => {
     });
   }
 };
+*/

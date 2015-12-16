@@ -23,7 +23,6 @@ lfm.tagAsync = Promise.promisifyAll(lfm.tag);
 let limit = 10;
 
 let handleData = (result) => {
-  Logger.bottom.log('OK');
   return result;
 };
 
