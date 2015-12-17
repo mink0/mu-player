@@ -50,9 +50,6 @@ let playCurrent = () => {
           global.Logger.error(err);
           global.Logger.bottom.log('{red-fg}Playback Error:{/red-fg}', err);
         });
-
-        //rightPane.select(playlist.getCurrentIndex());
-        storage.emit(FOCUS_RIGHT_PANE);
       } else {
         playlist.moveNext();
       }
@@ -76,7 +73,7 @@ export let search = (payload) => {
 
     let onTrack = (track, index, length, query) => {
       playlist.appendPlaylist(track);
-      return spinner.setContent(`${index + 1} / ${length}: ${query}\nPress z to close this window..`);
+      return spinner.setContent(`${index + 1} / ${length}: ${query}\nPress ESC to close this window...`);
     };
 
     let getBatchSearch = (text, onTrack) => {

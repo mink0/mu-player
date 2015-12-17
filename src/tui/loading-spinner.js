@@ -1,7 +1,7 @@
 import blessed from 'blessed';
 
 export default (screen, message, lockKeys = true, label = 'Loading') => {
-  var loader = blessed.loading({
+  var loading = blessed.loading({
     parent: screen,
     border: 'line',
     height: 'shrink',
@@ -15,16 +15,15 @@ export default (screen, message, lockKeys = true, label = 'Loading') => {
     vi: true
   });
 
-  loader.load(message);
+  loading.load(message);
 
   screen.lockKeys = lockKeys;
-  screen.key(['z'], (ch, key) => loader.stop());
 
-  var superStop = loader.stop;
-  loader.stop = () => {
-    superStop.call(loader);
-    screen.removeKey(['z'], (ch, key) => loader.stop());
-  };
+  screen.blockEsc = true;
+  screen.onceKey(['escape'], () => {
+    screen.blockEsc = false;
+    loading.stop();
+  });
 
-  return loader;
+  return loading;
 };

@@ -19,12 +19,16 @@ Playlist.prototype.setPlaylist = function(tracks) {
 };
 
 Playlist.prototype.appendPlaylist = function(tracks) {
-  if (Array.isArray(tracks) && tracks.length === 0) return;
+  if (typeof tracks !== 'object' ||
+    (Array.isArray(tracks) && tracks.length === 0)) return;
 
   if (this.clearOnAppend) {
     this.data = [];
+    this.curIndex = 0;
+    this.prevIndex = 0;
     this.clearOnAppend = false;
   }
+
   this.data = this.data.concat(tracks);
   this.update();
 };
