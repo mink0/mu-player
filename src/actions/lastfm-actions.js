@@ -72,7 +72,7 @@ export let getTopTracks = (artist) => {
   Logger.bottom.log('lfmGetTopTracks(', artist, ')');
   return lfm.artistAsync.getTopTracksAsync({
     artist: artist,
-    //limit: 50
+    limit: 30
   });
 };
 

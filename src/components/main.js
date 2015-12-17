@@ -31,7 +31,7 @@ export default (screen, layout) => {
 
   //layout.qsearch.focus();
   // FIXME:
-  layout.qsearch.setValue('rod modell');
+  layout.qsearch.setValue('murcof');
   layout.mediaTree.focus();
 
   rightPane.search({ type: 'search', query: layout.qsearch.value });

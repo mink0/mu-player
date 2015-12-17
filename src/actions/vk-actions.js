@@ -51,7 +51,7 @@ export let getSearchWithArtist = (track, artist) => {
   return request.then(response => {
     let items = [];
     response.items.forEach((item) => {
-      if (item.title.indexOf(track) > 0) items.push(item);
+      if (item.title.toLowerCase().indexOf(track.toLowerCase()) !== -1) items.push(item);
     });
     if (items.length === 0) {
       Logger.bottom.log('vkNotFound', track, artist);
