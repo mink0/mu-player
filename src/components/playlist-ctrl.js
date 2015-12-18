@@ -30,6 +30,16 @@ let screen = null;
 let rightPane = null;
 let playlist = null;
 
+let errorHandler = (err) => {
+  global.Logger.error(err);
+  if (err.hasOwnPropery('code') && err.code == 14) {
+    Logger.bottom.error('VKontakte API limits reached');
+  } else {
+    if (err.hasOwnPropery('error_msg')) Logger.bottom.error('ERR_MSG', err.error_msg);
+    if (err.hasOwnPropery('code')) Logger.bottom.error('ERR_CODE', err.code);
+  }
+};
+
 let playCurrent = () => {
   let urlFinded = false;
   if (playlist.list.items.length > 0) {
@@ -38,6 +48,7 @@ let playCurrent = () => {
       playlist.list.setItem(playlist.prevIndex, playlist.data[playlist.prevIndex].trackTitleFull);
       playlist.list.setItem(playlist.curIndex,
         '{yellow-fg}' + playlist.getCurrent().trackTitleFull + '{/yellow-fg}');
+      screen.render();
 
       let url = playlist.getCurrent().url;
       if (url) {
@@ -60,12 +71,12 @@ let playCurrent = () => {
 export let search = (payload) => {
   if (payload.type === 'search') {
     playlist.clearOnAppend = true;
-    vkActions.getSearch(payload.query).then(appendAudio).catch((err) => Logger.error(err));
-    scActions.getSearch(payload.query).then(appendAudio).catch((err) => Logger.error(err));
+    vkActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
+    scActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
   } else if (payload.type === 'searchWithArtist') {
     playlist.clearOnAppend = true;
-    scActions.getSearchWithArtist(payload.track, payload.artist).then(appendAudio).catch((err) => Logger.error(err));
-    vkActions.getSearchWithArtist(payload.track, payload.artist).then(appendAudio).catch((err) => Logger.error(err));
+    scActions.getSearchWithArtist(payload.track, payload.artist).then(appendAudio).catch(errorHandler);
+    vkActions.getSearchWithArtist(payload.track, payload.artist).then(appendAudio).catch(errorHandler);
   } else if (payload.type === 'tracklist') {
     playlist.clearOnAppend = true;
 
@@ -85,7 +96,7 @@ export let search = (payload) => {
       return Promise.reduce(tracklist, (total, current, index) => {
         let delay = Promise.delay(apiDelay); // new unresolved delay promise
         return delay.then(Promise.join(
-          scActions.getSearch(current.track, { limit: 1 }).catch((err) => Logger.error(err)),
+          scActions.getSearch(current.track, { limit: 1 }).catch(errorHandler),
           vkActions.getSearch(current.track, { limit: 1 }).catch((err) => {
             Logger.error(err);
             apiDelay = maxApiDelay;
@@ -200,79 +211,79 @@ storage.on(LOCAL_SEARCH, (data) => {
 //   }
 // });
 
-storage.on(ADD_TO_PROFILE, () => {
-  let selected = playlist.get(rightPane.selected);
-  let listEl = rightPane.items[rightPane.selected];
+// storage.on(ADD_TO_PROFILE, () => {
+//   let selected = playlist.get(rightPane.selected);
+//   let listEl = rightPane.items[rightPane.selected];
 
-  let addToProfile = () => {
-    let spinner = LoadingSpinner(screen, 'Adding...');
+//   let addToProfile = () => {
+//     let spinner = LoadingSpinner(screen, 'Adding...');
 
-    return vkActions.addToProfile(selected).then((selected) => {
-      rightPane.setItem(listEl, selected.trackTitleFull);
-      storage.emit(FOCUS_RIGHT_PANE);
+//     return vkActions.addToProfile(selected).then((selected) => {
+//       rightPane.setItem(listEl, selected.trackTitleFull);
+//       storage.emit(FOCUS_RIGHT_PANE);
 
-      InfoBox(screen, 'Successfully added to your profile');
-      spinner.stop();
-    }).catch((err) => {
-      Logger.error(err);
-      spinner.stop();
-    });
-  };
+//       InfoBox(screen, 'Successfully added to your profile');
+//       spinner.stop();
+//     }).catch((err) => {
+//       Logger.error(err);
+//       spinner.stop();
+//     });
+//   };
 
-  let addOnTop = () => {
-    let spinner = LoadingSpinner(screen, 'Moving...');
+//   let addOnTop = () => {
+//     let spinner = LoadingSpinner(screen, 'Moving...');
 
-    return vkActions.addOnTop(selected).then((result) => {
-      spinner.stop();
-    }).catch((err) => {
-      Logger.error(err);
-      spinner.stop();
-    });
-  };
+//     return vkActions.addOnTop(selected).then((result) => {
+//       spinner.stop();
+//     }).catch((err) => {
+//       Logger.error(err);
+//       spinner.stop();
+//     });
+//   };
 
-  if (selected.isAdded) {
-    addOnTop();
-  } else {
-    addToProfile();
-  }
-});
+//   if (selected.isAdded) {
+//     addOnTop();
+//   } else {
+//     addToProfile();
+//   }
+// });
 
-storage.on(OPEN_FS, (data) => {
-  let folder = fsActions.getFolder(data.path);
+// storage.on(OPEN_FS, (data) => {
+//   let folder = fsActions.getFolder(data.path);
 
-  fsActions.getTags(folder).then((result) => {
-    var collection = fsActions.flattenCollection(result);
-    loadAudio(collection);
-  });
-});
+//   fsActions.getTags(folder).then((result) => {
+//     var collection = fsActions.flattenCollection(result);
+//     loadAudio(collection);
+//   });
+// });
 
-storage.on(MOVE_TO_PLAYING, (data) => {
-  rightPane.select(playlist.getCurrentIndex());
-  storage.emit(FOCUS_RIGHT_PANE);
-});
+// storage.on(MOVE_TO_PLAYING, (data) => {
+//   //rightPane.select(playlist.getCurrentIndex());
+//   storage.emit(FOCUS_RIGHT_PANE);
+// });
 
-let processGmError = (err) => {
-  Logger.error(err);
+// let processGmError = (err) => {
+//   Logger.error(err);
 
-  if (err.message === 'error getting album tracks: Error: 401 error from server') {
-    Toast(screen, 'Auth error');
-  }
-};
+//   if (err.message === 'error getting album tracks: Error: 401 error from server') {
+//     Toast(screen, 'Auth error');
+//   }
+// };
 
-storage.on(OPEN_GM_ALBUM, (data) => {
-  gmActions.getAlbum(data.albumId).then((result) => {
-    loadAudio(result);
-  }).catch(processGmError);
-});
+// storage.on(OPEN_GM_ALBUM, (data) => {
+//   gmActions.getAlbum(data.albumId).then((result) => {
+//     loadAudio(result);
+//   }).catch(processGmError);
+// });
 
-storage.on(OPEN_GM_THUMBS_UP, (data) => {
-  gmActions.getThumbsUp().then((result) => {
-    loadAudio(result);
-  }).catch(processGmError);
-});
+// storage.on(OPEN_GM_THUMBS_UP, (data) => {
+//   gmActions.getThumbsUp().then((result) => {
+//     loadAudio(result);
+//   }).catch(processGmError);
+// });
 
-storage.on(OPEN_GM_ALL_TRACKS, (data) => {
-  gmActions.getAllTracks().then((result) => {
-    loadAudio(result);
-  }).catch(processGmError);
-});
+// storage.on(OPEN_GM_ALL_TRACKS, (data) => {
+//   gmActions.getAllTracks().then((result) => {
+//     loadAudio(result);
+//   }).catch(processGmError);
+// });

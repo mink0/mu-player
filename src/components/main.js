@@ -14,6 +14,11 @@ export default (screen, layout) => {
   leftPane.init(screen, layout.mediaTree);
   rightPane.init(screen, layout.playlist);
 
+  layout.logger.error = (msg, ...args) => {
+    args.splice(0, 0, '{red-fg}' + msg + '{/red-fg}');
+
+    layout.logger.log.apply(layout.logger, args);
+  };
   global.Logger.bottom = layout.logger;
 
   storage.emit(FOCUS_RIGHT_PANE);
@@ -21,17 +26,9 @@ export default (screen, layout) => {
   storage.on(PAUSE, () => player.pause());
   storage.on(SHOW_HELP, () => HelpBox(screen));
 
-  //FIXME:
-  // storage.on(VK_SEARCH, (data) => {
-  //   rightPane.search({
-  //     type: 'search',
-  //     query: data.query
-  //   });
-  // });
-
   //layout.qsearch.focus();
   // FIXME:
-  layout.qsearch.setValue('murcof');
+  layout.qsearch.setValue('deepchord');
   layout.mediaTree.focus();
 
   rightPane.search({ type: 'search', query: layout.qsearch.value });

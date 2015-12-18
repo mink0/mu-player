@@ -24,6 +24,7 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts) => {
+  Logger.bottom.log(`vk.com audio.search("${query}", "${opts}")`);
   var opts = opts || {};
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;
@@ -41,7 +42,7 @@ export let getSearch = (query, opts) => {
 };
 
 export let getSearchWithArtist = (track, artist) => {
-  Logger.bottom.log('vkSearchWArtist(', track, artist, ')');
+  Logger.bottom.log(`vk.com audio.search("${track}", "${artist}")`);
   let request = vk.method('audio.search', {
     count: SEARCH_LIMIT,
     offset: 0,
