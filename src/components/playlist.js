@@ -34,6 +34,7 @@ Playlist.prototype.appendPlaylist = function(tracks) {
 };
 
 Playlist.prototype.update = function() {
+  //this.removeDuplicates();
   this.list.setItems(_.pluck(this.data, 'trackTitleFull'));
 };
 
@@ -54,6 +55,23 @@ Playlist.prototype.setCurrent = function(index) {
 Playlist.prototype.moveNext = function() {
   this.setCurrent((this.curIndex + 1) % this.data.length);
   this.list.select(this.curIndex);
+};
+
+Playlist.prototype.removeDuplicates = function() {
+  let out = {}, arr = [];
+  for (var i = 0; i < this.data.length; i++) {
+    out[this.data[i].trackTitleFull.toLowerCase()] = this.data[i];
+  }
+
+  for (var k in out) {
+    arr.push(out[k]);
+  }
+
+  if (this.data.length - arr.length > 0) {
+    Logger.screen.log('> removed ' + (this.data.length - arr.length) + ' duplicate(s)');
+  }
+
+  this.data = arr;
 };
 
 module.exports = Playlist;

@@ -27,9 +27,8 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query) => {
+  // Logger.screen.log(`last.fm search("${query}")`);
   let menu = {};
-  Logger.bottom.log('lastfmSearch(', query, ')');
-
   return Promise.join(
     getSearchTrack(query),
     getSearchArtist(query),
@@ -45,7 +44,7 @@ export let getSearch = (query) => {
 };
 
 export let getSearchTrack = (query) => {
-  Logger.bottom.log('lfmSearch(', query, ')');
+  Logger.screen.log(`last.fm trackSearch("${query}")`);
   return lfm.trackAsync.searchAsync({
     track: query,
     limit: limit
@@ -53,7 +52,7 @@ export let getSearchTrack = (query) => {
 };
 
 export let getSearchAlbum = (query) => {
-  Logger.bottom.log('lfmSearchAlbum(', query, ')');
+  Logger.screen.log(`last.fm albumSearch("${query}")`);
   return lfm.albumAsync.searchAsync({
     album: query,
     limit: limit
@@ -61,7 +60,7 @@ export let getSearchAlbum = (query) => {
 };
 
 export let getSearchArtist = (query) => {
-  Logger.bottom.log('lfmSearchArtist(', query, ')');
+  Logger.screen.log(`last.fm artistSearch("${query}")`);
   return lfm.artistAsync.searchAsync({
     artist: query,
     limit: limit
@@ -69,7 +68,7 @@ export let getSearchArtist = (query) => {
 };
 
 export let getTopTracks = (artist) => {
-  Logger.bottom.log('lfmGetTopTracks(', artist, ')');
+  Logger.screen.log(`last.fm topTracks("${artist}")`);
   return lfm.artistAsync.getTopTracksAsync({
     artist: artist,
     limit: 30
@@ -77,7 +76,7 @@ export let getTopTracks = (artist) => {
 };
 
 export let getSimilar = (artist) => {
-  Logger.bottom.log('lfmGetSimilar(', artist, ')');
+  Logger.screen.log(`last.fm getSimilar("${artist}")`);
   return lfm.artistAsync.getSimilarAsync({
     artist: artist,
     //limit: 50
@@ -85,7 +84,7 @@ export let getSimilar = (artist) => {
 };
 
 export let getSearchTag = (query) => {
-  Logger.bottom.log('lfmSearchTag(', query, ')');
+  Logger.screen.log(`last.fm tagSearch("${query}")`);
   return lfm.tagAsync.searchAsync({
     tag: query,
     limit: limit

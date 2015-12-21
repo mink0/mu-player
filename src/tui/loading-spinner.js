@@ -22,6 +22,7 @@ export default (screen, message, lockKeys = true, label = 'Loading') => {
   screen.blockEsc = true;
   screen.onceKey(['escape'], () => {
     screen.blockEsc = false;
+    screen.lockKeys = false;
     loading.stop();
   });
 

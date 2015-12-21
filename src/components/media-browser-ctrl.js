@@ -24,7 +24,7 @@ export let init = (_screen, _menuPane) => {
 
   //storage.on(LASTFM_SEARCH, lfmSearchFn);
   menuPane.on('select', function(item) {
-    //Logger.bottom.log(item.content);
+    //Logger.screen.log(item.content);
     if (item.fn) item.fn();
   });
 };
@@ -67,7 +67,7 @@ export let search = (data) => {
           fn: function() {
             let self = this;
             lfmActions.getTopTracks(self.artist).then((tracks) => {
-              Logger.bottom.log('Last.fm found ' + tracks.track.length + ' track(s)');
+              Logger.screen.log('Last.fm found ' + tracks.track.length + ' track(s)');
               let tracklist = '';
               tracks.track.forEach((track) => {
                 tracklist += self.artist + ' - ' + track.name + '\n';

@@ -24,12 +24,11 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts) => {
-  Logger.bottom.log(`vk.com audio.search("${query}", "${opts}")`);
+  Logger.screen.log(`vk.com audio.search("${query}", "${opts}")`);
   var opts = opts || {};
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;
 
-  global.Logger.bottom.log('vkSearch(', query, ')');
   let queryOpts = {
     count: opts.limit,
     offset: opts.offset * opts.limit,
@@ -42,7 +41,7 @@ export let getSearch = (query, opts) => {
 };
 
 export let getSearchWithArtist = (track, artist) => {
-  Logger.bottom.log(`vk.com audio.search("${track}", "${artist}")`);
+  Logger.screen.log(`vk.com audio.search("${track}", "${artist}")`);
   let request = vk.method('audio.search', {
     count: SEARCH_LIMIT,
     offset: 0,
@@ -55,10 +54,10 @@ export let getSearchWithArtist = (track, artist) => {
       if (item.title.toLowerCase().indexOf(track.toLowerCase()) !== -1) items.push(item);
     });
     if (items.length === 0) {
-      Logger.bottom.log('vkNotFound', track, artist);
+      Logger.screen.log('vkNotFound', track, artist);
       return undefined;
     }
-    Logger.bottom.log('vkFound: ' + items.length + ' track(s)');
+    Logger.screen.log('vkFound: ' + items.length + ' track(s)');
 
     return handleData(items);
   });
@@ -67,7 +66,7 @@ export let getSearchWithArtist = (track, artist) => {
 
 /*
 export let getProfileAudio = () => {
-  Logger.bottom.log('getProfileAudio => ');
+  Logger.screen.log('getProfileAudio => ');
   let request = vk.method('audio.get', { need_user: 1, count: count, offset: offset * count });
   return request.then(response => {
     response.items.forEach(track => {
@@ -79,13 +78,13 @@ export let getProfileAudio = () => {
 };
 
 export let getGroupAudio = (groupId, albumId) => {
-  Logger.bottom.log('getGroupAudio => ', groupId, albumId);
+  Logger.screen.log('getGroupAudio => ', groupId, albumId);
   let request = vk.method('audio.get', { need_user: 1, count: count, offset: offset * count, owner_id: groupId, album_id: albumId });
   return request.then(response => handleData(response.items));
 };
 
 export let getWallAudio = (id) => {
-  Logger.bottom.log('getWallAudio(%s)', id);
+  Logger.screen.log('getWallAudio(%s)', id);
   let request = vk.method('wall.getById', { posts: [id] }, { transformResponse: false });
   return request.then((result) => {
     let attachments = result.body.response[0].attachments.filter(a => a.type === 'audio').map(a => a.audio);
@@ -94,18 +93,18 @@ export let getWallAudio = (id) => {
 };
 
 export let getRecommendations = () => {
-  Logger.bottom.log('getRecommendations()');
+  Logger.screen.log('getRecommendations()');
   return vk.method('audio.getRecommendations').then((response) => handleData(response.items));
 };
 
 export let getAlbums = () => {
-  Logger.bottom.log('getAlbums()');
+  Logger.screen.log('getAlbums()');
   return vk.method('audio.getAlbums').then((response) => response.items);
 };
 
 
 export let addToProfile = (selected) => {
-  Logger.bottom.log('addToProfile(%s)', selected);
+  Logger.screen.log('addToProfile(%s)', selected);
   return vk.method('audio.add', { audio_id: selected.aid , owner_id: selected.owner_id }).then((track) => {
     selected.isAdded = true;
     selected.trackTitleFull = formatTrackFull(selected);
@@ -115,7 +114,7 @@ export let addToProfile = (selected) => {
 };
 
 export let addOnTop = (selected) => {
-  Logger.bottom.log('addOnTop(%s)', selected);
+  Logger.screen.log('addOnTop(%s)', selected);
   return vk.method('audio.get', { need_user: 1, count: 1 }).then((result) => {
     let currentTopTrack = result.items[0];
     return vk.method('audio.reorder', { audio_id: selected.aid, before: currentTopTrack.aid });

@@ -19,7 +19,7 @@ export default (screen, layout) => {
 
     layout.logger.log.apply(layout.logger, args);
   };
-  global.Logger.bottom = layout.logger;
+  global.Logger.screen = layout.logger;
 
   storage.emit(FOCUS_RIGHT_PANE);
 
@@ -28,7 +28,7 @@ export default (screen, layout) => {
 
   //layout.qsearch.focus();
   // FIXME:
-  layout.qsearch.setValue('deepchord');
+  layout.qsearch.setValue('yagya');
   layout.mediaTree.focus();
 
   rightPane.search({ type: 'search', query: layout.qsearch.value });

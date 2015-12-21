@@ -38,11 +38,11 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts) => {
+  Logger.screen.log(`soundcloud search("${query}", "${opts}")`);
   var opts = opts || {};
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;
 
-  Logger.bottom.log('scSearch(', query, ')');
   let queryOpts = { limit: opts.limit, offset: opts.offset, q: query };
   let request = sc.getAsync('/tracks', queryOpts);
 
