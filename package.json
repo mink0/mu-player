@@ -1,7 +1,7 @@
 {
   "name": "mu",
   "version": "0.6.1",
-  "description": "Play audio from vk.com and soundcloud.com in your terminal",
+  "description": "Play audio from vk.com and soundcloud.com in your terminal via mpd",
   "main": "cli.js",
   "bin": {
     "mu": "cli.js"
@@ -36,11 +36,11 @@
     "inquirer-menu": "^0.1.4",
     "inquirer-question": "^1.1.1",
     "intel": "^1.0.2",
+    "komponist": "^0.1.0",
     "lastfmapi": "0.0.6",
     "lodash": "^3.10.1",
     "meow": "^3.4.1",
     "node-soundcloud": "0.0.4",
-    "player": "^0.6.1",
     "playmusic": "^2.1.0",
     "request": "^2.67.0",
     "split-tracklist": "^1.1.1",

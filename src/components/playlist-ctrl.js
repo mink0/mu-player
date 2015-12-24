@@ -1,12 +1,4 @@
-import storage, {
-  SC_SEARCH, OPEN_VK, ADD_TO_PROFILE, OPEN_FS, FOCUS_RIGHT_PANE, MOVE_TO_PLAYING,
-  OPEN_GM_ALBUM, OPEN_GM_THUMBS_UP, OPEN_GM_ALL_TRACKS, LOCAL_SEARCH
-}
-from './../storage/storage';
-
 import * as vkActions from './../actions/vk-actions';
-import * as fsActions from './../actions/fs-actions';
-import * as gmActions from './../actions/gm-actions';
 import * as scActions from './../actions/sc-actions';
 
 import Playlist from './playlist';
@@ -16,12 +8,6 @@ import * as player from './../player/player-control';
 import _ from 'lodash';
 
 import LoadingSpinner from './../tui/loading-spinner';
-import InfoBox from './../tui/info-box';
-import Toast from './../tui/toast';
-import {
-  prompt
-}
-from './../prompts/vk-prompts';
 
 import Promise from 'bluebird';
 import splitTracklist from 'split-tracklist';
@@ -47,23 +33,13 @@ let playCurrent = () => {
   let urlFinded = false;
   if (playlist.list.items.length > 0) {
     while (!urlFinded) {
-      // mark current playing
-      playlist.list.setItem(playlist.prevIndex, playlist.data[playlist.prevIndex].trackTitleFull);
-      playlist.list.setItem(playlist.curIndex,
-        '{yellow-fg}' + playlist.getCurrent().trackTitleFull + '{/yellow-fg}');
-      screen.render();
-
       let url = playlist.getCurrent().url;
+      let id = playlist.getCurrent().mpdId;
       if (url) {
         urlFinded = true;
         (typeof url === 'function' ? url() : Promise.resolve(url)).then((url) => {
-          player.play(url);
-          global.Logger.info(url);
-          global.Logger.screen.log('{green-fg}Playing:{/green-fg}', url);
-        }).catch((err) => {
-          global.Logger.error(err);
-          global.Logger.screen.error('Playback Error:', err);
-        });
+          player.play(url, id);
+        }).catch(errorHandler);
       } else {
         playlist.moveNext();
       }
@@ -76,10 +52,12 @@ export let search = (payload) => {
     playlist.clearOnAppend = true;
     vkActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
     scActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
+
   } else if (payload.type === 'searchWithArtist') {
     playlist.clearOnAppend = true;
     scActions.getSearchWithArtist(payload.track, payload.artist).then(appendAudio).catch(errorHandler);
     vkActions.getSearchWithArtist(payload.track, payload.artist).then(appendAudio).catch(errorHandler);
+
   } else if (payload.type === 'tracklist') {
     playlist.clearOnAppend = true;
 
@@ -144,36 +122,48 @@ export let init = (_screen, _rightPane) => {
   });
 };
 
-let setListElements = (elements) => {
-  rightPane.clearItems();
-  rightPane.setItems(elements);
-
-  storage.emit(FOCUS_RIGHT_PANE);
-};
-
-let setAudio = (audio) => {
-  setListElements(_.pluck(audio, 'trackTitleFull'));
-  storage.emit(FOCUS_RIGHT_PANE);
-};
-
-let loadAudio = (audio) => {
-  rightPane.focus();
-  playlist.setPlaylist(audio);
-};
-
 let appendAudio = (audio) => {
   rightPane.focus();
   playlist.appendPlaylist(audio);
 };
 
-storage.on(LOCAL_SEARCH, (data) => {
-  prompt(screen, 'Search', '').then((query) => {
-    setAudio(playlist.filter(query));
-    playlist.setCurrent(0);
+export let updatePlaying = (status) => {
+  Logger.info(status);
+  if (status.state === 'play') {
+    global.Logger.info(playlist.getCurrent().url);
+    global.Logger.screen.log('{green-fg}Playing:{/green-fg}', playlist.getCurrent().title,
+      '-', status.bitrate, 'kbps');
+    playlist.setCurrentById(status.songid);
+  } else if (status.state === 'stop')
+    playlist.stop();
 
-    playCurrent();
-  });
-});
+};
+
+// let setListElements = (elements) => {
+//   rightPane.clearItems();
+//   rightPane.setItems(elements);
+
+//   storage.emit(FOCUS_RIGHT_PANE);
+// };
+
+// let setAudio = (audio) => {
+//   setListElements(_.pluck(audio, 'trackTitleFull'));
+//   storage.emit(FOCUS_RIGHT_PANE);
+// };
+
+// let loadAudio = (audio) => {
+//   rightPane.focus();
+//   playlist.setPlaylist(audio);
+// };
+
+// storage.on(LOCAL_SEARCH, (data) => {
+//   prompt(screen, 'Search', '').then((query) => {
+//     setAudio(playlist.filter(query));
+//     playlist.setCurrent(0);
+
+//     playCurrent();
+//   });
+// });
 
 // storage.on(SC_SEARCH, (payload) => {
 //   if (payload.type === 'search') {

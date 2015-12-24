@@ -25,12 +25,13 @@ let handleData = (result) => {
     obj.source = 'sc';
     obj.artist = obj.user.username.replace(/&amp;/g, '&');
     obj.title = obj.title.replace(/&amp;/g, '&');
-    obj.url = function() {
-      return  req.getAsync({ url: obj.stream_url + '?client_id=' + storage.data.scClientId,
-        json: true,
-        followRedirect: false
-      }).then((res) => res[1].location.replace(/^https:\/\//i, 'http://'));
-    };
+    obj.url = obj.stream_url + '?client_id=' + storage.data.scClientId;
+    // obj.url = function() {
+    //   return  req.getAsync({ url: obj.stream_url + '?client_id=' + storage.data.scClientId,
+    //     json: true,
+    //     followRedirect: false
+    //   }).then((res) => res[1].location.replace(/^https:\/\//i, 'http://'));
+    // };
     obj.duration = parseInt(obj.duration / 1000);
     obj.trackTitleFull = formatTrackFull(obj);
     return obj;
@@ -38,7 +39,7 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts) => {
-  Logger.screen.log(`soundcloud search("${query}", "${opts}")`);
+  Logger.screen.log(`soundcloud search("${query}", "${opts||''}")`);
   var opts = opts || {};
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;

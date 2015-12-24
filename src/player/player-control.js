@@ -1,58 +1,40 @@
-var spawn = require('child_process').spawn;
-var onNextSong = () => Logger.info('no next song');
+import komponist from 'komponist';
+import * as playlist from '../components/playlist-ctrl';
+import errorHandler from '../helpers/error-handler';
 
-let createProcess = (url) => {
-  var ls = spawn('node', [__dirname + '/player.js']);
-
-  ls.stdin.write(url);
-
-  // ls.stdout.on('data', function (data) {
-  //   //Logger.info('stdout: ' + data);
-  // });
-
-  ls.stderr.on('data', function (data) {
-    data = data.toString();
-    if (data.trim() === 'No next song was found') {
-      onNextSong();
-    } else {
-      Logger.error(data.substr(0, 100));
-    }
-  });
-
-  ls.on('close', function (code) {
-    // Logger.error('child process exited with code ' + code + ' ' + i++);
-  });
-
-  return ls;
-};
-
-var x = {
-
-};
-
-let killPlayer = () => {
-  if (x.p) {
-    x.p.stdin.pause();
-    x.p.kill('SIGTERM');
+let mpd = komponist.createConnection(6600, 'localhost', function(err) {
+  if (err) {
+    console.log('You should start Music Player Daemon (MPD) first');
+    console.error(err);
+    process.exit(1);
   }
-};
-
-import exitHook from 'exit-hook';
-
-exitHook(() => {
-  killPlayer();
 });
 
-export let play = (url) => {
-  killPlayer();
+mpd.on('changed', function(system, data) {
+  Logger.info('Subsystem changed: ', system, data);
+  if (system === 'player') {
+    mpd.status((err, status) => {
+      if (err) return errorHandler(err);
+      playlist.updatePlaying(status);
+    });
+  }
+});
 
-  setTimeout(() => {
-    x.p = createProcess(url);
-  }, 10);
+export let play = (url, id) => {
+  // mpd.clear();
+  // mpd.add(url, (err) => {
+  //   if (err) return errHandler(err);
+  //   mpd.play(errHandler);
+  // });
+
+  mpd.playid(id);
+
 };
 
 export let pause = () => {
-  x.p.stdin.write('pause');
+  mpd.toggle();
 };
 
-export let setOnNextSong = (callback) => onNextSong = callback;
+export let getMpdClient = () => mpd;
+
+export let setOnNextSong = () => {};

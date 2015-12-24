@@ -4,7 +4,7 @@ var events = require('events');
 var eventEmitter = new events.EventEmitter();
 
 var intel = require('intel');
-intel.addHandler(new intel.handlers.File(process.env.HOME + '/.mu.log'));
+intel.addHandler(new intel.handlers.File('/tmp/mu.log'));
 global.Logger = intel;
 global.Logger.bottom = { log: function() {} }; // will be initialized soon
 

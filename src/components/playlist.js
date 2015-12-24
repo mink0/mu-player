@@ -1,8 +1,11 @@
 import _ from 'lodash';
+import * as player from '../player/player-control';
+import errorHandler from '../helpers/error-handler';
 
 function Playlist(listPane) {
   let self = this;
   this.list = listPane;
+  this.mpd = player.getMpdClient();
   this.curIndex = 0;
   this.prevIndex = null;
   this.data = null;
@@ -35,21 +38,58 @@ Playlist.prototype.appendPlaylist = function(tracks) {
 
 Playlist.prototype.update = function() {
   //this.removeDuplicates();
-  this.list.setItems(_.pluck(this.data, 'trackTitleFull'));
+  let self = this;
+  this.mpd.clear();
+  this.list.clearItems();
+  //this.list.setItems(_.pluck(this.data, 'trackTitleFull'));
+  for (var i = 0; i < this.data.length; i++) {
+    this.list.addItem(this.data[i].trackTitleFull);
+    this.mpdAdd(this.data[i]);
+  }
 };
 
-Playlist.prototype.push = function(track) {
-  this.data.push(track);
-  this.list.addItem(track.trackTitleFull);
+Playlist.prototype.mpdAdd = function(track) {
+  this.mpd.addid(track.url, (err, id) => {
+    if (err) return player.errHandler(err);
+
+    track.mpdId = id.Id;
+    // HACK: this tags don't streamed, so we have to add it manually
+    this.mpd.command('addtagid', [id.Id, 'artist', track.artist], errorHandler);
+    this.mpd.command('addtagid', [id.Id, 'title', track.title], errorHandler);
+  });
 };
 
 Playlist.prototype.getCurrent = function() {
   return this.data[this.curIndex % this.data.length];
 };
 
+Playlist.prototype.setCurrentById = function(mpdId) {
+  let index = null;
+  for (var i = 0; i < this.data.length; i++) {
+    if (this.data[i].mpdId == mpdId) {
+      index = i;
+      break;
+    }
+  }
+
+  if (!index) return Logger.screen.error('Can\'t find track with id', mpdId);
+
+  this.setCurrent(index);
+};
+
 Playlist.prototype.setCurrent = function(index) {
   this.prevIndex = this.curIndex;
   this.curIndex = index;
+
+  this.list.setItem(this.prevIndex, this.data[this.prevIndex].trackTitleFull);
+  this.list.setItem(this.curIndex,
+    '{yellow-fg}' + this.getCurrent().trackTitleFull + '{/yellow-fg}');
+  this.list.render();
+};
+
+Playlist.prototype.stop = function() {
+  this.list.setItem(this.curIndex, this.data[this.prevIndex].trackTitleFull);
+  this.list.render();
 };
 
 Playlist.prototype.moveNext = function() {
@@ -58,7 +98,8 @@ Playlist.prototype.moveNext = function() {
 };
 
 Playlist.prototype.removeDuplicates = function() {
-  let out = {}, arr = [];
+  let out = {},
+    arr = [];
   for (var i = 0; i < this.data.length; i++) {
     out[this.data[i].trackTitleFull.toLowerCase()] = this.data[i];
   }
@@ -96,3 +137,8 @@ module.exports = Playlist;
 
 //   return playlist;
 // },
+
+// Playlist.prototype.push = function(track) {
+//   this.data.push(track);
+//   this.list.addItem(track.trackTitleFull);
+// };
