@@ -12,7 +12,7 @@ import * as player from './../player/player-control';
 
 export default (screen, layout) => {
   leftPane.init(screen, layout.mediaTree);
-  rightPane.init(screen, layout.playlist);
+  rightPane.init(screen, layout.playlist, layout.pbarOpts);
 
   layout.logger.error = (msg, ...args) => {
     args.splice(0, 0, '{red-fg}' + msg + '{/red-fg}');

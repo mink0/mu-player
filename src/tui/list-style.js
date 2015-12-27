@@ -2,10 +2,6 @@ export default {
   top: 1,
   //bottom: '5',
   tags: true,
-  padding: {
-    left: 1,
-    right: 1
-  },
   input: true,
   scrollable: true,
   keys: true,

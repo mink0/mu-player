@@ -1,5 +1,5 @@
 import komponist from 'komponist';
-import * as playlist from '../components/playlist-ctrl';
+import * as playlistCtrl from '../components/playlist-ctrl';
 import errorHandler from '../helpers/error-handler';
 
 let mpd = komponist.createConnection(6600, 'localhost', function(err) {
@@ -10,12 +10,12 @@ let mpd = komponist.createConnection(6600, 'localhost', function(err) {
   }
 });
 
-mpd.on('changed', function(system, data) {
-  Logger.info('Subsystem changed: ', system, data);
+mpd.on('changed', function(system) {
+  Logger.info('Subsystem changed: ', system);
   if (system === 'player') {
     mpd.status((err, status) => {
       if (err) return errorHandler(err);
-      playlist.updatePlaying(status);
+      playlistCtrl.updatePlaying(status);
     });
   }
 });

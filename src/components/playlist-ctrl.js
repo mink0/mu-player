@@ -7,7 +7,8 @@ import * as player from './../player/player-control';
 
 import _ from 'lodash';
 
-import LoadingSpinner from './../tui/loading-spinner';
+import LoadingSpinner from '../tui/loading-spinner';
+import pbarWidget from '../tui/pbar-widget';
 
 import Promise from 'bluebird';
 import splitTracklist from 'split-tracklist';
@@ -15,6 +16,8 @@ import splitTracklist from 'split-tracklist';
 let screen = null;
 let rightPane = null;
 let playlist = null;
+let pbarOpts = null;
+let pbar = null;
 
 let errorHandler = (err) => {
   global.Logger.error(err);
@@ -107,9 +110,10 @@ export let search = (payload) => {
   }
 };
 
-export let init = (_screen, _rightPane) => {
+export let init = (_screen, _rightPane, _pbarOpts) => {
   screen = _screen;
   rightPane = _rightPane;
+  pbarOpts = _pbarOpts;
   playlist = new Playlist(rightPane);
 
   rightPane.on('select', () => {
@@ -128,15 +132,25 @@ let appendAudio = (audio) => {
 };
 
 export let updatePlaying = (status) => {
-  Logger.info(status);
+  global.Logger.info(status);
+  global.Logger.info(status.elapsed);
+  global.Logger.info(status.duration);
+  global.Logger.info(playlist.getCurrent().duration);
   if (status.state === 'play') {
     global.Logger.info(playlist.getCurrent().url);
     global.Logger.screen.log('{green-fg}Playing:{/green-fg}', playlist.getCurrent().title,
       '-', status.bitrate, 'kbps');
     playlist.setCurrentById(status.songid);
-  } else if (status.state === 'stop')
-    playlist.stop();
 
+    if (pbar) pbar.destroy();
+    let opts = _.cloneDeep(pbarOpts);
+    opts.duration = playlist.getCurrent().duration;
+
+    pbar = pbarWidget(opts);
+    screen.append(pbar);
+  } else if (status.state === 'stop') {
+    playlist.stop();
+  }
 };
 
 // let setListElements = (elements) => {

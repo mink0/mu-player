@@ -120,6 +120,23 @@ export default (screen) => {
     }
   };
 
+  let pbarOpts = {
+    bottom: 0,
+    right: 1,
+    height: 1,
+    width: '60%',
+    //duration: '437',
+    //elapsed: 20,
+    inputOnFocus: true,
+    pch: '.',
+    //bch: '#',
+    content: '0:31/6:51',
+    align: 'right',
+    style: {
+      fg: 'brightblack'
+    }
+  };
+
   let layout = {};
 
   layout.mediaBrowserBox = grid.set(0, 0, 80, 40, blessed.box, mediaBrowserBoxOpts);
@@ -131,6 +148,7 @@ export default (screen) => {
   layout.playlistBox.append(layout.playlist);
   layout.mediaTree = treeWidget(mediaTreeOpts);
   layout.mediaBrowserBox.append(layout.mediaTree);
+  layout.pbarOpts = pbarOpts;
   screen.append(layout.qprefix);
   screen.append(layout.qsearch);
 
