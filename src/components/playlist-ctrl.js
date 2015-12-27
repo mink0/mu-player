@@ -133,14 +133,13 @@ let appendAudio = (audio) => {
 
 export let updatePlaying = (status) => {
   global.Logger.info(status);
-  global.Logger.info(status.elapsed);
-  global.Logger.info(status.duration);
-  global.Logger.info(playlist.getCurrent().duration);
   if (status.state === 'play') {
+    playlist.setCurrentById(status.songid);
     global.Logger.info(playlist.getCurrent().url);
     global.Logger.screen.log('{green-fg}Playing:{/green-fg}', playlist.getCurrent().title,
-      '-', status.bitrate, 'kbps');
-    playlist.setCurrentById(status.songid);
+      '-', status.bitrate, 'kbps', status.audio);
+
+    screen.title = playlist.getCurrent().artist + ' - ' + playlist.getCurrent().title;
 
     if (pbar) pbar.destroy();
     let opts = _.cloneDeep(pbarOpts);
@@ -148,10 +147,20 @@ export let updatePlaying = (status) => {
 
     pbar = pbarWidget(opts);
     screen.append(pbar);
+
   } else if (status.state === 'stop') {
+    screen.title = ':mu';
     playlist.stop();
+    if (pbar) pbar.destroy();
   }
 };
+
+export let updatePbar = (elapsed) => {
+  if (!pbar) return;
+
+  pbar.setProgress(elapsed);
+};
+
 
 // let setListElements = (elements) => {
 //   rightPane.clearItems();

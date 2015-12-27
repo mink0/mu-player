@@ -133,7 +133,10 @@ export default (screen) => {
     content: '0:31/6:51',
     align: 'right',
     style: {
-      fg: 'brightblack'
+      fg: 'brightblack',
+      bar: {
+        fg: 'brightblack'
+      }
     }
   };
 
