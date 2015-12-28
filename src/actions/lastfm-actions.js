@@ -1,14 +1,7 @@
 import LastfmAPI from 'lastfmapi';
-import storage, {
-  LASTFM_SEARCH
-}
-from './../storage/storage';
+import storage from './../storage/storage';
 
 import Promise from 'bluebird';
-import {
-  format
-}
-from './music-actions';
 
 export let lfm = new LastfmAPI({
   api_key: storage.data.lfmApiKey,

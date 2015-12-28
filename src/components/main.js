@@ -11,7 +11,7 @@ import * as player from './../player/player-control';
 //import playlist from './../storage/playlist';
 
 export default (screen, layout) => {
-  leftPane.init(screen, layout.mediaTree);
+  leftPane.init(screen, layout.mediaTree, layout.qsearch);
   rightPane.init(screen, layout.playlist, layout.pbarOpts);
 
   layout.logger.error = (msg, ...args) => {
@@ -26,16 +26,14 @@ export default (screen, layout) => {
   storage.on(PAUSE, () => player.pause());
   storage.on(SHOW_HELP, () => HelpBox(screen));
 
-  //layout.qsearch.focus();
-  // FIXME:
-  layout.qsearch.setValue('yagya');
-  layout.mediaTree.focus();
-
-  rightPane.search({ type: 'search', query: layout.qsearch.value });
-  leftPane.search({ type: 'search', query: layout.qsearch.value });
-
   layout.qsearch.on('submit', () => {
     rightPane.search({ type: 'search', query: layout.qsearch.value });
     leftPane.search({ type: 'search', query: layout.qsearch.value });
   });
+
+  // FIXME:
+  layout.qsearch.setValue('yagya');
+  layout.qsearch.emit('submit');
+  layout.mediaTree.focus();
+
 };

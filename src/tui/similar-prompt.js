@@ -57,7 +57,7 @@ export default (screen, artist) => {
   list.on('action', () => screen.render());
 
   lfmActions.getSimilar(artist).then((artists) => {
-    Logger.screen.log('Found ' + artists.artist.length + ' similar artists for ' + artist);
+    Logger.screen.log('{green-fg}Found {/green-fg}' + artists.artist.length + ' similar artists for ' + artist);
     list.setItems(_.pluck(artists.artist, 'name'));
     list.focus();
     screen.render();

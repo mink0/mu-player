@@ -73,7 +73,7 @@ Playlist.prototype.setCurrentById = function(mpdId) {
     }
   }
 
-  if (!index) return Logger.screen.error('Can\'t find track with id', mpdId);
+  if (index === null) return Logger.screen.error('Can\'t find track with id', mpdId);
 
   this.setCurrent(index);
 };
@@ -117,29 +117,3 @@ Playlist.prototype.removeDuplicates = function() {
 };
 
 module.exports = Playlist;
-
-// Playlist.prototype.get = (index) => this.data[index];
-
-//Playlist.prototype.getCurrentItem = () => this.data[this.curIndex % this.data.length];
-// getCurrentIndex: () => current,
-// getPreviousItem: () => playlist[previous % playlist.length],
-// getPreviousIndex: () => previous,
-
-// filter: (pattern) => {
-//   if (!pattern || pattern.length === 0) {
-//     playlist = originalPlaylist;
-//   } else {
-//     let s = pattern.toLowerCase();
-//     playlist = originalPlaylist.filter((track) => {
-//       return track.artist.toLowerCase().indexOf(s) > -1 ||
-//         track.title.toLowerCase().indexOf(s) > -1;
-//     });
-//   }
-
-//   return playlist;
-// },
-
-// Playlist.prototype.push = function(track) {
-//   this.data.push(track);
-//   this.list.addItem(track.trackTitleFull);
-// };

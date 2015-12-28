@@ -16,15 +16,14 @@ import * as playlist from './playlist-ctrl';
 let screen = null;
 let menuPane = null;
 let treeData = {};
+let qsearch = null;
 
-export let init = (_screen, _menuPane) => {
+export let init = (_screen, _menuPane, _qsearch) => {
   screen = _screen;
   menuPane = _menuPane;
-  //renderPane();
+  qsearch = _qsearch;
 
-  //storage.on(LASTFM_SEARCH, lfmSearchFn);
   menuPane.on('select', function(item) {
-    //Logger.screen.log(item.content);
     if (item.fn) item.fn();
   });
 };
@@ -86,10 +85,8 @@ export let search = (data) => {
           fn: function() {
             let self = this;
             SimilarPrompt(screen, self.artist).then((artist) => {
-              playlist.search({
-                type: 'search',
-                query: artist,
-              });
+              qsearch.setValue(artist);
+              qsearch.emit('submit');
             });
           }
         },
