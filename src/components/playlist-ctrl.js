@@ -133,11 +133,14 @@ let appendAudio = (audio) => {
 
 export let updatePlaying = (status) => {
   global.Logger.info(status);
+
+  if (status.error) Logger.screen.error(status.error);
+
   if (status.state === 'play') {
     playlist.setCurrentById(status.songid);
     global.Logger.info(playlist.getCurrent().url);
-    global.Logger.screen.log('{green-fg}Playing:{/green-fg}', playlist.getCurrent().title,
-      '-', status.bitrate, 'kbps', status.audio);
+    global.Logger.screen.log('{green-fg}Play:{/green-fg}', playlist.getCurrent().artist, '-',
+      playlist.getCurrent().title, '[' + status.bitrate +' kbps]');
 
     screen.title = playlist.getCurrent().artist + ' - ' + playlist.getCurrent().title;
 

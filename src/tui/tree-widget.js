@@ -24,9 +24,10 @@ function Tree(options) {
 
   // Do not set height, since this create a bug where the first line is not always displayed
   this.rows = blessed.list({
-    top: 1,
-    width: 0,
-    left: 1,
+    top: options.top,
+    width: options.width,
+    //height: options.height,
+    left: options.left,
     style: options.style,
     padding: options.padding,
     keys: true,
@@ -34,6 +35,7 @@ function Tree(options) {
     input: options.input,
     vi: options.vi,
     ignoreKeys: options.ignoreKeys,
+    scrollbar: options.scrollbar,
     scrollable: options.scrollable,
     mouse: options.mouse
   });
@@ -144,8 +146,8 @@ Tree.prototype.focus = function() {
 Tree.prototype.render = function() {
   if (this.screen.focused === this.rows) this.rows.focus();
 
-  this.rows.width = this.width - 3;
-  this.rows.height = this.height - 3;
+  //this.rows.width = this.width - 3;
+  //this.rows.height = this.height - 3;
   Box.prototype.render.call(this);
 };
 

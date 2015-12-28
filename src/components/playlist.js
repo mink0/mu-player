@@ -15,10 +15,8 @@ function Playlist(listPane) {
 }
 
 Playlist.prototype.setPlaylist = function(tracks) {
-  this.data = tracks;
-  this.curIndex = 0;
-  this.prevIndex = 0;
-  this.update();
+  this.reset();
+  this.addItems(tracks);
 };
 
 Playlist.prototype.appendPlaylist = function(tracks) {
@@ -26,26 +24,29 @@ Playlist.prototype.appendPlaylist = function(tracks) {
     (Array.isArray(tracks) && tracks.length === 0)) return;
 
   if (this.clearOnAppend) {
-    this.data = [];
-    this.curIndex = 0;
-    this.prevIndex = 0;
+    this.reset();
     this.clearOnAppend = false;
   }
 
-  this.data = this.data.concat(tracks);
-  this.update();
+  this.addItems(tracks);
 };
 
-Playlist.prototype.update = function() {
-  //this.removeDuplicates();
-  let self = this;
+Playlist.prototype.reset = function() {
+  this.data = [];
+  this.curIndex = 0;
+  this.prevIndex = 0;
   this.mpd.clear();
   this.list.clearItems();
-  //this.list.setItems(_.pluck(this.data, 'trackTitleFull'));
-  for (var i = 0; i < this.data.length; i++) {
-    this.list.addItem(this.data[i].trackTitleFull);
-    this.mpdAdd(this.data[i]);
+};
+
+Playlist.prototype.addItems = function(tracks) {
+  //this.removeDuplicates();
+  for (var i = 0; i < tracks.length; i++) {
+    this.list.addItem(tracks[i].trackTitleFull);
+    this.mpdAdd(tracks[i]);
   }
+
+  this.data = this.data.concat(tracks);
 };
 
 Playlist.prototype.mpdAdd = function(track) {

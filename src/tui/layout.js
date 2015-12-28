@@ -36,8 +36,7 @@ export default (screen) => {
     style: {
       border: {
         fg: 'brightblack'
-      },
-      //fg: 'white'
+      }
     },
   };
 
@@ -56,7 +55,6 @@ export default (screen) => {
     height: 1,
     width: '100%',
     align: 'left',
-    //value: 'Ariel',
     inputOnFocus: true,
     style: {
       bold: true,
@@ -72,7 +70,7 @@ export default (screen) => {
     width: '98%',
     padding: {
       left: 1,
-      right: 1
+      right: 1,
     },
     input: true,
     scrollable: true,
@@ -94,12 +92,8 @@ export default (screen) => {
   };
 
   let mediaTreeOpts = {
-    //top: 0,
+    top: 0,
     tags: true,
-    // padding: {
-    //   left: 1,
-    //   right: 1
-    // },
     // input: true,
     // vi: true,
     // mouse: true,
@@ -109,12 +103,11 @@ export default (screen) => {
     scrollbar: {
       ch: ' ',
       inverse: true,
-      fg: 'yellow'
+      fg: 'gray'
     },
     style: {
       fg: 'white',
       selected: {
-        //bg: 'yellow',
         fg: 'ligthwhite'
       }
     }
@@ -125,12 +118,9 @@ export default (screen) => {
     right: 1,
     height: 1,
     width: '60%',
-    //duration: '437',
-    //elapsed: 20,
     inputOnFocus: true,
     pch: '.',
     //bch: '#',
-    content: '0:31/6:51',
     align: 'right',
     style: {
       fg: 'brightblack',

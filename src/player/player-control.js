@@ -4,7 +4,8 @@ import errorHandler from '../helpers/error-handler';
 
 let poller;
 
-let mpd = komponist.createConnection(6600, 'localhost', function(err) {
+let mpd = komponist.createConnection(function(err) {
+  //console.log(err, client)
   if (err) {
     console.log('You should start Music Player Daemon (MPD) first');
     console.error(err);
