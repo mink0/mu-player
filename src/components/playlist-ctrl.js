@@ -159,7 +159,7 @@ export let updatePlaying = (status) => {
 };
 
 export let updatePbar = (elapsed) => {
-  if (!pbar) return;
+  if (!pbar || pbar.detached) return;
 
   pbar.setProgress(elapsed);
 };

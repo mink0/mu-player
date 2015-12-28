@@ -44,31 +44,34 @@ export default (screen, artist) => {
     }
   });
 
-  screen.blockEsc = true;
-  list.key(['escape'], () => {
-    screen.remove(layout);
+  let clean = () => {
+    layout.destroy();
     screen.blockEsc = false;
     // screen.render();
+  };
+
+  screen.blockEsc = true;
+  list.key(['escape'], () => {
+    clean();
   });
 
   layout.append(list);
   list.focus();
+  screen.render();
 
-  list.on('action', () => screen.render());
+  //list.on('action', () => screen.render());
 
   lfmActions.getSimilar(artist).then((artists) => {
-    Logger.screen.log('{green-fg}Found {/green-fg}' + artists.artist.length + ' similar artists for ' + artist);
+    global.Logger.screen.log('{green-fg}Found {/green-fg}' + artists.artist.length +
+      ' similar artists for ' + artist);
     list.setItems(_.pluck(artists.artist, 'name'));
     list.focus();
     screen.render();
   });
 
-  screen.render();
-
   return new Promise((resolve, reject) => {
     list.on('select', (selected, index) => {
-      screen.remove(layout);
-      //screen.render();
+      clean();
       resolve(selected.content);
     });
   });
