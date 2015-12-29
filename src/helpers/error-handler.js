@@ -1,4 +1,4 @@
-export let errorHandler = (err) => {
+module.exports = (err) => {
   if (err) {
     global.Logger.error(err);
     global.Logger.screen.error(err);

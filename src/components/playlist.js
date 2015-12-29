@@ -73,9 +73,9 @@ Playlist.prototype.setCurrentById = function(mpdId) {
     }
   }
 
-  if (index === null) return Logger.screen.error('Can\'t find track with id', mpdId);
+  if (index !== null) this.setCurrent(index);
 
-  this.setCurrent(index);
+  return index;
 };
 
 Playlist.prototype.setCurrent = function(index) {

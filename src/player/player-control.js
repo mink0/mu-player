@@ -4,8 +4,7 @@ import errorHandler from '../helpers/error-handler';
 
 let poller;
 
-let mpd = komponist.createConnection(function(err) {
-  //console.log(err, client)
+let mpd = komponist.createConnection(6600, 'localhost', function(err) {
   if (err) {
     console.log('You should start Music Player Daemon (MPD) first');
     console.error(err);
@@ -20,8 +19,10 @@ let mpd = komponist.createConnection(function(err) {
   }, 1000);
 });
 
+mpd.on('error', (err) => errorHandler(err));
+
 mpd.on('changed', function(system) {
-  Logger.info('Subsystem changed: ', system);
+  global.Logger.info('Subsystem changed: ', system);
   if (system === 'player') {
     mpd.status((err, status) => {
       if (err) return errorHandler(err);
@@ -31,18 +32,11 @@ mpd.on('changed', function(system) {
 });
 
 export let play = (url, id) => {
-  // mpd.clear();
-  // mpd.add(url, (err) => {
-  //   if (err) return errHandler(err);
-  //   mpd.play(errHandler);
-  // });
-
-  mpd.playid(id);
-
+  mpd.playid(id, errorHandler);
 };
 
 export let pause = () => {
-  mpd.toggle();
+  mpd.toggle(errorHandler);
 };
 
 export let getMpdClient = () => mpd;

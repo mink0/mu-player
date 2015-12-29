@@ -133,7 +133,13 @@ export let updatePlaying = (status) => {
   if (status.error) global.Logger.screen.error('MPD:', status.error);
 
   if (status.state === 'play') {
-    playlist.setCurrentById(status.songid);
+    if (playlist.setCurrentById(status.songid) === null) {
+      screen.title = ':mu';
+      playlist.stop();
+      playInfo.hide();
+      return global.Logger.screen.error('Playlist:', 'Can\'t find track with id', status.songid);
+    }
+
     global.Logger.info(playlist.getCurrent().url);
     global.Logger.screen.log('{green-fg}Play:{/green-fg}',
       playlist.getCurrent().artist, '-', playlist.getCurrent().title, '[' + status.bitrate +' kbps]',
@@ -147,13 +153,13 @@ export let updatePlaying = (status) => {
       artist: playlist.getCurrent().artist,
       status: '{green-fg}Playing{/green-fg}'
     });
-    //screen.render();
   } else if (status.state === 'stop') {
     screen.title = ':mu';
     playlist.stop();
     playInfo.hide();
   } else if (status.state === 'pause') {
-    playInfo.updateStatus('{red-fg}Paused{/red-fg}');
+    playInfo.updateStatus('{cyan-fg}Paused{/cyan-fg}');
+    global.Logger.screen.log('{cyan-fg}Paused{/cyan-fg}');
   }
 };
 
