@@ -14,10 +14,22 @@ import Promise from 'bluebird';
 import splitTracklist from 'split-tracklist';
 
 let screen = null;
+let layout = null;
 let rightPane = null;
 let playlist = null;
 let pbarOpts = null;
-let pbar = null;
+let playInfo = null;
+
+export let init = (_screen, _layout) => {
+  screen = _screen;
+  layout = _layout;
+  rightPane = _layout.playlist;
+  playInfo = _layout.playInfo;
+
+  playlist = new Playlist(rightPane);
+
+  rightPane.on('select', () => playCurrent());
+};
 
 let errorHandler = (err) => {
   global.Logger.error(err);
@@ -110,22 +122,6 @@ export let search = (payload) => {
   }
 };
 
-export let init = (_screen, _rightPane, _pbarOpts) => {
-  screen = _screen;
-  rightPane = _rightPane;
-  pbarOpts = _pbarOpts;
-  playlist = new Playlist(rightPane);
-
-  rightPane.on('select', () => {
-    playCurrent();
-  });
-
-  player.setOnNextSong(() => {
-    playlist.moveNext();
-    playCurrent();
-  });
-};
-
 let appendAudio = (audio) => {
   rightPane.focus();
   playlist.appendPlaylist(audio);
@@ -134,32 +130,35 @@ let appendAudio = (audio) => {
 export let updatePlaying = (status) => {
   global.Logger.info(status);
 
-  if (status.error) Logger.screen.error('MPD:', status.error);
+  if (status.error) global.Logger.screen.error('MPD:', status.error);
 
   if (status.state === 'play') {
     playlist.setCurrentById(status.songid);
     global.Logger.info(playlist.getCurrent().url);
-    global.Logger.screen.log('{green-fg}Play:{/green-fg}', playlist.getCurrent().artist, '-',
-      playlist.getCurrent().title, '[' + status.bitrate +' kbps]');
+    global.Logger.screen.log('{green-fg}Play:{/green-fg}',
+      playlist.getCurrent().artist, '-', playlist.getCurrent().title, '[' + status.bitrate +' kbps]',
+      '[' +  status.audio + ']');
 
     screen.title = playlist.getCurrent().artist + ' - ' + playlist.getCurrent().title;
 
-    if (pbar) pbar.destroy();
-    let opts = _.cloneDeep(pbarOpts);
-    opts.duration = playlist.getCurrent().duration;
-
-    pbar = pbarWidget(opts);
-    screen.append(pbar);
-
+    playInfo.init({
+      duration: playlist.getCurrent().duration,
+      title: playlist.getCurrent().title,
+      artist: playlist.getCurrent().artist,
+      status: '{green-fg}Playing{/green-fg}'
+    });
+    //screen.render();
   } else if (status.state === 'stop') {
     screen.title = ':mu';
     playlist.stop();
-    if (pbar) pbar.destroy();
+    playInfo.hide();
+  } else if (status.state === 'pause') {
+    playInfo.updateStatus('{red-fg}Paused{/red-fg}');
   }
 };
 
 export let updatePbar = (elapsed) => {
-  if (!pbar || pbar.detached) return;
+  if (playInfo.hidden) return;
 
-  pbar.setProgress(elapsed);
+  playInfo.setProgress(elapsed);
 };

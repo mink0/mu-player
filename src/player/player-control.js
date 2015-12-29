@@ -46,5 +46,3 @@ export let pause = () => {
 };
 
 export let getMpdClient = () => mpd;
-
-export let setOnNextSong = () => {};

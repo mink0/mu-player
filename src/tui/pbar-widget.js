@@ -15,6 +15,10 @@ function Pbar(options) {
   this.progress(0);
 }
 
+Pbar.prototype.init = function(duration) {
+
+};
+
 Pbar.prototype.render = function() {
   var ret = this._render();
   if (!ret) return;

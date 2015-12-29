@@ -1,10 +1,10 @@
 import blessed from 'blessed';
 import contrib from 'blessed-contrib';
 
-import treeWidget from './tree-widget.js';
+import treeWidget from './tree-widget';
+import playInfo from './play-info-widget';
 
 export default (screen) => {
-
   let grid = new contrib.grid({
     rows: 100,
     cols: 100,
@@ -30,10 +30,11 @@ export default (screen) => {
   };
 
   let loggerOpts = {
-    label: 'Logger',
+    label: 'Log',
     inputOnFocus: true,
     tags: true,
     style: {
+      fg: 'brightblack',
       border: {
         fg: 'brightblack'
       }
@@ -66,8 +67,9 @@ export default (screen) => {
 
   let playlistOpts = {
     top: 0,
+    left: 0,
     tags: true,
-    width: '98%',
+    width: '100%-2',
     padding: {
       left: 1,
       right: 1,
@@ -113,21 +115,15 @@ export default (screen) => {
     }
   };
 
-  let pbarOpts = {
-    bottom: 0,
-    right: 1,
-    height: 1,
-    width: '60%',
-    inputOnFocus: true,
-    pch: '.',
-    //bch: '#',
-    align: 'right',
+  var playInfoOpts = {
+    height: 3,
+    tags: true,
     style: {
-      fg: 'brightblack',
-      bar: {
-        fg: 'brightblack'
-      }
-    }
+      border: {
+        fg: 'brightblack',
+      },
+      // fg: 'yellow',
+    },
   };
 
   let layout = {};
@@ -135,13 +131,17 @@ export default (screen) => {
   layout.mediaBrowserBox = grid.set(0, 0, 80, 40, blessed.box, mediaBrowserBoxOpts);
   layout.playlistBox = grid.set(0, 40, 99, 60, blessed.box, playlistBoxOpts);
   layout.logger = grid.set(80, 0, 19, 40, blessed.log, loggerOpts);
+  layout.playInfo = grid.set(92, 40, 8, 60, playInfo, playInfoOpts);
+  layout.playInfo.hide();
+
   layout.qprefix = blessed.box(qprefixOpts);
   layout.qsearch = blessed.textbox(qsearchOpts);
   layout.playlist = blessed.list(playlistOpts);
   layout.playlistBox.append(layout.playlist);
   layout.mediaTree = treeWidget(mediaTreeOpts);
   layout.mediaBrowserBox.append(layout.mediaTree);
-  layout.pbarOpts = pbarOpts;
+
+
   screen.append(layout.qprefix);
   screen.append(layout.qsearch);
 
