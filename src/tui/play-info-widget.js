@@ -90,11 +90,16 @@ PlayInfo.prototype.setProgress = function(elapsed) {
 
 PlayInfo.prototype.updateStatus = function(status) {
   if (status) this.status = status;
+
+  if (this.status === 'play') this.statusText = '{green-fg}Playing{/green-fg}';
+  if (this.status === 'stop') this.statusText = '{light-red-fg}Stopped{/right-red-fg}';
+  if (this.status === 'pause') this.statusText = '{cyan-fg}Paused{/cyan-fg}';
+
   this.updateLabel();
 };
 
 PlayInfo.prototype.updateLabel = function() {
-  this.setLabel('[' + this.status + '] {light-yellow-fg}' + this.artist + ' - ' + this.title + '{/light-yellow-fg}');
+  this.setLabel('[' + this.statusText + '] {light-yellow-fg}' + this.artist + ' - ' + this.title + '{/light-yellow-fg}');
 };
 
 PlayInfo.prototype.__proto__ = Box.prototype;

@@ -17,8 +17,8 @@ let screen = null;
 let layout = null;
 let rightPane = null;
 let playlist = null;
-let pbarOpts = null;
 let playInfo = null;
+let songid = null;
 
 export let init = (_screen, _layout) => {
   screen = _screen;
@@ -134,12 +134,21 @@ export let updatePlaying = (status) => {
 
   if (status.state === 'play') {
     if (playlist.setCurrentById(status.songid) === null) {
+      global.Logger.screen.error('Playlist:', 'Can\'t find track with id', status.songid);
       screen.title = ':mu';
       playlist.stop();
       playInfo.hide();
-      return global.Logger.screen.error('Playlist:', 'Can\'t find track with id', status.songid);
+      return;
     }
 
+    if (status.songid === songid) {
+      // resume from pause
+      playInfo.updateStatus('play');
+      return;
+    }
+
+    // new song
+    songid = status.songid;
     global.Logger.info(playlist.getCurrent().url);
     global.Logger.screen.log('{green-fg}Play:{/green-fg}',
       playlist.getCurrent().artist, '-', playlist.getCurrent().title, '[' + status.bitrate +' kbps]',
@@ -151,15 +160,14 @@ export let updatePlaying = (status) => {
       duration: playlist.getCurrent().duration,
       title: playlist.getCurrent().title,
       artist: playlist.getCurrent().artist,
-      status: '{green-fg}Playing{/green-fg}'
+      status: 'play'
     });
   } else if (status.state === 'stop') {
     screen.title = ':mu';
     playlist.stop();
     playInfo.hide();
   } else if (status.state === 'pause') {
-    playInfo.updateStatus('{cyan-fg}Paused{/cyan-fg}');
-    global.Logger.screen.log('{cyan-fg}Paused{/cyan-fg}');
+    playInfo.updateStatus('pause');
   }
 };
 
