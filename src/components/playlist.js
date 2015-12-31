@@ -51,7 +51,7 @@ Playlist.prototype.addItems = function(tracks) {
 
 Playlist.prototype.mpdAdd = function(track) {
   this.mpd.addid(track.url, (err, id) => {
-    if (err) return player.errHandler(err);
+    if (err) return errorHandler(err);
 
     track.mpdId = id.Id;
     // HACK: this tags don't streamed, so we have to add it manually

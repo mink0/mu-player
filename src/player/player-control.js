@@ -22,7 +22,6 @@ let mpd = komponist.createConnection(6600, 'localhost', function(err) {
 mpd.on('error', (err) => errorHandler(err));
 
 mpd.on('changed', function(system) {
-  global.Logger.info('Subsystem changed: ', system);
   if (system === 'player') {
     mpd.status((err, status) => {
       if (err) return errorHandler(err);
@@ -37,6 +36,40 @@ export let play = (url, id) => {
 
 export let pause = () => {
   mpd.toggle(errorHandler);
+};
+
+export let volumeUp = () => {
+  mpd.status((err, status) => {
+    if (err) return errorHandler(err);
+
+    let vol = parseInt(status.volume) + 2;
+    if (vol > 100) vol = 100;
+    global.Logger.screen.log('Volume: ' + vol + '%');
+    mpd.setvol(vol);
+  });
+};
+
+export let volumeDown = () => {
+  mpd.status((err, status) => {
+    if (err) return errorHandler(err);
+
+    let vol = parseInt(status.volume) - 2;
+    if (vol < 0) vol = 0;
+    global.Logger.screen.log('Volume: ' + vol + '%');
+    mpd.setvol(vol);
+  });
+};
+
+export let seekFwd = () => {
+  let seek = '+10';
+  global.Logger.screen.log('Seek: ' + seek + 's');
+  mpd.seekcur(seek, errorHandler);
+};
+
+export let seekBwd = () => {
+  let seek = '-10';
+  global.Logger.screen.log('Seek: ' + seek + 's');
+  mpd.seekcur(seek, errorHandler);
 };
 
 export let getMpdClient = () => mpd;

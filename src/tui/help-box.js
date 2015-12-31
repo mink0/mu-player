@@ -10,7 +10,7 @@ export default (screen) => {
     width: 'half',
     top: 'center',
     left: 'center',
-    label: ' {blue-fg}Help{/blue-fg}',
+    label: 'Help',
     tags: true,
     keys: true,
     hidden: true,
@@ -18,31 +18,31 @@ export default (screen) => {
   });
 
   var lines = [];
-  var addHotkey = (key, description) => lines.push(_.padRight(key, 8) + description);
+  var addHotkey = (key, description) => {
+    lines.push(_.padRight(key, 8) + '{yellow-fg}' + description + '{/yellow-fg}');
+  };
 
-  addHotkey('f', 'local search');
-  addHotkey('space', 'play/stop');
-  addHotkey('m', 'switch focused pane');
-
-  addHotkey('ctrl-f', 'VK: search');
-  addHotkey('x', 'VK: add track to profile audio');
-
-  lines.push('');
-
-  addHotkey('d', 'select playing track');
-  addHotkey('g', 'move to the beginning');
-  addHotkey('G', 'move to the end');
+  addHotkey('enter', 'play');
+  addHotkey('space', 'play/pause');
+  addHotkey('tab', 'switch focused pane');
 
   lines.push('');
 
-  addHotkey('q', 'exit');
+  addHotkey('left', 'select media browser');
+  addHotkey('right', 'select playlist');
 
   lines.push('');
 
-  lines.push('Storage file ' + storage.path);
-  lines.push('Press any key to hide help box');
+  addHotkey('q, esc', 'exit');
+
+  lines.push('');
+
+  lines.push(`Storage file: "${storage.path}"`);
+
+  lines.push('');
+  lines.push('{right}{green-fg}Press any key to hide this window{/green-fg}{/right}');
 
   msg.display(lines.join('\n'), 0, function(err) {
-    Logger.error(err);
+    global.Logger.error(err);
   });
 };

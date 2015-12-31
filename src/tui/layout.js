@@ -157,5 +157,6 @@ export default (screen) => {
     layout.qsearch.setValue(layout.qsearch.value.trim());
   });
   layout.qsearch.on('blur', () => layout.qsearch.style.fg = 'brightwhite');
+
   return layout;
 };
