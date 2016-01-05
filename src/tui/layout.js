@@ -34,7 +34,6 @@ export default (screen) => {
     inputOnFocus: true,
     tags: true,
     style: {
-      fg: 'brightblack',
       border: {
         fg: 'brightblack'
       }

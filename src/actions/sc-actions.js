@@ -5,10 +5,6 @@ let sc = require('node-soundcloud');
 sc = Promise.promisifyAll(sc);
 
 import splitTracklist from 'split-tracklist';
-
-import request from 'request';
-let req = Promise.promisifyAll(request);
-
 import { formatTrack } from './music-actions';
 
 sc.init({

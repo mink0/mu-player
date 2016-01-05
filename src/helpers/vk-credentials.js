@@ -9,7 +9,8 @@ let responseExample = 'https://oauth.vk.com/blank.html#access_token=<85 symbols>
 let token = {
   name: 'url',
   type: 'input',
-  message: `Open "${authUrl}" in browser.\nCopy paste new url here.\nIt should look "${responseExample}"`
+  message: `Open "${authUrl}" in browser.\nCopy paste new url here.\nIt should look "${responseExample}"
+  \nUrl>`
 };
 
 let extractToken = (data) => {
@@ -24,7 +25,7 @@ export let setupToken = (response) => {
 };
 
 export let hasData = () => typeof storage.data.vkToken !== 'undefined';
-export let init = () => hasData() ? setupToken(storage.data.vkToken) : undefined;
+export let init = () => hasData() ? setupToken(storage.data.vkToken) : Promise.resolve(true);
 export let getUser = () => storage.data.vkUsername;
 
 storage.vkHasData = hasData;

@@ -172,7 +172,7 @@ export let updatePlaying = (status) => {
 };
 
 export let updatePbar = (elapsed) => {
-  if (playInfo.hidden) return;
+  if (playInfo === null || playInfo.hidden) return;
 
   playInfo.setProgress(elapsed);
 };

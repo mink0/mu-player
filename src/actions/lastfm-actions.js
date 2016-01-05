@@ -20,18 +20,13 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query) => {
-  // Logger.screen.log(`last.fm search("${query}")`);
   let menu = {};
   return Promise.join(
     getSearchTrack(query),
     getSearchArtist(query),
-    //getSearchAlbum(query),
-    //getSearchTag(query),
     function(tracks, artists /*, artists/*, tags*/) {
       menu.tracks = tracks.trackmatches.track;
       menu.artists = artists.artistmatches.artist;
-      //menu.albums = albums.albummatches.album;
-      //menu.tags = tags.tagmatches.tag;
       return handleData(menu);
     });
 };
