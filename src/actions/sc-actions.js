@@ -35,7 +35,7 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts) => {
-  Logger.screen.log(`soundcloud search("${query}", "${opts||''}")`);
+  Logger.screen.log(`soundcloud search("${query}")`);
   var opts = opts || {};
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;

@@ -75,7 +75,7 @@ PlayInfo.prototype.init = function(opts) {
   else this.curTime.width = 14;
   this.pbar.style.width = this.width - this.curTime.width - 2;
 
-  this.updateLabel();
+  this.updateStatus();
 
   this.show();
 };

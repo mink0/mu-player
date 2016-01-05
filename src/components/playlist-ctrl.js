@@ -153,8 +153,7 @@ export let updatePlaying = (status) => {
     songid = status.songid;
     global.Logger.info(playlist.getCurrent().url);
     global.Logger.screen.log('{green-fg}Play:{/green-fg}',
-      playlist.getCurrent().artist, '-', playlist.getCurrent().title, '[' + status.bitrate + ' kbps]',
-      '[' + status.audio + ']');
+      playlist.getCurrent().artist, '-', playlist.getCurrent().title, '[' + status.bitrate + ' kbps]');
 
     screen.title = playlist.getCurrent().artist + ' - ' + playlist.getCurrent().title;
 
