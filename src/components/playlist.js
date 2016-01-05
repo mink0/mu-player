@@ -89,6 +89,8 @@ Playlist.prototype.setCurrent = function(index) {
 };
 
 Playlist.prototype.stop = function() {
+  if (this.data === null) return;
+
   this.list.setItem(this.curIndex, this.data[this.prevIndex].trackTitleFull);
   this.list.render();
 };

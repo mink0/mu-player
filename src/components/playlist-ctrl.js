@@ -5,10 +5,7 @@ import Playlist from './playlist';
 
 import * as player from './../player/player-control';
 
-import _ from 'lodash';
-
 import LoadingSpinner from '../tui/loading-spinner';
-import pbarWidget from '../tui/pbar-widget';
 
 import Promise from 'bluebird';
 import splitTracklist from 'split-tracklist';
@@ -62,7 +59,14 @@ let playCurrent = () => {
   }
 };
 
+export let stop = () => {
+  screen.title = ':mu';
+  playlist.stop();
+  playInfo.hide();
+};
+
 export let search = (payload) => {
+  stop();
   if (payload.type === 'search') {
     playlist.clearOnAppend = true;
     vkActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
@@ -135,9 +139,7 @@ export let updatePlaying = (status) => {
   if (status.state === 'play') {
     if (playlist.setCurrentById(status.songid) === null) {
       global.Logger.screen.error('Playlist:', 'Can\'t find track with id', status.songid);
-      screen.title = ':mu';
-      playlist.stop();
-      playInfo.hide();
+      stop();
       return;
     }
 
@@ -151,8 +153,8 @@ export let updatePlaying = (status) => {
     songid = status.songid;
     global.Logger.info(playlist.getCurrent().url);
     global.Logger.screen.log('{green-fg}Play:{/green-fg}',
-      playlist.getCurrent().artist, '-', playlist.getCurrent().title, '[' + status.bitrate +' kbps]',
-      '[' +  status.audio + ']');
+      playlist.getCurrent().artist, '-', playlist.getCurrent().title, '[' + status.bitrate + ' kbps]',
+      '[' + status.audio + ']');
 
     screen.title = playlist.getCurrent().artist + ' - ' + playlist.getCurrent().title;
 
@@ -163,9 +165,7 @@ export let updatePlaying = (status) => {
       status: 'play'
     });
   } else if (status.state === 'stop') {
-    screen.title = ':mu';
-    playlist.stop();
-    playInfo.hide();
+    stop();
   } else if (status.state === 'pause') {
     playInfo.updateStatus('pause');
   }

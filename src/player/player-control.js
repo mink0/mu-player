@@ -34,6 +34,10 @@ export let play = (url, id) => {
   mpd.playid(id, errorHandler);
 };
 
+export let stop = () => {
+  mpd.stop(errorHandler);
+};
+
 export let pause = () => {
   mpd.toggle(errorHandler);
 };

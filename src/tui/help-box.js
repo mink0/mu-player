@@ -24,10 +24,15 @@ export default (screen) => {
 
   addHotkey('enter', 'play');
   addHotkey('space', 'play/pause');
-  addHotkey('tab', 'switch focused pane');
+  addHotkey('s', 'stop');
+  addHotkey('>', 'seek forward');
+  addHotkey('<', 'seek backward');
+  addHotkey('+', 'volume up');
+  addHotkey('-', 'volume down');
 
   lines.push('');
 
+  addHotkey('tab', 'switch focused pane');
   addHotkey('left', 'select media browser');
   addHotkey('right', 'select playlist');
 

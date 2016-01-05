@@ -25,7 +25,9 @@ setupCredentials(cli.flags.setup).then(() => {
 
   startApp(screen, layout);
 
-  screen.key(['space'], () => storage.emit(PAUSE));
+  screen.key(['space'], () => player.pause());
+  screen.key(['s'], () => player.stop());
+
   screen.key(['left'], () => layout.mediaTree.focus());
   screen.key(['right'], () => layout.playlist.focus());
 
