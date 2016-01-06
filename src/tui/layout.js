@@ -45,7 +45,6 @@ export default (screen) => {
     left: 0,
     height: 1,
     width: 1,
-    align: 'left',
     content: '>',
   };
 
@@ -114,16 +113,24 @@ export default (screen) => {
     }
   };
 
-  var playInfoOpts = {
+  let playInfoOpts = {
     height: 3,
     tags: true,
     style: {
       border: {
-        fg: 'brightblack',
-      },
-      // fg: 'yellow',
-    },
+        fg: 'brightblack'
+      }
+    }
   };
+
+  let plistCountOpts = {
+    top: -1,
+    width: 'shrink',
+    right: 1,
+    height: 1,
+    tags: true
+  };
+
 
   let layout = {};
 
@@ -135,8 +142,12 @@ export default (screen) => {
 
   layout.qprefix = blessed.box(qprefixOpts);
   layout.qsearch = blessed.textbox(qsearchOpts);
+  
   layout.playlist = blessed.list(playlistOpts);
+  layout.plistCount = blessed.box(plistCountOpts);
   layout.playlistBox.append(layout.playlist);
+  layout.playlistBox.append(layout.plistCount);
+
   layout.mediaTree = treeWidget(mediaTreeOpts);
   layout.mediaBrowserBox.append(layout.mediaTree);
 

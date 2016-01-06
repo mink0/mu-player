@@ -2,16 +2,17 @@ import _ from 'lodash';
 import * as player from '../player/player-control';
 import errorHandler from '../helpers/error-handler';
 
-function Playlist(listPane) {
+function Playlist(plistPane, countPane) {
   let self = this;
-  this.list = listPane;
+  this.list = plistPane;
   this.mpd = player.getMpdClient();
   this.curIndex = 0;
   this.prevIndex = null;
   this.data = null;
   this.clearOnAppend = null;
+  this.counter = countPane;
 
-  listPane.on('select', (item, index) => self.setCurrent(index));
+  plistPane.on('select', (item, index) => self.setCurrent(index));
 }
 
 Playlist.prototype.setPlaylist = function(tracks) {
@@ -37,6 +38,7 @@ Playlist.prototype.reset = function() {
   this.prevIndex = 0;
   this.mpd.clear();
   this.list.clearItems();
+  this.counter.hide();
 };
 
 Playlist.prototype.addItems = function(tracks) {
@@ -47,6 +49,12 @@ Playlist.prototype.addItems = function(tracks) {
   }
 
   this.data = this.data.concat(tracks);
+  this.updateCounter();
+};
+
+Playlist.prototype.updateCounter = function() {
+  this.counter.setContent(`{bright-black-fg}${this.curIndex + 1}/${this.data.length}`);
+  if (this.counter.hidden) this.counter.show();
 };
 
 Playlist.prototype.mpdAdd = function(track) {
@@ -85,6 +93,7 @@ Playlist.prototype.setCurrent = function(index) {
   this.list.setItem(this.prevIndex, this.data[this.prevIndex].trackTitleFull);
   this.list.setItem(this.curIndex,
     '{yellow-fg}' + this.getCurrent().trackTitleFull + '{/yellow-fg}');
+  this.updateCounter();
   this.list.render();
 };
 

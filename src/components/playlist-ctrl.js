@@ -12,7 +12,7 @@ import splitTracklist from 'split-tracklist';
 
 let screen = null;
 let layout = null;
-let rightPane = null;
+let plistPane = null;
 let playlist = null;
 let playInfo = null;
 let songid = null;
@@ -20,12 +20,12 @@ let songid = null;
 export let init = (_screen, _layout) => {
   screen = _screen;
   layout = _layout;
-  rightPane = _layout.playlist;
+  plistPane = _layout.playlist;
   playInfo = _layout.playInfo;
 
-  playlist = new Playlist(rightPane);
+  playlist = new Playlist(plistPane, layout.plistCount);
 
-  rightPane.on('select', () => playCurrent());
+  plistPane.on('select', () => playCurrent());
 };
 
 let errorHandler = (err) => {
@@ -127,7 +127,7 @@ export let search = (payload) => {
 };
 
 let appendAudio = (audio) => {
-  rightPane.focus();
+  plistPane.focus();
   playlist.appendPlaylist(audio);
 };
 
