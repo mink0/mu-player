@@ -1,6 +1,6 @@
 # mu-player
 
-![mu-player](https://github.com/mink0/mu-player/blob/master/screenshot.png)
+![mu-player](https://raw.githubusercontent.com/mink0/mu-player/master/screenshot.png)
 
 ### Top Features
   
