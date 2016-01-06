@@ -42,7 +42,7 @@ export default (screen) => {
 
   lines.push('');
 
-  lines.push(`Storage file: "${storage.path}"`);
+  lines.push(`Config file: "${storage.path}"`);
 
   lines.push('');
   lines.push('{right}{green-fg}Press any key to hide this window{/green-fg}{/right}');

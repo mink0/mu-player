@@ -3,21 +3,25 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 import * as lfmActions from './../actions/lastfm-actions';
 
-export default (screen_name, artist) => {
-  var layout = blessed.box({
+export default (screen, artist) => {
+  let layout;
+  let list;
+
+  let layoutOpts = {
     parent: screen,
     label: 'Choose Artist',
     top: 'center',
     left: 'center',
     width: '50%',
     height: '50%',
+    content: 'Loading...',
     tags: true,
     border: {
       type: 'line'
     }
-  });
+  };
 
-  var list = blessed.list({
+  let listOpts = {
     top: 0,
     tags: true,
     padding: {
@@ -39,26 +43,25 @@ export default (screen_name, artist) => {
         bg: 'yellow'
       }
     }
-  });
+  };
 
   let clean = () => {
     layout.destroy();
     screen.blockEsc = false;
+    screen.restoreFocus();
   };
 
   screen.blockEsc = true;
-  list.key(['escape'], () => {
-    clean();
-  });
-
-  layout.append(list);
-  list.focus();
-  screen.render();
+  list = blessed.list(listOpts);
+  list.key(['escape', 'left', 'right', 'tab'], () => clean());
 
   lfmActions.getSimilar(artist).then((artists) => {
     global.Logger.screen.log('{green-fg}Found {/green-fg}' + artists.artist.length +
       ' similar artists for ' + artist);
     list.setItems(_.pluck(artists.artist, 'name'));
+    layout = blessed.box(layoutOpts);
+    layout.append(list);
+    screen.saveFocus();
     list.focus();
     screen.render();
   });

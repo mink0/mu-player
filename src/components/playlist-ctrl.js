@@ -84,7 +84,7 @@ export let search = (payload) => {
 
     let onTrack = (track, index, length, query) => {
       playlist.appendPlaylist(track);
-      return spinner.setContent(`${index + 1} / ${length}: ${query}\nPress ESC to close this window...`);
+      return spinner.setContent(`${index + 1} / ${length}: ${query}`);
     };
 
     let getBatchSearch = (text, onTrack) => {
