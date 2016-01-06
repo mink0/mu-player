@@ -3,7 +3,7 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 import * as lfmActions from './../actions/lastfm-actions';
 
-export default (screen, artist) => {
+export default (screen_name, artist) => {
   var layout = blessed.box({
     parent: screen,
     label: 'Choose Artist',
@@ -29,17 +29,14 @@ export default (screen, artist) => {
     keys: true,
     vi: true,
     mouse: true,
-    //alwaysScroll: true,
     scrollbar: {
       ch: ' ',
       inverse: true,
       fg: 'gray'
     },
     style: {
-      //bg: 'brightblack',
       selected: {
-        bg: 'gray',
-        fg: 'brightyellow'
+        bg: 'yellow'
       }
     }
   });
@@ -47,7 +44,6 @@ export default (screen, artist) => {
   let clean = () => {
     layout.destroy();
     screen.blockEsc = false;
-    // screen.render();
   };
 
   screen.blockEsc = true;
@@ -58,8 +54,6 @@ export default (screen, artist) => {
   layout.append(list);
   list.focus();
   screen.render();
-
-  //list.on('action', () => screen.render());
 
   lfmActions.getSimilar(artist).then((artists) => {
     global.Logger.screen.log('{green-fg}Found {/green-fg}' + artists.artist.length +
