@@ -1,6 +1,9 @@
 # mu-player
 
-![alt tag](https://github.com/mink0/mu-player/blob/master/screenshot.png)
+<p align="center">
+  <img src="https://github.com/mink0/mu-player/blob/master/screenshot.png"></img>
+</p>
+
 ### Features
 
   Play ANY music ABSOLUTELY FREE(c) from vk.com and soundcloud.com using [Music Player Daemon](http://www.musicpd.org/).
@@ -23,10 +26,14 @@ Or `sudo npm -g install git+https://github.com/mink0/mu-player.git` on Linux.
   
   * Now you could run `mu` and setup credentials for lastfm.com, soundcloud.com and vk.com. You need to register accounts first.
   * Run `mu` again and enjoy the free goodies.
-  * Run `mu --setup` for editing your credentials.
-  * Press `?` for in-app help.
 
 Tested on OS X Yosemite and Ubuntu linux 14.04.
+
+### Setup
+  * Run `mu --setup` for editing your credentials.
+
+### Help
+  * Press `?` for in-app help.
 
 ### Alternatives
 - https://github.com/ewnd9/badtaste
