@@ -144,7 +144,7 @@ export let updatePlaying = (status) => {
     }
 
     if (status.songid === songid) {
-      // resume from pause
+      // resume from pause or from stop
       playInfo.updateStatus('play');
       return;
     }

@@ -96,6 +96,7 @@ PlayInfo.prototype.updateStatus = function(status) {
   if (this.status === 'pause') this.statusText = '{cyan-fg}Paused{/cyan-fg}';
 
   this.updateLabel();
+  if (this.hidden) this.show();
 };
 
 PlayInfo.prototype.updateLabel = function() {
