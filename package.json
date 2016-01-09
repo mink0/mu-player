@@ -1,6 +1,6 @@
 {
   "name": "mu-player",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Play audio from vk.com and soundcloud.com via mpd",
   "main": "cli.js",
   "bin": {
