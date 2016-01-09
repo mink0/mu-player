@@ -14,7 +14,10 @@ You could use mu-player standalone or with any other full-featured MPD clients. 
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player. 
 
 ### Changelog
-
+  * v0.1.2 
+    - Add playlist counter
+    - MPD connection error message
+  
   * v0.1.1 
     - Bug fixes
   

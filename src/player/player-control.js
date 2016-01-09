@@ -4,13 +4,7 @@ import errorHandler from '../helpers/error-handler';
 
 let poller;
 
-let mpd = komponist.createConnection(6600, 'localhost', function(err) {
-  if (err) {
-    console.log('You should start Music Player Daemon (MPD) first');
-    console.error(err);
-    process.exit(1);
-  }
-
+let mpd = komponist.createConnection(6600, 'localhost', function(err, clinet) {
   poller = setInterval(() => {
     mpd.status((err, status) => {
       if (err) return errorHandler(err);
@@ -19,7 +13,17 @@ let mpd = komponist.createConnection(6600, 'localhost', function(err) {
   }, 1000);
 });
 
-mpd.on('error', (err) => errorHandler(err));
+mpd.on('error', (err) => {
+  // FIXME: no proper error handling on createConnection
+  if (err.code === 'ECONNREFUSED') {
+    console.log('You should start Music Player Daemon (MPD) first!');
+    console.log('Visit http://mpd.wikia.com/wiki/Install for the installation instructions.');
+    console.error(err);
+    process.exit(1);
+  }
+
+  errorHandler(err);
+});
 
 mpd.on('changed', function(system) {
   if (system === 'player') {
