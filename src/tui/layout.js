@@ -33,6 +33,11 @@ export default (screen) => {
     label: 'Log',
     inputOnFocus: true,
     tags: true,
+    input: true,
+    scrollable: true,
+    keys: true,
+    vi: true,
+    mouse: true,
     style: {
       border: {
         fg: 'brightblack'
