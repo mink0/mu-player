@@ -2,6 +2,8 @@ import komponist from 'komponist';
 import * as playlistCtrl from '../components/playlist-ctrl';
 import errorHandler from '../helpers/error-handler';
 
+const API_TIMEOUT = 1000;
+
 let poller;
 let apiTimer = null;
 let seekPos = 0;
@@ -72,24 +74,30 @@ export let volumeDown = () => {
 
 export let seekFwd = () => {
   seekPos = '+' + (parseInt(seekPos, 10) + 10);
-  seek();
+  seekWithDelay();
 };
 
 export let seekBwd = () => {
   seekPos = '' + (parseInt(seekPos, 10) - 10);
-  seek();
+  seekWithDelay();
 };
 
-export let seek = () => {
+export let seekWithDelay = () => {
   // wait for previous call
   if (apiTimer === null) {
-    apiTimer = setTimeout(() => {
-      global.Logger.screen.log('Seek: ' + seekPos + 's');
-      mpd.seekcur(seekPos, errorHandler);
-      apiTimer = null;
-      seekPos = 0;
-    }, 1000);
+    apiTimer = setTimeout(seek, API_TIMEOUT);
+  } else {
+    clearTimeout(apiTimer);
+    global.Logger.screen.log(seekPos + 's');
+    apiTimer = setTimeout(seek, API_TIMEOUT);
   }
 };
+
+function seek() {
+  global.Logger.screen.log('Seek: ' + seekPos + 's');
+  mpd.seekcur(seekPos, errorHandler);
+  apiTimer = null;
+  seekPos = 0;
+}
 
 export let getMpdClient = () => mpd;
