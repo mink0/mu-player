@@ -56,7 +56,7 @@ export let volumeUp = () => {
 
     let vol = parseInt(status.volume) + 2;
     if (vol > 100) vol = 100;
-    global.Logger.screen.log('Volume: ' + vol + '%');
+    global.Logger.screen.log('{cyan-fg}Volume:{/cyan-fg} ' + vol + '%');
     mpd.setvol(vol);
   });
 };
@@ -67,7 +67,7 @@ export let volumeDown = () => {
 
     let vol = parseInt(status.volume) - 2;
     if (vol < 0) vol = 0;
-    global.Logger.screen.log('Volume: ' + vol + '%');
+    global.Logger.screen.log('{cyan-fg}Volume:{/cyan-fg} ' + vol + '%');
     mpd.setvol(vol);
   });
 };
@@ -85,22 +85,23 @@ export let seekBwd = () => {
 export let seekWithDelay = () => {
   // wait for previous call
   if (seekTimer === null) {
-    seekTimer = setTimeout(() => {
-      global.Logger.screen.log('Seek: ' + seekPos + 's');
-      mpd.seekcur(seekPos, errorHandler);
-      seekTimer = null;
-      seekPos = 0;
-    }, SEEK_TIMEOUT);
+    seekTimer = setTimeout(seek, SEEK_TIMEOUT);
   } else {
     global.Logger.screen.log(seekPos + 's');
   }
 };
 
 function seek() {
-  global.Logger.screen.log('Seek: ' + seekPos + 's');
-  mpd.seekcur(seekPos, errorHandler);
-  apiTimer = null;
-  seekPos = 0;
+  mpd.seekcur(seekPos, (err) => {
+    if (err) return errorHandler(err);
+
+    global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ' + seekPos + 's');
+    // wait for switching to new playback position
+    seekTimer = setTimeout(() => {
+      seekTimer = null;
+      seekPos = 0;
+    }, SEEK_TIMEOUT);
+  });
 }
 
 export let getMpdClient = () => mpd;

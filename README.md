@@ -15,8 +15,9 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
 
 ### Changelog
   
-  - Seekbar fix
-  - Logger scroll support 
+  * v0.2.0
+    - Better track seek
+    - Logger scroll support 
   
   * v0.1.3
     - Bug fix
