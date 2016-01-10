@@ -16,6 +16,7 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
 ### Changelog
   
   - Seekbar fix
+  - Logger scroll support 
   
   * v0.1.3
     - Bug fix
@@ -31,7 +32,7 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
     - Initial release
 
 ### Install
-  * First install [MPD](http://www.musicpd.org/). I recommend to use versions `0.18.9` and higher for `addtagid` functionality. Follow the http://mpd.wikia.com/wiki/Install for the instructions.
+  * First install [MPD](http://www.musicpd.org/). I recommend to use versions `0.19` and higher for `addtagid` functionality. Follow the http://mpd.wikia.com/wiki/Install for the instructions.
   * Start MPD daemon if it is not started on system boot. You could test if it is running by typing `telnet localhost 6600`. You should see `OK MPD` response.
   * You need [nodejs](https://nodejs.org/) and [npm](https://www.npmjs.com/) to install mu-player.
   * Install mu-player:

@@ -2,10 +2,10 @@ import komponist from 'komponist';
 import * as playlistCtrl from '../components/playlist-ctrl';
 import errorHandler from '../helpers/error-handler';
 
-const API_TIMEOUT = 1000;
+const SEEK_TIMEOUT = 1000;
 
 let poller;
-let apiTimer = null;
+let seekTimer = null;
 let seekPos = 0;
 
 let mpd = komponist.createConnection(6600, 'localhost', function(err, clinet) {
@@ -84,12 +84,15 @@ export let seekBwd = () => {
 
 export let seekWithDelay = () => {
   // wait for previous call
-  if (apiTimer === null) {
-    apiTimer = setTimeout(seek, API_TIMEOUT);
+  if (seekTimer === null) {
+    seekTimer = setTimeout(() => {
+      global.Logger.screen.log('Seek: ' + seekPos + 's');
+      mpd.seekcur(seekPos, errorHandler);
+      seekTimer = null;
+      seekPos = 0;
+    }, SEEK_TIMEOUT);
   } else {
-    clearTimeout(apiTimer);
     global.Logger.screen.log(seekPos + 's');
-    apiTimer = setTimeout(seek, API_TIMEOUT);
   }
 };
 
