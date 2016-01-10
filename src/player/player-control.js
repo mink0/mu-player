@@ -3,6 +3,8 @@ import * as playlistCtrl from '../components/playlist-ctrl';
 import errorHandler from '../helpers/error-handler';
 
 let poller;
+let apiTimer = null;
+let seekPos = 0;
 
 let mpd = komponist.createConnection(6600, 'localhost', function(err, clinet) {
   poller = setInterval(() => {
@@ -69,15 +71,25 @@ export let volumeDown = () => {
 };
 
 export let seekFwd = () => {
-  let seek = '+10';
-  global.Logger.screen.log('Seek: ' + seek + 's');
-  mpd.seekcur(seek, errorHandler);
+  seekPos = '+' + (parseInt(seekPos, 10) + 10);
+  seek();
 };
 
 export let seekBwd = () => {
-  let seek = '-10';
-  global.Logger.screen.log('Seek: ' + seek + 's');
-  mpd.seekcur(seek, errorHandler);
+  seekPos = '' + (parseInt(seekPos, 10) - 10);
+  seek();
+};
+
+export let seek = () => {
+  // wait for previous call
+  if (apiTimer === null) {
+    apiTimer = setTimeout(() => {
+      global.Logger.screen.log('Seek: ' + seekPos + 's');
+      mpd.seekcur(seekPos, errorHandler);
+      apiTimer = null;
+      seekPos = 0;
+    }, 1000);
+  }
 };
 
 export let getMpdClient = () => mpd;

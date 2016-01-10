@@ -17,8 +17,8 @@ let handleData = (result) => {
     obj.source = 'vk';
     obj.artist = obj.artist.replace(/&amp;/g, '&');
     obj.title = obj.title.replace(/&amp;/g, '&');
-
     obj.trackTitleFull = formatTrackFull(obj);
+    
     return obj;
   });
 };
