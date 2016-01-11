@@ -1,7 +1,8 @@
-var blessed = require('blessed');
-var Node = blessed.Node;
-var Box = blessed.Box;
-var pbarWidget = require('./pbar-widget.js');
+import blessed from 'blessed';
+import { timeConvert } from '../actions/music-actions';
+
+let Node = blessed.Node;
+let Box = blessed.Box;
 
 var pbarOpts = {
   bottom: 0,
@@ -108,17 +109,3 @@ PlayInfo.prototype.__proto__ = Box.prototype;
 PlayInfo.prototype.type = 'pbar';
 
 module.exports = PlayInfo;
-
-function timeConvert(_seconds) {
-  var sec_num = parseInt(_seconds, 10); // don't forget the second param
-  var hours = Math.floor(sec_num / 3600);
-  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-  var seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-  if (hours < 10) hours = '0' + hours;
-  if (minutes < 10) minutes = '0' + minutes;
-  if (seconds < 10) seconds = '0' + seconds;
-
-  var time = hours === '00' ? minutes + ':' + seconds : hours + ':' + minutes + ':' + seconds;
-  return time;
-}

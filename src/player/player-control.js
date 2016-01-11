@@ -1,12 +1,15 @@
 import komponist from 'komponist';
 import * as playlistCtrl from '../components/playlist-ctrl';
 import errorHandler from '../helpers/error-handler';
+import { timeConvert } from '../actions/music-actions';
 
 const SEEK_TIMEOUT = 1000;
+const SEEK_VALUE = 10;
 
 let poller;
 let seekTimer = null;
 let seekPos = 0;
+let seekVal = SEEK_VALUE;
 
 let mpd = komponist.createConnection(6600, 'localhost', function(err, clinet) {
   poller = setInterval(() => {
@@ -73,12 +76,12 @@ export let volumeDown = () => {
 };
 
 export let seekFwd = () => {
-  seekPos = '+' + (parseInt(seekPos, 10) + 10);
+  seekPos = '+' + (parseInt(seekPos, 10) + seekVal);
   seekWithDelay();
 };
 
 export let seekBwd = () => {
-  seekPos = '' + (parseInt(seekPos, 10) - 10);
+  seekPos = '' + (parseInt(seekPos, 10) - seekVal);
   seekWithDelay();
 };
 
@@ -87,7 +90,9 @@ export let seekWithDelay = () => {
   if (seekTimer === null) {
     seekTimer = setTimeout(seek, SEEK_TIMEOUT);
   } else {
-    global.Logger.screen.log(seekPos + 's');
+    if (seekVal < SEEK_VALUE * 5) seekVal = seekVal * 2;
+    global.Logger.screen.log('Seek to: ', seekPos >= 0 ? 
+      '+' + timeConvert(seekPos) : timeConvert(seekPos));
   }
 };
 
@@ -95,11 +100,14 @@ function seek() {
   mpd.seekcur(seekPos, (err) => {
     if (err) return errorHandler(err);
 
-    global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ' + seekPos + 's');
+    global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ', seekPos >= 0 ? 
+      '+' + timeConvert(seekPos) : timeConvert(seekPos));
+
     // wait for switching to new playback position
     seekTimer = setTimeout(() => {
       seekTimer = null;
       seekPos = 0;
+      seekVal = SEEK_VALUE;
     }, SEEK_TIMEOUT);
   });
 }
