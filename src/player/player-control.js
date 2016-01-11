@@ -1,7 +1,10 @@
 import komponist from 'komponist';
 import * as playlistCtrl from '../components/playlist-ctrl';
 import errorHandler from '../helpers/error-handler';
-import { timeConvert } from '../actions/music-actions';
+import {
+  timeConvert
+}
+from '../actions/music-actions';
 
 const SEEK_TIMEOUT = 1000;
 const SEEK_VALUE = 10;
@@ -42,7 +45,10 @@ mpd.on('changed', function(system) {
 });
 
 export let play = (url, id) => {
-  mpd.playid(id, errorHandler);
+  mpd.playid(id, (err) => {
+    if (err) return errorHandler(err);
+    metadata(url);
+  });
 };
 
 export let stop = () => {
@@ -91,24 +97,45 @@ export let seekWithDelay = () => {
     seekTimer = setTimeout(seek, SEEK_TIMEOUT);
   } else {
     if (seekVal < SEEK_VALUE * 5) seekVal = seekVal * 2;
-    global.Logger.screen.log('Seek to: ', seekPos >= 0 ? 
+
+    clearTimeout(seekTimer);
+    seekTimer = setTimeout(seek, SEEK_TIMEOUT);
+
+    global.Logger.screen.log('Seek to: ', seekPos >= 0 ?
       '+' + timeConvert(seekPos) : timeConvert(seekPos));
+
+    //playlistCtrl.updatePbar(null, seekPos);
   }
 };
 
+export let metadata = (url, cb=()=>{}) => {
+  mpd.command('lsinfo', [url], (err, info) => {
+    if (err) return cb(err);
+
+    for (var k in info) {
+      global.Logger.screen.log(`{cyan-fg}info{/cyan-fg} ${k}: ${info[k]}`);
+    }
+
+    return cb(null, info);
+  });
+
+};
+
 function seek() {
+  global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ', seekPos >= 0 ?
+    '+' + timeConvert(seekPos) : timeConvert(seekPos));
+
+  playlistCtrl.updatePbar(null, seekPos);
+
   mpd.seekcur(seekPos, (err) => {
     if (err) return errorHandler(err);
 
-    global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ', seekPos >= 0 ? 
-      '+' + timeConvert(seekPos) : timeConvert(seekPos));
-
     // wait for switching to new playback position
-    seekTimer = setTimeout(() => {
+    //seekTimer = setTimeout(() => {
       seekTimer = null;
       seekPos = 0;
       seekVal = SEEK_VALUE;
-    }, SEEK_TIMEOUT);
+    //}, SEEK_TIMEOUT);
   });
 }
 

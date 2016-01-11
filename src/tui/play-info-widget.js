@@ -45,10 +45,8 @@ var curTimeOpts = {
   content: '--/--',
 };
 
-function PlayInfo(options) {
+function PlayInfo(options={}) {
   if (!(this instanceof Node)) return new PlayInfo(options);
-
-  var options = options || {};
 
   Box.call(this, options);
 
@@ -59,9 +57,6 @@ function PlayInfo(options) {
   this.append(this.curTime);
   this.append(blessed.box(prefix));
   this.append(blessed.box(suffix));
-  //this.pbar.setProgress(100);
-
-  //this.curTime.width = this.curTime.width - 1;
 }
 
 PlayInfo.prototype.init = function(opts) {
@@ -81,12 +76,14 @@ PlayInfo.prototype.init = function(opts) {
   this.show();
 };
 
-PlayInfo.prototype.setProgress = function(elapsed) {
-  this.elapsed = elapsed;
+PlayInfo.prototype.setProgress = function(elapsed, seek) {
+  if (elapsed) this.elapsed = parseFloat(elapsed);
+  if (seek) this.elapsed = parseFloat(this.elapsed) + parseFloat(seek);
+
   this.curTime.setContent(timeConvert(this.elapsed) + '/' + timeConvert(this.duration));
   this.pbar.setProgress((this.elapsed / this.duration) * 100);
   this.curTime.width = this.curTime.content.length;
-  //this.render();
+  // this.render(); // high cpu load
 };
 
 PlayInfo.prototype.updateStatus = function(status) {
