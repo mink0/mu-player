@@ -48,6 +48,8 @@ export let play = (url, id) => {
   mpd.playid(id, (err) => {
     if (err) return errorHandler(err);
     metadata(url);
+    // FIX: mpd didn't send event sometimes on linux 
+   mpd.emit('changed', 'player');
   });
 };
 
