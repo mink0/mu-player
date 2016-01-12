@@ -51,6 +51,8 @@ let playCurrent = () => {
         urlFinded = true;
         (typeof url === 'function' ? url() : Promise.resolve(url)).then((url) => {
           player.play(url, id);
+          //FIX: on linux mpd didn't send event sometimes
+          playInfo.updateStatus('play');
         }).catch(errorHandler);
       } else {
         playlist.moveNext();

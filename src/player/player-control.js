@@ -126,17 +126,13 @@ function seek() {
   global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ', seekPos >= 0 ?
     '+' + timeConvert(seekPos) : timeConvert(seekPos));
 
-  //playlistCtrl.updatePbar(null, seekPos);
-
   mpd.seekcur(seekPos, (err) => {
     if (err) return errorHandler(err);
 
-    // wait for switching to new playback position
-    //seekTimer = setTimeout(() => {
-      seekTimer = null;
-      seekPos = 0;
-      seekVal = SEEK_VALUE;
-    //}, SEEK_TIMEOUT);
+    //FIXME: On Linux you should wait for switching to new playback position
+    seekTimer = null;
+    seekPos = 0;
+    seekVal = SEEK_VALUE;
   });
 }
 

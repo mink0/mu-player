@@ -14,10 +14,12 @@ You could use mu-player standalone or with any other full-featured MPD clients. 
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Changelog
+    - track metadata show
+    - progressive track seek
   
   * v0.2.0
     - Better track seek
-    - Logger scroll support 
+    - Log scrolling via keyboard/mouse
   
   * v0.1.3
     - Bug fix
