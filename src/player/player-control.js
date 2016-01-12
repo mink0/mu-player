@@ -48,8 +48,10 @@ export let play = (url, id) => {
   mpd.playid(id, (err) => {
     if (err) return errorHandler(err);
     metadata(url);
-    // FIX: mpd didn't send event sometimes on linux 
-   mpd.emit('changed', 'player');
+    // FIX: mpd didn't send play event sometimes on linux 
+    setTimeout(() => {
+      mpd.emit('changed', 'player')
+    }, 1000);
   });
 };
 
@@ -84,13 +86,13 @@ export let volumeDown = () => {
 };
 
 export let seekFwd = () => {
-  seekPos = '+' + (parseInt(seekPos, 10) + seekVal);
+  seekPos = seekPos + seekVal;
   playlistCtrl.updatePbar(null, seekVal);
   seekWithDelay();
 };
 
 export let seekBwd = () => {
-  seekPos = '' + (parseInt(seekPos, 10) - seekVal);
+  seekPos = seekPos - seekVal;
   playlistCtrl.updatePbar(null, -1 * seekVal);
   seekWithDelay();
 };
@@ -127,8 +129,9 @@ export let metadata = (url, cb=()=>{}) => {
 function seek() {
   global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ', seekPos >= 0 ?
     '+' + timeConvert(seekPos) : timeConvert(seekPos));
-
-  mpd.seekcur(seekPos, (err) => {
+  
+  let seekPosMpd = seekPos > 0 ? '+' + seekPos : '' + seekPos; 
+  mpd.seekcur(seekPosMpd, (err) => {
     if (err) return errorHandler(err);
 
     //FIXME: On Linux you should wait for switching to new playback position

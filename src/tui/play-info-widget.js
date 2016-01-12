@@ -80,7 +80,7 @@ PlayInfo.prototype.init = function(opts) {
 PlayInfo.prototype.setProgress = function(elapsed, seek) {
   if (seek) {
     this.elapsed = parseFloat(this.elapsed) + parseFloat(seek);
-    
+
     // prevent pbar reset on track seek
     if (pTimeout) clearTimeout(pTimeout);
     pTimeout = setTimeout(() => {
@@ -92,6 +92,8 @@ PlayInfo.prototype.setProgress = function(elapsed, seek) {
     if (pTimeout !== null) return;
     this.elapsed = parseFloat(elapsed);
   }
+
+  if (this.elapsed < 0) this.elapsed = 0;
 
   this.curTime.setContent(timeConvert(this.elapsed) + '/' + timeConvert(this.duration));
   this.pbar.setProgress((this.elapsed / this.duration) * 100);
@@ -111,7 +113,12 @@ PlayInfo.prototype.updateStatus = function(status) {
 };
 
 PlayInfo.prototype.updateLabel = function() {
-  this.setLabel('[' + this.statusText + '] {light-yellow-fg}' + this.artist + ' - ' + this.title + '{/light-yellow-fg}');
+  let label = '[' + this.statusText + '] {light-yellow-fg}' + 
+    this.artist.trim()+ ' - ' + this.title.trim();
+ 
+  if (label.length > this.width) label = label.substr(0, this.width) + '~';
+  
+  this.setLabel(label);
 };
 
 PlayInfo.prototype.__proto__ = Box.prototype;

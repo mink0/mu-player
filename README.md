@@ -14,7 +14,8 @@ You could use mu-player standalone or with any other full-featured MPD clients. 
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Changelog
-    - fix 
+    - Fix: long labels on track info
+    - Fix: no track progress on linux sometimes
     - track metadata show
     - progressive track seek
   
