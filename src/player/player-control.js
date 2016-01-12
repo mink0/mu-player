@@ -83,11 +83,13 @@ export let volumeDown = () => {
 
 export let seekFwd = () => {
   seekPos = '+' + (parseInt(seekPos, 10) + seekVal);
+  playlistCtrl.updatePbar(null, seekVal);
   seekWithDelay();
 };
 
 export let seekBwd = () => {
   seekPos = '' + (parseInt(seekPos, 10) - seekVal);
+  playlistCtrl.updatePbar(null, -1 * seekVal);
   seekWithDelay();
 };
 
@@ -104,7 +106,6 @@ export let seekWithDelay = () => {
     global.Logger.screen.log('Seek to: ', seekPos >= 0 ?
       '+' + timeConvert(seekPos) : timeConvert(seekPos));
 
-    //playlistCtrl.updatePbar(null, seekPos);
   }
 };
 
@@ -125,7 +126,7 @@ function seek() {
   global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ', seekPos >= 0 ?
     '+' + timeConvert(seekPos) : timeConvert(seekPos));
 
-  playlistCtrl.updatePbar(null, seekPos);
+  //playlistCtrl.updatePbar(null, seekPos);
 
   mpd.seekcur(seekPos, (err) => {
     if (err) return errorHandler(err);

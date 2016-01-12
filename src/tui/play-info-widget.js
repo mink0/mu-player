@@ -3,6 +3,7 @@ import { timeConvert } from '../actions/music-actions';
 
 let Node = blessed.Node;
 let Box = blessed.Box;
+let pTimeout = null;
 
 var pbarOpts = {
   bottom: 0,
@@ -77,8 +78,20 @@ PlayInfo.prototype.init = function(opts) {
 };
 
 PlayInfo.prototype.setProgress = function(elapsed, seek) {
-  if (elapsed) this.elapsed = parseFloat(elapsed);
-  if (seek) this.elapsed = parseFloat(this.elapsed) + parseFloat(seek);
+  if (seek) {
+    this.elapsed = parseFloat(this.elapsed) + parseFloat(seek);
+    
+    // prevent pbar reset on track seek
+    if (pTimeout) clearTimeout(pTimeout);
+    pTimeout = setTimeout(() => {
+      pTimeout = null;
+    }, 1000);
+  }
+
+  if (elapsed) {
+    if (pTimeout !== null) return;
+    this.elapsed = parseFloat(elapsed);
+  }
 
   this.curTime.setContent(timeConvert(this.elapsed) + '/' + timeConvert(this.duration));
   this.pbar.setProgress((this.elapsed / this.duration) * 100);
