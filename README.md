@@ -4,9 +4,9 @@
 
 ### Top Features
 
-  - Play ANY music from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/) for free.
+  - Play ANY music  for free from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
   - Explore new music by [last.fm](http://lastfm.com/) top tracks and similar artists search.
-  - Low system requirements. It will pump smooth even on your grandpa notebook.
+  - Low system requirements. It will pump smooth even on your grandpa's notebook.
   - Mu-player will definitely save your laptop battery. CPU consumption of in-browser playback comparing with MPD is HUGE.
 
 You could use mu-player standalone or with any other full-featured MPD clients. See http://mpd.wikia.com/wiki/Clients for some greatness. For Ubuntu and Linux Mint [mpDris2](https://github.com/eonpatapon/mpDris2) is recommended. It will add native popups, multimedia keys support and playback control in a system tray.
@@ -14,6 +14,7 @@ You could use mu-player standalone or with any other full-featured MPD clients. 
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Changelog
+    - Support for changing MPD connection parameters from config file
     - Fix: long labels on track info
     - Fix: no track progress on linux sometimes
     - track metadata show
@@ -49,7 +50,13 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
 Tested on OS X Yosemite and Ubuntu linux 14.04.
 
 ### Setup
-  * Run `mu --setup` for editing your credentials.
+  * Run `mu --setup` to edit your credentials.
+
+### Config
+  * Config file is located in `~/.murc`.
+
+### Log
+  * Log is located in `/tmp/mu.log`.
 
 ### Help
   * Press `?` for in-app help.

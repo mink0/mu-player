@@ -8,6 +8,10 @@ var storage = require('dot-file-config')('.murc', {
 storage.data.vkLinks = storage.data.vkLinks || [];
 storage.data.gmLinks = storage.data.gmLinks || [];
 storage.data.fs = storage.data.fs || [];
+storage.data.mpd = storage.data.mpd || {
+  host: 'localhost',
+  port: '6600'
+};
 
 import events from 'events';
 

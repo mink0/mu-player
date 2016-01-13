@@ -5,6 +5,7 @@ import {
   timeConvert
 }
 from '../actions/music-actions';
+import storage from '../storage/storage';
 
 const SEEK_TIMEOUT = 1000;
 const SEEK_VALUE = 10;
@@ -13,8 +14,10 @@ let poller;
 let seekTimer = null;
 let seekPos = 0;
 let seekVal = SEEK_VALUE;
+let host = storage.data.mpd.host;
+let port = storage.data.mpd.port;
 
-let mpd = komponist.createConnection(6600, 'localhost', function(err, clinet) {
+let mpd = komponist.createConnection(port, host, function(err, clinet) {
   poller = setInterval(() => {
     mpd.status((err, status) => {
       if (err) return errorHandler(err);
@@ -50,8 +53,8 @@ export let play = (url, id) => {
     metadata(url);
     // FIX: mpd didn't send play event sometimes on linux 
     setTimeout(() => {
-      mpd.emit('changed', 'player')
-    }, 1000);
+      mpd.emit('changed', 'player');
+    }, 2000);
   });
 };
 
