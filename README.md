@@ -4,10 +4,10 @@
 
 ### Top Features
 
-  - Play ANY music  for free from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
+  - Play ANY music for free from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
   - Explore new music by [last.fm](http://lastfm.com/) top tracks and similar artists search.
   - Low system requirements. It will pump smooth even on your grandpa's notebook.
-  - Mu-player will definitely save your laptop battery. CPU consumption of in-browser playback comparing with MPD is HUGE.
+  - Mu-player will definitely save your laptop battery. CPU load of in-browser playback comparing to MPD is HUGE.
 
 You could use mu-player standalone or with any other full-featured MPD clients. See http://mpd.wikia.com/wiki/Clients for some greatness. For Ubuntu and Linux Mint [mpDris2](https://github.com/eonpatapon/mpDris2) is recommended. It will add native popups, multimedia keys support and playback control in a system tray.
 
@@ -17,8 +17,8 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
     - Support for changing MPD connection parameters from config file
     - Fix: long labels on track info
     - Fix: no track progress on linux sometimes
-    - track metadata show
-    - progressive track seek
+    - Track metadata show
+    - Progressive track seek
   
   * v0.2.0
     - Better track seek
