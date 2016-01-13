@@ -114,7 +114,7 @@ export default (screen) => {
 
   layout.playlist = blessed.list({
     tags: true,
-    label: 'Playlist',
+    // label: 'Playlist',
     border: 'line',
     padding: {
       left: 1,
