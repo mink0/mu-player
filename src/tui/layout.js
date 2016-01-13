@@ -45,7 +45,7 @@ export default (screen) => {
    */
 
   layout.mediaTree = treeWidget({
-    height: '80%',
+    height: '80%+1',
     label: 'Media',
     border: 'line',
     tags: true,
@@ -73,7 +73,7 @@ export default (screen) => {
 
   layout.logger = blessed.log({
     bottom: 0,
-    height: '20%+1',
+    height: '20%',
     label: 'Log',
     border: 'line',
     inputOnFocus: true,
