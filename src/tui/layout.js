@@ -1,5 +1,4 @@
 import blessed from 'blessed';
-import contrib from 'blessed-contrib';
 
 import treeWidget from './tree-widget';
 import playInfo from './play-info-widget';
@@ -15,7 +14,6 @@ export default (screen) => {
     height: '100%-1',
     width: '100%',
     style: {
-      bg: 'white',
       border: {
         fg: 'brightblack'
       }
@@ -24,9 +22,8 @@ export default (screen) => {
 
   layout.leftPane = blessed.box({
     left: 0,
-    width: '40%',
+    width: '40%+1',
     style: {
-      bg: 'yellow',
       border: {
         fg: 'brightblack'
       }
@@ -37,7 +34,6 @@ export default (screen) => {
     right: 0,
     width: '60%',
     style: {
-      bg: 'yellow',
       border: {
         fg: 'brightblack'
       }
@@ -48,19 +44,10 @@ export default (screen) => {
    * Left pane
    */
 
-  layout.mediaBrowserBox = blessed.box({
-    height: '70%',
-    label: 'Media',
-    style: {
-      bg: 'black',
-      border: {
-        fg: 'brightblack'
-      }
-    },
-  });
-
   layout.mediaTree = treeWidget({
-    top: 0,
+    height: '80%',
+    label: 'Media',
+    border: 'line',
     tags: true,
     // input: true,
     // vi: true,
@@ -74,8 +61,10 @@ export default (screen) => {
       fg: 'gray'
     },
     style: {
-      bg: 'green',
       fg: 'white',
+      border: {
+        fg: 'brightblack'
+      },
       selected: {
         fg: 'ligthwhite'
       }
@@ -84,8 +73,9 @@ export default (screen) => {
 
   layout.logger = blessed.log({
     bottom: 0,
-    height: '30%',
+    height: '20%+1',
     label: 'Log',
+    border: 'line',
     inputOnFocus: true,
     tags: true,
     input: true,
@@ -94,7 +84,6 @@ export default (screen) => {
     vi: true,
     mouse: true,
     style: {
-      bg: 'magenta',
       border: {
         fg: 'brightblack'
       }
@@ -105,24 +94,30 @@ export default (screen) => {
    * Right pane
    */
 
-  layout.playlistBox = blessed.box({
-    label: 'Playlist',
-    style: {
-      bg: 'cyan',
-      border: {
-        fg: 'brightblack'
-      }
-    },
+  // layout.playlistBox = blessed.box({
+  //   label: 'Playlist',
+  //   style: {
+  //     bg: 'cyan',
+  //     border: {
+  //       fg: 'brightblack'
+  //     }
+  //   },
+  // });
+
+  layout.plistCount = blessed.box({
+    top: -1,
+    width: 'shrink',
+    right: 1,
+    height: 1,
+    tags: true
   });
 
   layout.playlist = blessed.list({
-    top: 0,
-    left: 0,
     tags: true,
-    width: '100%-2',
+    label: 'Playlist',
+    border: 'line',
     padding: {
       left: 1,
-      right: 1,
     },
     input: true,
     scrollable: true,
@@ -136,6 +131,9 @@ export default (screen) => {
     },
     style: {
       fg: 'white',
+      border: {
+        fg: 'brightblack'
+      },
       selected: {
         //bg: 'yellow',
         fg: 'ligthwhite'
@@ -144,21 +142,15 @@ export default (screen) => {
   });
 
   layout.playInfo = playInfo({
+    bottom: 0,
     height: 3,
+    border: 'line',
     tags: true,
     style: {
       border: {
         fg: 'brightblack'
       }
     }
-  });
-
-  layout.plistCount = blessed.box({
-    top: -1,
-    width: 'shrink',
-    right: 1,
-    height: 1,
-    tags: true
   });
 
   /**
@@ -194,14 +186,14 @@ export default (screen) => {
   layout.bg.append(layout.rightPane);
 
   // left pane  
-  layout.mediaBrowserBox.append(layout.mediaTree);
-  layout.leftPane.append(layout.mediaBrowserBox);
+  layout.leftPane.append(layout.mediaTree);
   layout.leftPane.append(layout.logger);
 
   // right pane
-  layout.playlistBox.append(layout.playlist);
-  layout.rightPane.append(layout.playlistBox);
-  
+  layout.rightPane.append(layout.playlist);
+  layout.rightPane.append(layout.playInfo);
+  layout.playlist.append(layout.plistCount);
+
   // footer
   screen.append(layout.qprefix);
   screen.append(layout.qsearch);

@@ -29,7 +29,6 @@
   "dependencies": {
     "babel": "^5.8.23",
     "blessed": "^0.1.80",
-    "blessed-contrib": "^2.5.2",
     "bluebird": "^2.10.0",
     "dot-file-config": "^0.5.0",
     "inquirer-menu": "^0.1.4",

@@ -23,7 +23,7 @@ setupCredentials(cli.flags.setup).then(() => {
   let screen = tui();
   let layout = drawLayout(screen);
 
-  //startApp(screen, layout);
+  startApp(screen, layout);
 
   screen.key(['space'], () => player.pause());
   screen.key(['s'], () => player.stop());

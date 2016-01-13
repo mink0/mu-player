@@ -5,6 +5,7 @@ export default () => {
     smartCSR: true,
     dockBorders: true,
     ignoreDockContrast: true,
+    autoPadding: true,
     cursor: {
       artificial: true,
       shape: 'underline',
