@@ -116,7 +116,10 @@ PlayInfo.prototype.updateLabel = function() {
   let label = '[' + this.statusText + '] {light-yellow-fg}' + 
     this.artist.trim()+ ' - ' + this.title.trim();
  
-  if (label.length > this.width) label = label.substr(0, this.width) + '~';
+  let notags = label.replace(/\{(?:.|\n)*?\}/gm, '');
+  
+  if (notags.length > this.width - 5) 
+    label = label.substring(0, this.width + (label.length - notags.length) - 5) + '~';
   
   this.setLabel(label);
 };

@@ -112,6 +112,7 @@ export default (screen) => {
   });
 
   layout.playlist = blessed.list({
+    height: '100%-2',
     tags: true,
     // label: 'Playlist', // blessed bug - slow render with label
     border: 'line',
