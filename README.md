@@ -14,6 +14,7 @@ You could use mu-player standalone or with any other full-featured MPD clients. 
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Changelog
+  * v0.3.0
     - Total layout rewrite for proper support all terminals resolutions.
     - Support for changing MPD connection parameters from config file
     - Track metadata show
@@ -49,7 +50,7 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
   * Now you could run `mu` and setup credentials for lastfm.com, soundcloud.com and vk.com. We have tons of free music there but you need to register accounts first.
   * Run `mu` again and enjoy the music.
 
-Tested on OS X Yosemite and Ubuntu linux 14.04.
+Tested on OS X Yosemite, Ubuntu linux 14.04, 15.10, Linux Mint 17.3.
 
 ### Setup
   * Run `mu --setup` to edit your credentials.
