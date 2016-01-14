@@ -14,12 +14,13 @@ You could use mu-player standalone or with any other full-featured MPD clients. 
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Changelog
-    - Full layout rewrite for better support low-resolution terminals.
+    - Total layout rewrite for proper support all terminals resolutions.
     - Support for changing MPD connection parameters from config file
-    - Fix: long labels on track info
-    - Fix: no track progress on linux sometimes
     - Track metadata show
     - Progressive track seek
+    - Fix long labels on track info
+    - Fix no track progress on linux sometimes
+    - Fix track-info playlist overlaping
   
   * v0.2.0
     - Better track seek

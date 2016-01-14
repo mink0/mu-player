@@ -112,7 +112,7 @@ export default (screen) => {
   });
 
   layout.playlist = blessed.list({
-    height: '100%-2',
+    height: '100%',
     tags: true,
     // label: 'Playlist', // blessed bug - slow render with label
     border: 'line',
@@ -199,29 +199,6 @@ export default (screen) => {
   screen.append(layout.qprefix);
   screen.append(layout.qsearch);
 
-
-
-  // layout.mediaBrowserBox = grid.set(0, 0, 80, 40, blessed.box, mediaBrowserBoxOpts);
-  // layout.playlistBox = grid.set(0, 40, 100, 60, blessed.box, playlistBoxOpts);
-  // layout.logger = grid.set(80, 0, 20, 40, blessed.log, loggerOpts);
-  // layout.playInfo = grid.set(92, 40, 8, 60, playInfo, playInfoOpts);
-  // layout.playInfo.hide();
-
-  // layout.qprefix = blessed.box(qprefixOpts);
-  // layout.qsearch = blessed.textbox(qsearchOpts);
-  
-  // layout.playlist = blessed.list(playlistOpts);
-  // layout.plistCount = blessed.box(plistCountOpts);
-  // layout.playlistBox.append(layout.playlist);
-  // layout.playlistBox.append(layout.plistCount);
-
-  // layout.mediaTree = treeWidget(mediaTreeOpts);
-  // layout.mediaBrowserBox.append(layout.mediaTree);
-
-
-  // screen.append(layout.qprefix);
-  // screen.append(layout.qsearch);
-
   // Focus events:
   layout.playlist.on('focus', () => layout.playlist.style.selected.bg = 'yellow');
   layout.playlist.on('blur', () => layout.playlist.style.selected.bg = 'default');
@@ -235,5 +212,9 @@ export default (screen) => {
   });
   layout.qsearch.on('blur', () => layout.qsearch.style.fg = 'brightwhite');
 
+  // FIX: Hacky fix of overlaping playinfo and playlist
+  layout.playInfo.on('show', () => layout.playlist.height = '100%-2');
+  layout.playInfo.on('hide', () => layout.playlist.height = '100%');
+  
   return layout;
 };
