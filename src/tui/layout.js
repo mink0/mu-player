@@ -122,7 +122,7 @@ export default (screen) => {
     input: true,
     scrollable: true,
     keys: true,
-    vi: true,
+    //vi: true,
     mouse: true,
     scrollbar: {
       ch: ' ',

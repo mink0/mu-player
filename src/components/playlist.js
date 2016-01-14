@@ -12,7 +12,7 @@ function Playlist(plistPane, countPane) {
   this.clearOnAppend = null;
   this.counter = countPane;
 
-  plistPane.on('select', (item, index) => self.setCurrent(index));
+  this.list.on('select', (item, index) => self.setCurrent(index));
 }
 
 Playlist.prototype.setPlaylist = function(tracks) {
