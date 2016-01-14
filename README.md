@@ -14,6 +14,8 @@ You could use mu-player standalone or with any other full-featured MPD clients. 
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Changelog
+    - Fix locked 'q' key bug
+    
   * v0.3.0
     - Total layout rewrite for proper support all terminals resolutions.
     - Support for changing MPD connection parameters from config file

@@ -1,20 +1,21 @@
 {
   "name": "mu-player",
   "version": "0.3.0",
-  "description": "Play audio from vk.com and soundcloud.com via mpd",
+  "description": "Play music from vk.com and soundcloud.com via Music Player Daemon",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mink0/mu-player.git"
+  },
+  "author": "minkolazer",
   "main": "cli.js",
   "bin": {
     "mu": "cli.js"
   },
+  "preferGlobal": "true",
   "scripts": {
     "start": "node cli.js",
     "test": "mocha --require babel/register",
     "test:watch": "mocha -w --require babel/register"
-  },
-  "preferGlobal": "true",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mink0/mu-player.git"
   },
   "keywords": [
     "vk",
@@ -24,7 +25,6 @@
     "music",
     "player"
   ],
-  "author": "minkolazer",
   "license": "MIT",
   "dependencies": {
     "babel": "^5.8.23",

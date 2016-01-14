@@ -20,10 +20,19 @@ export default (screen, message, lockKeys = true, label = 'Loading') => {
   screen.lockKeys = lockKeys;
 
   screen.blockEsc = true;
-  screen.onceKey(['escape'], () => {
+  
+  let clear = () => {
     screen.blockEsc = false;
     screen.lockKeys = false;
+  };
+
+  screen.onceKey(['escape', 'q'], () => {
+    clear();
     loading.stop();
+  });
+
+  loading.on('hide', () => {
+    clear();
   });
 
   return loading;

@@ -45,7 +45,7 @@ export default (screen, artist) => {
     }
   };
 
-  let clean = () => {
+  let clear = () => {
     layout.destroy();
     screen.blockEsc = false;
     screen.restoreFocus();
@@ -53,7 +53,7 @@ export default (screen, artist) => {
 
   screen.blockEsc = true;
   list = blessed.list(listOpts);
-  list.key(['escape', 'left', 'right', 'tab'], () => clean());
+  list.key(['escape', 'left', 'right', 'tab'], () => clear());
 
   lfmActions.getSimilar(artist).then((artists) => {
     global.Logger.screen.log('{green-fg}Found {/green-fg}' + artists.artist.length +
@@ -68,7 +68,7 @@ export default (screen, artist) => {
 
   return new Promise((resolve, reject) => {
     list.on('select', (selected, index) => {
-      clean();
+      clear();
       resolve(selected.content);
     });
   });
