@@ -46,7 +46,7 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
   * Install mu-player:
     - MAC OS X: `npm -g install mu-player`.
     - Ubuntu (Debian) Linux: `sudo npm -g install mu-player`.
-  * Now you could run `mu` and setup credentials for lastfm.com, soundcloud.com and vk.com. We have tons of free music there but you need to register accounts there first.
+  * Now you could run `mu` and setup credentials for lastfm.com, soundcloud.com and vk.com. We have tons of free music there but you need to register accounts first.
   * Run `mu` again and enjoy the music.
 
 Tested on OS X Yosemite and Ubuntu linux 14.04.
