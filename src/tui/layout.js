@@ -94,16 +94,6 @@ export default (screen) => {
    * Right pane
    */
 
-  // layout.playlistBox = blessed.box({
-  //   label: 'Playlist',
-  //   style: {
-  //     bg: 'cyan',
-  //     border: {
-  //       fg: 'brightblack'
-  //     }
-  //   },
-  // });
-
   layout.plistCount = blessed.box({
     top: -1,
     width: 'shrink',
@@ -112,9 +102,18 @@ export default (screen) => {
     tags: true
   });
 
+  // blessed bug - slow render with label forced me to do this workaround
+  layout.plistLabel = blessed.box({
+    top: -1,
+    width: 'shrink',
+    left: 0,
+    height: 1,
+    content: 'Playlist'
+  });
+
   layout.playlist = blessed.list({
     tags: true,
-    // label: 'Playlist',
+    // label: 'Playlist', // blessed bug - slow render with label
     border: 'line',
     padding: {
       left: 1,
@@ -193,6 +192,7 @@ export default (screen) => {
   layout.rightPane.append(layout.playlist);
   layout.rightPane.append(layout.playInfo);
   layout.playlist.append(layout.plistCount);
+  layout.playlist.append(layout.plistLabel);
 
   // footer
   screen.append(layout.qprefix);
