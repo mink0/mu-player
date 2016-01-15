@@ -1,27 +1,39 @@
 import * as vk from 'vk-universal-api';
-
 import splitTracklist from 'split-tracklist';
-import Promise from 'bluebird';
-
 import {
+  getRemoteBitrate,
   formatTrack
 }
 from './music-actions';
+import errorHandler from '../helpers/error-handler';
+import Promise from 'bluebird';
 
 const SEARCH_LIMIT = 1000;
 
 let formatTrackFull = (track) => formatTrack(track);
 
-let handleData = (result) => {
-  return result.filter(obj => obj.artist && obj.title).map(obj => {
+let handleData = Promise.promisify((result, cb) => {
+  let count = 0;
+  let out = result.filter(obj => obj.artist && obj.title).map(obj => {
     obj.source = 'vk';
     obj.artist = obj.artist.replace(/&amp;/g, '&');
     obj.title = obj.title.replace(/&amp;/g, '&');
-    obj.trackTitleFull = formatTrackFull(obj);
-    
+    //obj.trackTitleFull = formatTrackFull(obj);
+    count++;
+    getRemoteBitrate(obj.url, obj.duration, function(err, bitrate) {
+      if (err) return errorHandler(err);
+      obj.bitrate = bitrate;
+      obj.trackTitleFull = formatTrackFull(obj);
+
+      if (--count === 0) {
+        Logger.screen.log('all done!');
+        return cb(null, out);
+      }
+    });
+
     return obj;
   });
-};
+});
 
 export let getSearch = (query, opts) => {
   Logger.screen.log(`vk.com audio.search("${query}")`);

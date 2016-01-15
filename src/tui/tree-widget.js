@@ -31,13 +31,13 @@ function Tree(options) {
     style: options.style,
     padding: options.padding,
     keys: true,
+    mouse: options.mouse,
     tags: options.tags,
     input: options.input,
     vi: options.vi,
     ignoreKeys: options.ignoreKeys,
     scrollbar: options.scrollbar,
     scrollable: options.scrollable,
-    mouse: options.mouse
   });
 
   this.append(this.rows);

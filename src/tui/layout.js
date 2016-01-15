@@ -49,9 +49,10 @@ export default (screen) => {
     label: 'Media',
     border: 'line',
     tags: true,
-    // input: true,
-    // vi: true,
-    // mouse: true,
+    input: true,
+    vi: true,
+    mouse: true,
+    scrollable: true,
     template: {
       spaces: true
     },
@@ -122,7 +123,7 @@ export default (screen) => {
     input: true,
     scrollable: true,
     keys: true,
-    //vi: true,
+    vi: true,
     mouse: true,
     scrollbar: {
       ch: ' ',
