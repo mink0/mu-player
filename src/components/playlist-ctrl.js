@@ -35,7 +35,9 @@ let errorHandler = (err) => {
   if (typeof err === 'object') {
     if (err.code == 14) {
       Logger.screen.error('VKontakte API limits reached');
-    } else {
+    } else if (err.cause) {
+      Logger.screen.error('ERROR:', err.cause);
+    }else {
       if (err.error_msg) Logger.screen.error('ERR_MSG', err.error_msg);
       if (err.code) Logger.screen.error('ERR_CODE', err.code);
       Logger.screen.error('ERROR:', err);
@@ -73,18 +75,22 @@ export let search = (payload) => {
     playlist.clearOnAppend = true;
     let vk = vkActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
     let sc = scActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
-    
+
     Promise.all([vk, sc]).then(() => {
-      global.Logger.screen.log('All done!', playlist.data.length);
+      global.Logger.screen.log('Found: ', playlist.data.length);
       let promises = [];
+
       playlist.data.forEach((track) => {
+        if (track.source)
         promises.push(getBitrateAsync(track.url, track.duration).then((bitrate) => {
           track.bitrate = bitrate;
-        }));
+        }).catch(errorHandler));
       });
 
-      Promise.all(promises).then(() => { 
-        playlist.sort(payload.query); 
+      global.Logger.screen.log('Loading bitrates...');
+      Promise.all(promises).then(() => {
+        global.Logger.screen.log('...loaded');
+        playlist.sort(payload.query);
       });
     });
 

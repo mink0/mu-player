@@ -3,26 +3,27 @@ import request from 'request';
 import Promise from 'bluebird';
 
 export let getRemoteAudioSize = (url, cb) => {
-  request.head(url, (err, res) =>{
+  request.head(url, (err, res) => {
     if (err) return cb(err);
 
-    if (res.statusCode == 200) {
-      if (res.headers['content-type'] !== 'audio/mpeg') 
-        return cb(new Error('Unknown content-type for ' + url));
+    if (res.statusCode !== 200)
+      return cb(new Error('Wrong status code for ' + url));
 
-      cb(null, parseInt(res.headers['content-length'], 10));
-    } 
+    if (res.headers['content-type'] !== 'audio/mpeg')
+      return cb(new Error('Unknown content-type for ' + url));
 
-    // Logger.screen.log(res.headers);
+    let out = {};
+    if (res.headers['x-amz-meta-bitrate'])
+      out.bitrate = res.headers['x-amz-meta-bitrate'];
+
+    if (res.headers['content-length'])
+      out.size = parseInt(res.headers['content-length'], 10);
+
+    if ((out.size == 0 || out.size == undefined) && !out.bitrate)
+      return cb(new Error('Unknown content-length for ' + url));
+
+    cb(null, out);
   });
-
-    // obj.url = function() {
-    //   return  req.getAsync({ url: obj.stream_url + '?client_id=' + storage.data.scClientId,
-    //     json: true,
-    //     followRedirect: false
-    //   }).then((res) => res[1].location.replace(/^https:\/\//i, 'http://'));
-    // };
-
 };
 
 export let getRemoteBitrate = (url, duration, cb) => {
@@ -30,10 +31,16 @@ export let getRemoteBitrate = (url, duration, cb) => {
   let std = [64, 128, 192, 224, 256, 320];
   let sv;
   var duration = parseInt(duration, 10);
-  getRemoteAudioSize(url, function(err, size) {
+
+  getRemoteAudioSize(url, function(err, data) {
     if (err) return cb(err);
 
-    let bitrate = Math.round((size * 8 / 1000) / duration);
+    if (data.bitrate) return cb(null, parseInt(data.bitrate, 10));
+
+    let bitrate = Math.round((data.size * 8 / 1000) / duration);
+
+    if (bitrate > 320) bitrate = 320; // embeded cover
+
     for (var i = 0; i < std.length; i++) {
       sv = bitrate * si;
       if (bitrate - sv <= std[i] && bitrate + sv >= std[i]) {
@@ -44,36 +51,6 @@ export let getRemoteBitrate = (url, duration, cb) => {
 
     return cb(null, bitrate);
   });
-};
-
-export let formatTrack = (track) => {
-  if (track.label) {
-		return `{light-red-fg}${track.label}{/light-red-fg}`;
-	}
-
-  let result = `{bold}${track.artist}{/bold}`;
-
-  if (track.source) {
-    result = `[${track.source}] ` + result;
-  }
-
-	if (track.title) {
-		result += ` - ${  track.title}`;
-	}
-
-  if (track.duration) {
-    let duration = _.padLeft(track.duration / 60 | 0, 2, '0') + ':' + _.padLeft(track.duration % 60, 2, '0');
-    
-    if (track.bitrate) result += ` [${track.bitrate}kbps]`;
-
-    result += ` {|}${duration}`;
-  }
-
-  if (!track.url) {
-    result = `Not Found: ${result}`;
-  }
-
-  return result;
 };
 
 export let format = (items) => {
@@ -88,7 +65,7 @@ export let format = (items) => {
 export let timeConvert = (_seconds) => {
   let bzero = 1;
   var sec_num = parseInt(_seconds, 10); // don't forget the second param
-  
+
   if (sec_num < 0) bzero = -1;
   sec_num = sec_num * bzero;
 
@@ -101,8 +78,8 @@ export let timeConvert = (_seconds) => {
   if (seconds < 10) seconds = '0' + seconds;
 
   var time = hours === '00' ? minutes + ':' + seconds : hours + ':' + minutes + ':' + seconds;
-  
+
   if (bzero === -1) time = '-' + time;
-  
+
   return time;
 };

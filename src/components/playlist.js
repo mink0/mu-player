@@ -44,7 +44,10 @@ Playlist.prototype.reset = function() {
 Playlist.prototype.addItems = function(tracks) {
   //this.removeDuplicates();
   for (var i = 0; i < tracks.length; i++) {
+    tracks[i].trackTitleFull = this.formatTrackTitle(tracks[i]);
+
     this.list.addItem(tracks[i].trackTitleFull);
+
     this.mpdAdd(tracks[i]);
   }
 
@@ -116,16 +119,18 @@ Playlist.prototype.sort = function(query) {
   let WEIGHTS = {
     vk: 10,
     artistExact: 10,
-    trackExact: 8,
+    titleExact: 8,
     artistContains: 6,
-    trackContains: 4,
-    bitrate: 10,
+    titleContains: 4,
+    bitrate: 20,
     pos: 10
   };
 
   let calcWeight = (track) => {
-    if (track.bitrate) track.weight += (track.bitrate / 320) * WEIGHTS.bitrate;
-    
+    if (!track.hasOwnProperty('weight')) track.weight = 0;
+
+    if (track.bitrate) track.weight += ((track.bitrate / 320) * WEIGHTS.bitrate);
+
     if (track.artist) {
       if (track.artist.trim().toLowerCase() === query.trim().toLowerCase())
         track.weight += WEIGHTS.artistExact;
@@ -134,58 +139,38 @@ Playlist.prototype.sort = function(query) {
         track.weight += WEIGHTS.artistContains;
     }
 
+    if (track.title) {
+      if (track.title.trim().toLowerCase() === query.trim().toLowerCase())
+        track.weight += WEIGHTS.titleExact;
+
+      if (track.title.trim().toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
+        track.weight += WEIGHTS.titleContains;
+    }
+
   };
 
   // to calculate order weight
   this.data.forEach((track) => {
-    track.weight = calcWeight(track);
+    calcWeight(track);
+
     if (track.source === 'vk') vkTracks.push(track);
     if (track.source === 'sc') scTracks.push(track);
+  });
+
+  vkTracks.forEach((track, index) => {
+    track.weight += ((vkTracks.length - index) / vkTracks.length) * WEIGHTS.pos;
   });
 
   scTracks.forEach((track, index) => {
     track.weight += ((scTracks.length - index) / scTracks.length) * WEIGHTS.pos;
   });
-  
-  vkTracks.forEach((track, index) => {
-    track.weight += ((vkTracks.length - index) / vkTracks.length) * WEIGHTS.pos;
+
+  let sorted = this.data.sort(function(a, b) {
+    return parseFloat(b.weight, 10) - parseFloat(a.weight, 10);
   });
 
+  this.setPlaylist(sorted);
 
-
-  // let posWeight;
-  // let bitWeight;
-  // this.data.forEach((track, index) => {
-  //   if (track.source === 'vk') {
-  //     posWeight = (vkTracks.length - index)/vkTracks.length;
-  //     if (posWeight <= 0) {
-  //       posWeight = (vkTracks.length + scTracks.length - index) / vkTracks.length;
-  //     }
-  //   } else if (track.source === 'sc') {
-  //     posWeight = (scTracks.length - index)/scTracks.length;
-  //     if (posWeight <= 0) {
-  //       posWeight = (scTracks.length + vkTracks.length - index) / scTracks.length;
-  //     }
-  //   }
-  //   track.weight += posWeight * WEIGHTS.pos;
-
-  //   // track.weight += (track.bitrate / 320) * WEIGHTS.bitrate;
-
-  //   // if (track.artist.trim().toLowerCase() === query.trim().toLowerCase())
-  //   //   track.weight += WEIGHTS.artistExact;
-
-  //   // if (track.artist.trim().toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
-  //   //   track.weight += WEIGHTS.artistContains;
-
-
-  //   Logger.screen.log(track.source, posWeight);
-  // });
-
-  this.setPlaylist(this.data.sort(function(a, b) {
-    return parseFloat(a.weight, 10) < parseFloat(b.weight, 10);
-  }));
-
-  Logger.screen.log('Sorted!');
 };
 
 Playlist.prototype.removeDuplicates = function() {
@@ -204,5 +189,28 @@ Playlist.prototype.removeDuplicates = function() {
 
   this.data = arr;
 };
+
+Playlist.prototype.formatTrackTitle = function(track) {
+  if (track.label)
+    return `{light-red-fg}${track.label}{/light-red-fg}`;
+
+  let result = `{bold}${track.artist}{/bold}`;
+
+  if (track.source) result = `[${track.source}] ` + result;
+
+  if (track.title) result += ` - ${  track.title}`;
+
+  if (track.duration) {
+    result += '{|}';
+    let duration = _.padLeft(track.duration / 60 | 0, 2, '0') + ':' + _.padLeft(track.duration % 60, 2, '0');
+    if (track.bitrate) result += ` {light-black-fg}${track.bitrate}kbps{/light-black-fg}`;
+    result += ` ${duration}`;
+  }
+
+  if (!track.url) result = `Not Found: ${result}`;
+
+  return result;
+};
+
 
 module.exports = Playlist;

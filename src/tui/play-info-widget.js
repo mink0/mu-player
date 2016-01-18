@@ -64,6 +64,7 @@ PlayInfo.prototype.init = function(opts) {
   this.duration = opts.duration;
   this.artist = opts.artist;
   this.title = opts.title;
+  this.bitrate = opts.bitrate;
   this.elapsed = 0;
   this.status = opts.status;
   this.setProgress(0);
@@ -113,14 +114,14 @@ PlayInfo.prototype.updateStatus = function(status) {
 };
 
 PlayInfo.prototype.updateLabel = function() {
-  let label = '[' + this.statusText + '] {light-yellow-fg}' + 
+  let label = '[' + this.statusText + '] {light-yellow-fg}' +
     this.artist.trim()+ ' - ' + this.title.trim();
- 
+
   let notags = label.replace(/\{(?:.|\n)*?\}/gm, '');
-  
-  if (notags.length > this.width - 5) 
+
+  if (notags.length > this.width - 5)
     label = label.substring(0, this.width + (label.length - notags.length) - 5) + '~';
-  
+
   this.setLabel(label);
 };
 

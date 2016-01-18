@@ -29,7 +29,6 @@ let handleData = (result) => {
     //   }).then((res) => res[1].location.replace(/^https:\/\//i, 'http://'));
     // };
     obj.duration = parseInt(obj.duration / 1000);
-    obj.trackTitleFull = formatTrackFull(obj);
     return obj;
   });
 };
