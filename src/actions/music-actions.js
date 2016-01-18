@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import request from 'request';
+import Promise from 'bluebird';
 
 export let getRemoteAudioSize = (url, cb) => {
   request.head(url, (err, res) =>{
@@ -24,11 +25,11 @@ export let getRemoteAudioSize = (url, cb) => {
 
 };
 
-export let getRemoteBitrate = (url, _duration, cb) => {
+export let getRemoteBitrate = (url, duration, cb) => {
   let si = 0.05;
   let std = [64, 128, 192, 224, 256, 320];
   let sv;
-  let duration = parseInt(_duration, 10);
+  var duration = parseInt(duration, 10);
   getRemoteAudioSize(url, function(err, size) {
     if (err) return cb(err);
 

@@ -9,6 +9,7 @@ import LoadingSpinner from '../tui/loading-spinner';
 
 import Promise from 'bluebird';
 import splitTracklist from 'split-tracklist';
+import { getRemoteBitrate } from '../actions/music-actions';
 
 let screen = null;
 let layout = null;
@@ -16,6 +17,7 @@ let plistPane = null;
 let playlist = null;
 let playInfo = null;
 let songid = null;
+let getBitrateAsync = Promise.promisify(getRemoteBitrate);
 
 export let init = (_screen, _layout) => {
   screen = _screen;
@@ -69,8 +71,22 @@ export let search = (payload) => {
   stop();
   if (payload.type === 'search') {
     playlist.clearOnAppend = true;
-    vkActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
-    scActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
+    let vk = vkActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
+    let sc = scActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
+    
+    Promise.all([vk, sc]).then(() => {
+      global.Logger.screen.log('All done!', playlist.data.length);
+      let promises = [];
+      playlist.data.forEach((track) => {
+        promises.push(getBitrateAsync(track.url, track.duration).then((bitrate) => {
+          track.bitrate = bitrate;
+        }));
+      });
+
+      Promise.all(promises).then(() => { 
+        playlist.sort(payload.query); 
+      });
+    });
 
   } else if (payload.type === 'searchWithArtist') {
     playlist.clearOnAppend = true;

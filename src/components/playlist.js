@@ -109,9 +109,87 @@ Playlist.prototype.moveNext = function() {
   this.list.select(this.curIndex);
 };
 
+Playlist.prototype.sort = function(query) {
+  let vkTracks = [];
+  let scTracks = [];
+
+  let WEIGHTS = {
+    vk: 10,
+    artistExact: 10,
+    trackExact: 8,
+    artistContains: 6,
+    trackContains: 4,
+    bitrate: 10,
+    pos: 10
+  };
+
+  let calcWeight = (track) => {
+    if (track.bitrate) track.weight += (track.bitrate / 320) * WEIGHTS.bitrate;
+    
+    if (track.artist) {
+      if (track.artist.trim().toLowerCase() === query.trim().toLowerCase())
+        track.weight += WEIGHTS.artistExact;
+
+      if (track.artist.trim().toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
+        track.weight += WEIGHTS.artistContains;
+    }
+
+  };
+
+  // to calculate order weight
+  this.data.forEach((track) => {
+    track.weight = calcWeight(track);
+    if (track.source === 'vk') vkTracks.push(track);
+    if (track.source === 'sc') scTracks.push(track);
+  });
+
+  scTracks.forEach((track, index) => {
+    track.weight += ((scTracks.length - index) / scTracks.length) * WEIGHTS.pos;
+  });
+  
+  vkTracks.forEach((track, index) => {
+    track.weight += ((vkTracks.length - index) / vkTracks.length) * WEIGHTS.pos;
+  });
+
+
+
+  // let posWeight;
+  // let bitWeight;
+  // this.data.forEach((track, index) => {
+  //   if (track.source === 'vk') {
+  //     posWeight = (vkTracks.length - index)/vkTracks.length;
+  //     if (posWeight <= 0) {
+  //       posWeight = (vkTracks.length + scTracks.length - index) / vkTracks.length;
+  //     }
+  //   } else if (track.source === 'sc') {
+  //     posWeight = (scTracks.length - index)/scTracks.length;
+  //     if (posWeight <= 0) {
+  //       posWeight = (scTracks.length + vkTracks.length - index) / scTracks.length;
+  //     }
+  //   }
+  //   track.weight += posWeight * WEIGHTS.pos;
+
+  //   // track.weight += (track.bitrate / 320) * WEIGHTS.bitrate;
+
+  //   // if (track.artist.trim().toLowerCase() === query.trim().toLowerCase())
+  //   //   track.weight += WEIGHTS.artistExact;
+
+  //   // if (track.artist.trim().toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
+  //   //   track.weight += WEIGHTS.artistContains;
+
+
+  //   Logger.screen.log(track.source, posWeight);
+  // });
+
+  this.setPlaylist(this.data.sort(function(a, b) {
+    return parseFloat(a.weight, 10) < parseFloat(b.weight, 10);
+  }));
+
+  Logger.screen.log('Sorted!');
+};
+
 Playlist.prototype.removeDuplicates = function() {
-  let out = {},
-    arr = [];
+  let out = {}, arr = [];
   for (var i = 0; i < this.data.length; i++) {
     out[this.data[i].trackTitleFull.toLowerCase()] = this.data[i];
   }
