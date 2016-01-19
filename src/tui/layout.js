@@ -1,7 +1,7 @@
 import blessed from 'blessed';
 
 import treeWidget from './tree-widget';
-import playInfo from './play-info-widget';
+import trackInfo from './track-info-widget';
 
 export default (screen) => {
   let layout = {};
@@ -142,7 +142,7 @@ export default (screen) => {
     }
   });
 
-  layout.playInfo = playInfo({
+  layout.trackInfo = trackInfo({
     bottom: 0,
     height: 3,
     border: 'line',
@@ -192,7 +192,7 @@ export default (screen) => {
 
   // right pane
   layout.rightPane.append(layout.playlist);
-  layout.rightPane.append(layout.playInfo);
+  layout.rightPane.append(layout.trackInfo);
   layout.playlist.append(layout.plistCount);
   layout.playlist.append(layout.plistLabel);
 
@@ -214,8 +214,8 @@ export default (screen) => {
   layout.qsearch.on('blur', () => layout.qsearch.style.fg = 'brightwhite');
 
   // FIX: Hacky fix of overlaping playinfo and playlist
-  layout.playInfo.on('show', () => layout.playlist.height = '100%-2');
-  layout.playInfo.on('hide', () => layout.playlist.height = '100%');
+  layout.trackInfo.on('show', () => layout.playlist.height = '100%-2');
+  layout.trackInfo.on('hide', () => layout.playlist.height = '100%');
   
   return layout;
 };

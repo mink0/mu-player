@@ -55,8 +55,8 @@ var topRightOpts = {
   //content: '[{light-black-fg}128kbps{/light-black-fg}]',
 };
 
-function PlayInfo(options={}) {
-  if (!(this instanceof Node)) return new PlayInfo(options);
+function TrackInfo(options={}) {
+  if (!(this instanceof Node)) return new TrackInfo(options);
 
   Box.call(this, options);
 
@@ -71,7 +71,7 @@ function PlayInfo(options={}) {
   this.append(blessed.box(pbarSuffixOpts));
 }
 
-PlayInfo.prototype.init = function(opts) {
+TrackInfo.prototype.init = function(opts) {
   this.duration = opts.duration;
   this.artist = opts.artist;
   this.title = opts.title;
@@ -89,7 +89,7 @@ PlayInfo.prototype.init = function(opts) {
   this.show();
 };
 
-PlayInfo.prototype.setProgress = function(elapsed, seek) {
+TrackInfo.prototype.setProgress = function(elapsed, seek) {
   if (seek) {
     this.elapsed = parseFloat(this.elapsed) + parseFloat(seek);
 
@@ -113,7 +113,7 @@ PlayInfo.prototype.setProgress = function(elapsed, seek) {
   // this.render(); // high cpu load
 };
 
-PlayInfo.prototype.updateStatus = function(status) {
+TrackInfo.prototype.updateStatus = function(status) {
   if (status) this.status = status;
 
   if (this.status === 'play') this.statusText = '{green-fg}Playing{/green-fg}';
@@ -123,10 +123,12 @@ PlayInfo.prototype.updateStatus = function(status) {
   this.updateLabel();
   if (this.hidden) this.show();
 
-  this.topRight.setContent(`[{light-black-fg}${this.bitrate}kbps{/light-black-fg}]`);
+  this.topRight.setContent(
+    `{light-black-fg}[{/light-black-fg}${this.bitrate}kbps{light-black-fg}]{/light-black-fg}`
+  );
 };
 
-PlayInfo.prototype.updateLabel = function() {
+TrackInfo.prototype.updateLabel = function() {
   let label = '[' + this.statusText + '] {light-yellow-fg}' +
     this.artist.trim()+ ' - ' + this.title.trim();
 
@@ -138,8 +140,8 @@ PlayInfo.prototype.updateLabel = function() {
   this.setLabel(label);
 };
 
-PlayInfo.prototype.__proto__ = Box.prototype;
+TrackInfo.prototype.__proto__ = Box.prototype;
 
-PlayInfo.prototype.type = 'pbar';
+TrackInfo.prototype.type = 'pbar';
 
-module.exports = PlayInfo;
+module.exports = TrackInfo;

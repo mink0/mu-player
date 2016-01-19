@@ -1,7 +1,7 @@
 import blessed from 'blessed';
 
 export default (screen, message, lockKeys = true, label = 'Loading') => {
-  var loading = blessed.loading({
+  let spinner = blessed.loading({
     parent: screen,
     border: 'line',
     height: 'shrink',
@@ -15,25 +15,28 @@ export default (screen, message, lockKeys = true, label = 'Loading') => {
     vi: true
   });
 
-  loading.load(message);
+  spinner.load(message);
 
   screen.lockKeys = lockKeys;
-
   screen.blockEsc = true;
-  
+
   let clear = () => {
     screen.blockEsc = false;
     screen.lockKeys = false;
+    screen.unkey(['escape'], stop);
   };
 
-  screen.onceKey(['escape', 'q'], () => {
+  let stop = ()  => {
     clear();
-    loading.stop();
+    spinner.destroy();
+  };
+
+  screen.key(['escape'], stop);
+
+  // HACK: on spinner stop
+  spinner.on('hide', () => {
+    clear();
   });
 
-  loading.on('hide', () => {
-    clear();
-  });
-
-  return loading;
+  return spinner;
 };

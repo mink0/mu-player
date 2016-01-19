@@ -15,7 +15,7 @@ let screen = null;
 let layout = null;
 let plistPane = null;
 let playlist = null;
-let playInfo = null;
+let trackInfo = null;
 let songid = null;
 let getBitrateAsync = Promise.promisify(getRemoteBitrate);
 
@@ -23,7 +23,7 @@ export let init = (_screen, _layout) => {
   screen = _screen;
   layout = _layout;
   plistPane = _layout.playlist;
-  playInfo = _layout.playInfo;
+  trackInfo = _layout.trackInfo;
 
   playlist = new Playlist(plistPane, layout.plistCount);
 
@@ -66,7 +66,7 @@ let playCurrent = () => {
 export let stop = () => {
   screen.title = ':mu';
   playlist.stop();
-  playInfo.hide();
+  trackInfo.hide();
 };
 
 let appendAudio = (audio) => {
@@ -101,13 +101,19 @@ export let search = (payload) => {
       appendAudio(tracks);
     }).catch(errorHandler);
 
+    let searchDone = () => {
+      global.Logger.screen.log('Apply smart sorting...');
+      playlist.sort(payload.query);
+      spinner.stop();
+    };
+
     Promise.all([vk, sc]).then(() => {
       global.Logger.screen.info('Found:', `${playlist.data.length} results`);
-      vkBitrates.then(() => {
-        global.Logger.screen.log('Apply smart sorting...');
-        playlist.sort(payload.query);
-        spinner.stop();
-      });
+      
+      if (vkBitrates !== undefined) 
+        vkBitrates.then(() => searchDone());
+      else 
+        searchDone();
     });
 
   } else if (payload.type === 'searchWithArtist') {
@@ -178,7 +184,7 @@ export let updatePlaying = (status) => {
 
     if (status.songid === songid) {
       // resume from pause or from stop
-      playInfo.updateStatus('play');
+      trackInfo.updateStatus('play');
       return;
     }
 
@@ -191,7 +197,7 @@ export let updatePlaying = (status) => {
 
     screen.title = cur.artist + ' - ' + cur.title;
 
-    playInfo.init({
+    trackInfo.init({
       duration: cur.duration,
       title: cur.title,
       artist: cur.artist,
@@ -201,12 +207,12 @@ export let updatePlaying = (status) => {
   } else if (status.state === 'stop') {
     stop();
   } else if (status.state === 'pause') {
-    playInfo.updateStatus('pause');
+    trackInfo.updateStatus('pause');
   }
 };
 
 export let updatePbar = (elapsed, seek) => {
-  if (playInfo === null || playInfo.hidden) return;
+  if (trackInfo === null || trackInfo.hidden) return;
 
-  playInfo.setProgress(elapsed, seek);
+  trackInfo.setProgress(elapsed, seek);
 };

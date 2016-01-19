@@ -66,8 +66,13 @@ Playlist.prototype.mpdAdd = function(track) {
 
     track.mpdId = id.Id;
     // HACK: this tags don't streamed, so we have to add it manually
-    this.mpd.command('addtagid', [id.Id, 'artist', track.artist], errorHandler);
-    this.mpd.command('addtagid', [id.Id, 'title', track.title], errorHandler);
+    // On some unicode chars this SPAM log with errors. So Logger.info is preferred.
+    this.mpd.command('addtagid', [id.Id, 'artist', track.artist], (err, res) => {
+      if (err) global.Logger.info(err);
+    });
+    this.mpd.command('addtagid', [id.Id, 'title', track.title], (err, res) => {
+      if (err) global.Logger.info(err);
+    });
   });
 };
 
