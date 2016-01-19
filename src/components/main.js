@@ -14,6 +14,12 @@ export default (screen, layout) => {
 
     layout.logger.log.apply(layout.logger, args);
   };
+
+  layout.logger.info = (msg, ...args) => {
+    args.splice(0, 0, '{green-fg}' + msg + '{/green-fg}');
+
+    layout.logger.log.apply(layout.logger, args);
+  };
   global.Logger.screen = layout.logger;
 
   storage.on(PAUSE, () => player.pause());

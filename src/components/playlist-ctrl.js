@@ -5,7 +5,7 @@ import Playlist from './playlist';
 
 import * as player from './../player/player-control';
 
-import LoadingSpinner from '../tui/loading-spinner';
+import loadingSpinner from '../tui/loading-spinner';
 
 import Promise from 'bluebird';
 import splitTracklist from 'split-tracklist';
@@ -69,28 +69,44 @@ export let stop = () => {
   playInfo.hide();
 };
 
+let appendAudio = (audio) => {
+  plistPane.focus();
+  playlist.appendPlaylist(audio);
+};
+
 export let search = (payload) => {
   stop();
   if (payload.type === 'search') {
+    let spinner = loadingSpinner(screen, 'Searching...', false);
+
     playlist.clearOnAppend = true;
-    let vk = vkActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
     let sc = scActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
 
-    Promise.all([vk, sc]).then(() => {
-      global.Logger.screen.log('Found: ', playlist.data.length);
+    let vkBitrates;
+    let vk = vkActions.getSearch(payload.query).then((tracks) => {
       let promises = [];
 
-      playlist.data.forEach((track) => {
-        if (track.source)
+      global.Logger.screen.log('Loading bitrates...');
+      spinner.setContent('Loading bitrates...');
+      tracks.forEach((track) => {
         promises.push(getBitrateAsync(track.url, track.duration).then((bitrate) => {
           track.bitrate = bitrate;
         }).catch(errorHandler));
       });
 
-      global.Logger.screen.log('Loading bitrates...');
-      Promise.all(promises).then(() => {
-        global.Logger.screen.log('...loaded');
+      vkBitrates = Promise.all(promises);
+      vkBitrates.then(() => {
+        spinner.setContent('Apply smart sorting...');
+      });
+      appendAudio(tracks);
+    }).catch(errorHandler);
+
+    Promise.all([vk, sc]).then(() => {
+      global.Logger.screen.info('Found:', `${playlist.data.length} results`);
+      vkBitrates.then(() => {
+        global.Logger.screen.log('Apply smart sorting...');
         playlist.sort(payload.query);
+        spinner.stop();
       });
     });
 
@@ -102,7 +118,7 @@ export let search = (payload) => {
   } else if (payload.type === 'tracklist') {
     playlist.clearOnAppend = true;
 
-    let spinner = LoadingSpinner(screen, 'Searching for tracks...', false);
+    let spinner = loadingSpinner(screen, 'Searching for tracks...', false);
 
     let onTrack = (track, index, length, query) => {
       playlist.appendPlaylist(track);
@@ -148,11 +164,6 @@ export let search = (payload) => {
   }
 };
 
-let appendAudio = (audio) => {
-  plistPane.focus();
-  playlist.appendPlaylist(audio);
-};
-
 export let updatePlaying = (status) => {
   global.Logger.info(status);
 
@@ -173,16 +184,18 @@ export let updatePlaying = (status) => {
 
     // new song
     songid = status.songid;
-    global.Logger.info(playlist.getCurrent().url);
-    global.Logger.screen.log('{green-fg}Play:{/green-fg}',
-      playlist.getCurrent().artist, '-', playlist.getCurrent().title, '[' + status.bitrate + ' kbps]');
+    let cur = playlist.getCurrent();
+    global.Logger.info('Open: ', cur.url);
+    global.Logger.screen.info('Play:',
+      cur.artist, '-', cur.title, '[' + status.bitrate + ' kbps]');
 
-    screen.title = playlist.getCurrent().artist + ' - ' + playlist.getCurrent().title;
+    screen.title = cur.artist + ' - ' + cur.title;
 
     playInfo.init({
-      duration: playlist.getCurrent().duration,
-      title: playlist.getCurrent().title,
-      artist: playlist.getCurrent().artist,
+      duration: cur.duration,
+      title: cur.title,
+      artist: cur.artist,
+      bitrate: cur.bitrate,
       status: 'play'
     });
   } else if (status.state === 'stop') {

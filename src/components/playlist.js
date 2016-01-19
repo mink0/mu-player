@@ -117,11 +117,10 @@ Playlist.prototype.sort = function(query) {
   let scTracks = [];
 
   let WEIGHTS = {
-    vk: 10,
-    artistExact: 10,
-    titleExact: 8,
-    artistContains: 6,
-    titleContains: 4,
+    artistExact: 3,
+    artistContains: 1,
+    titleExact: 2,
+    titleContains: 1,
     bitrate: 20,
     pos: 10
   };
@@ -203,7 +202,7 @@ Playlist.prototype.formatTrackTitle = function(track) {
   if (track.duration) {
     result += '{|}';
     let duration = _.padLeft(track.duration / 60 | 0, 2, '0') + ':' + _.padLeft(track.duration % 60, 2, '0');
-    if (track.bitrate) result += ` {light-black-fg}${track.bitrate}kbps{/light-black-fg}`;
+    //if (track.bitrate) result += ` {light-black-fg}${track.bitrate}kbps{/light-black-fg}`;
     result += ` ${duration}`;
   }
 

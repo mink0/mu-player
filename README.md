@@ -6,6 +6,7 @@
 
   - Play ANY music for free from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
   - Explore new music by [last.fm](http://lastfm.com/) top tracks and similar artists search.
+  - Search results with the highest bitrates first.
   - Low system requirements. It will pump smooth even on your grandpa's notebook.
   - Mu-player will definitely save your laptop battery. CPU load of in-browser playback comparing to MPD is HUGE.
 
@@ -14,9 +15,10 @@ You could use mu-player standalone or with any other full-featured MPD clients. 
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Changelog
+    - Bitrate detection and smart sorting
     - Add `PageUp`, `PageDown` key support
     - Fix locked 'q' key bug
-    
+
   * v0.3.0
     - Total layout rewrite for proper support all terminals resolutions.
     - Support for changing MPD connection parameters from config file
@@ -25,11 +27,11 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
     - Fix long labels on track info
     - Fix no track progress on linux sometimes
     - Fix track-info playlist overlaping
-  
+
   * v0.2.0
     - Better track seek
     - Log scrolling via keyboard/mouse
-  
+
   * v0.1.3
     - Bug fix
 

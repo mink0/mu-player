@@ -21,7 +21,7 @@ var pbarOpts = {
   }
 };
 
-var prefix = {
+var pbarPrefixOpts = {
   bottom: 0,
   left: 0,
   height: 1,
@@ -29,7 +29,7 @@ var prefix = {
   content: '[',
 };
 
-var suffix = {
+var pbarSuffixOpts = {
   bottom: 0,
   right: 0,
   height: 1,
@@ -43,7 +43,16 @@ var curTimeOpts = {
   height: 1,
   width: 11,
   align: 'right',
-  content: '--/--',
+  content: '-- --/-- --',
+};
+
+var topRightOpts = {
+  top: -1,
+  right: 1,
+  height: 1,
+  tags: true,
+  width: 'shrink',
+  //content: '[{light-black-fg}128kbps{/light-black-fg}]',
 };
 
 function PlayInfo(options={}) {
@@ -53,11 +62,13 @@ function PlayInfo(options={}) {
 
   this.pbar = blessed.progressbar(pbarOpts);
   this.curTime = blessed.box(curTimeOpts);
+  this.topRight = blessed.box(topRightOpts);
 
   this.append(this.pbar);
   this.append(this.curTime);
-  this.append(blessed.box(prefix));
-  this.append(blessed.box(suffix));
+  this.append(this.topRight);
+  this.append(blessed.box(pbarPrefixOpts));
+  this.append(blessed.box(pbarSuffixOpts));
 }
 
 PlayInfo.prototype.init = function(opts) {
@@ -111,6 +122,8 @@ PlayInfo.prototype.updateStatus = function(status) {
 
   this.updateLabel();
   if (this.hidden) this.show();
+
+  this.topRight.setContent(`[{light-black-fg}${this.bitrate}kbps{/light-black-fg}]`);
 };
 
 PlayInfo.prototype.updateLabel = function() {
@@ -119,8 +132,8 @@ PlayInfo.prototype.updateLabel = function() {
 
   let notags = label.replace(/\{(?:.|\n)*?\}/gm, '');
 
-  if (notags.length > this.width - 5)
-    label = label.substring(0, this.width + (label.length - notags.length) - 5) + '~';
+  if (notags.length > this.width - 15)
+    label = label.substring(0, this.width + (label.length - notags.length) - 15) + '~';
 
   this.setLabel(label);
 };
