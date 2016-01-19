@@ -173,6 +173,8 @@ Playlist.prototype.sort = function(query) {
     return parseFloat(b.weight, 10) - parseFloat(a.weight, 10);
   });
 
+  global.Logger.screen.log('Smart sorting applied...');
+  
   this.setPlaylist(sorted);
 
 };

@@ -102,13 +102,12 @@ export let search = (payload) => {
     }).catch(errorHandler);
 
     let searchDone = () => {
-      global.Logger.screen.log('Apply smart sorting...');
       playlist.sort(payload.query);
       spinner.stop();
     };
 
     Promise.all([vk, sc]).then(() => {
-      global.Logger.screen.info('Found:', `${playlist.data.length} results`);
+      global.Logger.screen.log(`Found: ${playlist.data.length} results`);
       
       if (vkBitrates !== undefined) 
         vkBitrates.then(() => searchDone());

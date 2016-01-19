@@ -54,7 +54,7 @@ export let play = (url, id) => {
     // FIX: mpd didn't send play event sometimes on linux 
     setTimeout(() => {
       mpd.emit('changed', 'player');
-    }, 2000);
+    }, 1000);
   });
 };
 

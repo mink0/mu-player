@@ -16,10 +16,17 @@ export default (screen, layout) => {
   };
 
   layout.logger.info = (msg, ...args) => {
+    args.splice(0, 0, '{cyan-fg}' + msg + '{/cyan-fg}');
+
+    layout.logger.log.apply(layout.logger, args);
+  };
+
+  layout.logger.status = (msg, ...args) => {
     args.splice(0, 0, '{green-fg}' + msg + '{/green-fg}');
 
     layout.logger.log.apply(layout.logger, args);
   };
+
   global.Logger.screen = layout.logger;
 
   storage.on(PAUSE, () => player.pause());
