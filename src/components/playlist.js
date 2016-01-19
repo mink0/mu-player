@@ -8,7 +8,7 @@ function Playlist(plistPane, countPane) {
   this.mpd = player.getMpdClient();
   this.curIndex = 0;
   this.prevIndex = null;
-  this.data = null;
+  this.data = [];
   this.clearOnAppend = null;
   this.counter = countPane;
 
@@ -106,7 +106,7 @@ Playlist.prototype.setCurrent = function(index) {
 };
 
 Playlist.prototype.stop = function() {
-  if (this.data === null) return;
+  if (this.data.length === 0) return;
 
   this.list.setItem(this.curIndex, this.data[this.prevIndex].trackTitleFull);
   this.list.render();
@@ -117,7 +117,7 @@ Playlist.prototype.moveNext = function() {
   this.list.select(this.curIndex);
 };
 
-Playlist.prototype.sort = function(query) {
+Playlist.prototype.sort = function(payload) {
   let vkTracks = [];
   let scTracks = [];
 
@@ -135,20 +135,36 @@ Playlist.prototype.sort = function(query) {
 
     if (track.bitrate) track.weight += ((track.bitrate / 320) * WEIGHTS.bitrate);
 
-    if (track.artist) {
-      if (track.artist.trim().toLowerCase() === query.trim().toLowerCase())
-        track.weight += WEIGHTS.artistExact;
+    if (track.hasOwnProperty('artist')) {
+      if (payload.query) {
+        if (track.artist.trim().toLowerCase() === payload.query.trim().toLowerCase())
+          track.weight += WEIGHTS.artistExact;
 
-      if (track.artist.trim().toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
-        track.weight += WEIGHTS.artistContains;
+        if (track.artist.trim().toLowerCase().indexOf(payload.query.trim().toLowerCase()) !== -1)
+          track.weight += WEIGHTS.artistContains;
+      } else if (payload.artist) {
+        if (track.artist.trim().toLowerCase() === payload.artist.trim().toLowerCase())
+          track.weight += WEIGHTS.artistExact;
+
+        if (track.artist.trim().toLowerCase().indexOf(payload.artist.trim().toLowerCase()) !== -1)
+          track.weight += WEIGHTS.artistContains;
+      }
     }
 
-    if (track.title) {
-      if (track.title.trim().toLowerCase() === query.trim().toLowerCase())
-        track.weight += WEIGHTS.titleExact;
+    if (track.hasOwnProperty('title')) {
+      if (payload.query) {
+        if (track.title.trim().toLowerCase() === payload.query.trim().toLowerCase())
+          track.weight += WEIGHTS.titleExact;
 
-      if (track.title.trim().toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
-        track.weight += WEIGHTS.titleContains;
+        if (track.title.trim().toLowerCase().indexOf(payload.query.trim().toLowerCase()) !== -1)
+          track.weight += WEIGHTS.titleContains;
+      } else if (payload.track) {
+        if (track.title.trim().toLowerCase() === payload.track.trim().toLowerCase())
+          track.weight += WEIGHTS.titleExact;
+
+        if (track.title.trim().toLowerCase().indexOf(payload.track.trim().toLowerCase()) !== -1)
+          track.weight += WEIGHTS.titleContains;
+      }
     }
 
   };
@@ -173,14 +189,14 @@ Playlist.prototype.sort = function(query) {
     return parseFloat(b.weight, 10) - parseFloat(a.weight, 10);
   });
 
-  global.Logger.screen.log('Smart sorting applied...');
-  
-  this.setPlaylist(sorted);
+  global.Logger.screen.log('Smart sorting applied!');
 
+  this.setPlaylist(sorted);
 };
 
 Playlist.prototype.removeDuplicates = function() {
-  let out = {}, arr = [];
+  let out = {},
+    arr = [];
   for (var i = 0; i < this.data.length; i++) {
     out[this.data[i].trackTitleFull.toLowerCase()] = this.data[i];
   }

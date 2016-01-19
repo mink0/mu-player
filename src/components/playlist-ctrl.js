@@ -9,7 +9,10 @@ import loadingSpinner from '../tui/loading-spinner';
 
 import Promise from 'bluebird';
 import splitTracklist from 'split-tracklist';
-import { getRemoteBitrate } from '../actions/music-actions';
+import {
+  getRemoteBitrate
+}
+from '../actions/music-actions';
 
 let screen = null;
 let layout = null;
@@ -37,7 +40,7 @@ let errorHandler = (err) => {
       Logger.screen.error('VKontakte API limits reached');
     } else if (err.cause) {
       Logger.screen.error('ERROR:', err.cause);
-    }else {
+    } else {
       if (err.error_msg) Logger.screen.error('ERR_MSG', err.error_msg);
       if (err.code) Logger.screen.error('ERR_CODE', err.code);
       Logger.screen.error('ERROR:', err);
@@ -69,56 +72,71 @@ export let stop = () => {
   trackInfo.hide();
 };
 
-let appendAudio = (audio) => {
+let appendTracks = (tracks) => {
   plistPane.focus();
-  playlist.appendPlaylist(audio);
+  playlist.appendPlaylist(tracks);
+  return tracks;
+};
+
+let loadBitrates = (tracks, spinner) => {
+  let msg = 'Loading bitrates...';
+  global.Logger.screen.log(msg);
+  spinner.setContent(msg);
+
+  let bitrates = [];
+  tracks.forEach((track) => {
+    bitrates.push(getBitrateAsync(track.url, track.duration).then((bitrate) => {
+      track.bitrate = bitrate;
+    }).catch(errorHandler));
+  });
+
+  return Promise.all(bitrates).then(() => {
+    let msg = 'Bitrates successfully loaded!';
+    global.Logger.screen.log(msg);
+    spinner.setContent(msg);
+    return tracks;
+  });
 };
 
 export let search = (payload) => {
   stop();
-  if (payload.type === 'search') {
+  // smart sorting
+  if (payload.type === 'search' || payload.type === 'searchWithArtist') {
+    let sc, vk;
     let spinner = loadingSpinner(screen, 'Searching...', false);
 
-    playlist.clearOnAppend = true;
-    let sc = scActions.getSearch(payload.query).then(appendAudio).catch(errorHandler);
-
-    let vkBitrates;
-    let vk = vkActions.getSearch(payload.query).then((tracks) => {
-      let promises = [];
-
-      global.Logger.screen.log('Loading bitrates...');
-      spinner.setContent('Loading bitrates...');
-      tracks.forEach((track) => {
-        promises.push(getBitrateAsync(track.url, track.duration).then((bitrate) => {
-          track.bitrate = bitrate;
-        }).catch(errorHandler));
+    if (payload.type === 'search') {
+      playlist.clearOnAppend = true;
+      sc = scActions.getSearch(payload.query).then(appendTracks);
+      vk = vkActions.getSearch(payload.query).then((tracks) => {
+        appendTracks(tracks);
+        return loadBitrates(tracks, spinner);
       });
 
-      vkBitrates = Promise.all(promises);
-      vkBitrates.then(() => {
-        spinner.setContent('Apply smart sorting...');
+    } else if (payload.type === 'searchWithArtist') {
+      playlist.clearOnAppend = true;
+      sc = scActions.getSearchWithArtist(payload.track, payload.artist).then(appendTracks);
+      vk = vkActions.getSearchWithArtist(payload.track, payload.artist).then((tracks) => {
+        appendTracks(tracks);
+        return loadBitrates(tracks, spinner);
       });
-      appendAudio(tracks);
-    }).catch(errorHandler);
+    }
 
-    let searchDone = () => {
-      playlist.sort(payload.query);
-      spinner.stop();
-    };
-
+    // smart sorting
+    //vk.catch(errorHandler); // proper exit
+    //sc.catch(errorHandler); // 
     Promise.all([vk, sc]).then(() => {
-      global.Logger.screen.log(`Found: ${playlist.data.length} results`);
+      let count = 0;
+      if (vk.isFulfilled()) count += vk.value().length;
+      if (sc.isFulfilled()) count += sc.value().length;
       
-      if (vkBitrates !== undefined) 
-        vkBitrates.then(() => searchDone());
-      else 
-        searchDone();
+      global.Logger.screen.log(`Found: ${count} result(s)`);
+      if (count > 1) playlist.sort(payload);
+      spinner.stop();
+    }).catch((err) => {
+      errorHandler(err);
+      spinner.stop();
     });
-
-  } else if (payload.type === 'searchWithArtist') {
-    playlist.clearOnAppend = true;
-    scActions.getSearchWithArtist(payload.track, payload.artist).then(appendAudio).catch(errorHandler);
-    vkActions.getSearchWithArtist(payload.track, payload.artist).then(appendAudio).catch(errorHandler);
 
   } else if (payload.type === 'tracklist') {
     playlist.clearOnAppend = true;

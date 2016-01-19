@@ -41,7 +41,7 @@ export let getSearchWithArtist = (track, artist) => {
   Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
   let request = vk.method('audio.search', {
     count: SEARCH_LIMIT,
-    offset: 0,
+    offset: 0,  
     performer_only: 1,
     q: artist
   });
@@ -50,11 +50,13 @@ export let getSearchWithArtist = (track, artist) => {
     response.items.forEach((item) => {
       if (item.title.toLowerCase().indexOf(track.toLowerCase()) !== -1) items.push(item);
     });
-    if (items.length === 0) {
-      Logger.screen.log('vkNotFound', track, artist);
-      return undefined;
-    }
-    Logger.screen.log('vkFound: ' + items.length + ' track(s)');
+
+    // if (items.length === 0) {
+    //   Logger.screen.error(`vk.com`, `not found "${artist}"-"${track}"`);
+    //   throw new Error('NotFound');
+    // }
+
+    // Logger.screen.info('vk.com', 'found:', items.length, 'track(s)');
 
     return handleData(items);
   });
