@@ -99,92 +99,90 @@ let loadBitrates = (tracks, spinner) => {
 };
 
 export let search = (payload) => {
+  let sc;
+  let vk;
+  let spinner = loadingSpinner(screen, 'Searching...', false);
+
   stop();
-  // smart sorting
-  if (payload.type === 'search' || payload.type === 'searchWithArtist') {
-    let sc, vk;
-    let spinner = loadingSpinner(screen, 'Searching...', false);
 
-    if (payload.type === 'search') {
-      playlist.clearOnAppend = true;
-      sc = scActions.getSearch(payload.query).then(appendTracks);
-      vk = vkActions.getSearch(payload.query).then((tracks) => {
-        appendTracks(tracks);
-        return loadBitrates(tracks, spinner);
-      });
-
-    } else if (payload.type === 'searchWithArtist') {
-      playlist.clearOnAppend = true;
-      sc = scActions.getSearchWithArtist(payload.track, payload.artist).then(appendTracks);
-      vk = vkActions.getSearchWithArtist(payload.track, payload.artist).then((tracks) => {
-        appendTracks(tracks);
-        return loadBitrates(tracks, spinner);
-      });
-    }
-
-    // smart sorting
-    //vk.catch(errorHandler); // proper exit
-    //sc.catch(errorHandler); // 
-    Promise.all([vk, sc]).then(() => {
-      let count = 0;
-      if (vk.isFulfilled()) count += vk.value().length;
-      if (sc.isFulfilled()) count += sc.value().length;
-      
-      global.Logger.screen.log(`Found: ${count} result(s)`);
-      if (count > 1) playlist.sort(payload);
-      spinner.stop();
-    }).catch((err) => {
-      errorHandler(err);
-      spinner.stop();
+  if (payload.type === 'search') {
+    playlist.clearOnAppend = true;
+    sc = scActions.getSearch(payload.query).then(appendTracks);
+    vk = vkActions.getSearch(payload.query).then((tracks) => {
+      appendTracks(tracks);
+      return loadBitrates(tracks, spinner);
     });
 
-  } else if (payload.type === 'tracklist') {
+  } else if (payload.type === 'searchWithArtist') {
     playlist.clearOnAppend = true;
-
-    let spinner = loadingSpinner(screen, 'Searching for tracks...', false);
-
-    let onTrack = (track, index, length, query) => {
-      playlist.appendPlaylist(track);
-      return spinner.setContent(`${index + 1} / ${length}: ${query}`);
-    };
-
-    let getBatchSearch = (text, onTrack) => {
-      let apiDelay = 350;
-      let maxApiDelay = 2000;
-      let tracklist = splitTracklist(text);
-      global.Logger.screen.log('getBatchSearch(', tracklist, ')');
-
-      return Promise.reduce(tracklist, (total, current, index) => {
-        let delay = Promise.delay(apiDelay); // new unresolved delay promise
-        return delay.then(Promise.join(
-          scActions.getSearch(current.track, {
-            limit: 1
-          }).catch(errorHandler),
-          vkActions.getSearch(current.track, {
-            limit: 1
-          }).catch((err) => {
-            Logger.error(err);
-            apiDelay = maxApiDelay;
-            //apiDelay = apiDelay >= maxApiDelay ? maxApiDelay: apiDelay * 2;
-            Logger.screen.log('vk.com paranoid throttling enabled: delay', apiDelay);
-          }),
-          function(scTracks, vkTracks) {
-            let tracks = [];
-            if (scTracks && scTracks.length > 0) tracks = tracks.concat(scTracks);
-            if (vkTracks && vkTracks.length > 0) tracks = tracks.concat(vkTracks);
-
-            return onTrack(tracks, index, tracklist.length, current.track);
-          }));
-      });
-    };
-
-    getBatchSearch(payload.tracklist, onTrack).then(() => {
-      spinner.stop();
-    }).catch((err) => {
-      spinner.stop();
-      global.Logger.error(err);
+    sc = scActions.getSearchWithArtist(payload.track, payload.artist).then(appendTracks);
+    vk = vkActions.getSearchWithArtist(payload.track, payload.artist).then((tracks) => {
+      appendTracks(tracks);
+      return loadBitrates(tracks, spinner);
     });
   }
+
+  // smart sorting
+  Promise.all([vk, sc]).then(() => {
+    let count = 0;
+    if (vk.isFulfilled()) count += vk.value().length;
+    if (sc.isFulfilled()) count += sc.value().length;
+
+    global.Logger.screen.log(`Found: ${count} result(s)`);
+    if (count > 1) playlist.sort(payload);
+    spinner.stop();
+  }).catch((err) => {
+    errorHandler(err);
+    spinner.stop();
+  });
+};
+
+export let batchSearch = (payload) => {
+  playlist.clearOnAppend = true;
+
+  let spinner = loadingSpinner(screen, 'Searching for tracks...', false);
+
+  let onTrack = (track, index, length, query) => {
+    playlist.appendPlaylist(track);
+    return spinner.setContent(`${index + 1} / ${length}: ${query}`);
+  };
+
+  let getBatchSearch = (text, onTrack) => {
+    let apiDelay = 350;
+    let maxApiDelay = 2000;
+    let tracklist = splitTracklist(text);
+    global.Logger.screen.log('getBatchSearch(', tracklist, ')');
+
+    return Promise.reduce(tracklist, (total, current, index) => {
+      let delay = Promise.delay(apiDelay); // new unresolved delay promise
+      return delay.then(Promise.join(
+        scActions.getSearch(current.track, {
+          limit: 1
+        }).catch(errorHandler),
+        vkActions.getSearch(current.track, {
+          limit: 1
+        }).catch((err) => {
+          global.Logger.error(err);
+          apiDelay = maxApiDelay;
+          //apiDelay = apiDelay >= maxApiDelay ? maxApiDelay: apiDelay * 2;
+          global.Logger.screen.log('vk.com paranoid throttling enabled: delay', apiDelay);
+        }),
+        function(scTracks, vkTracks) {
+          let tracks = [];
+          if (scTracks && scTracks.length > 0) tracks = tracks.concat(scTracks);
+          if (vkTracks && vkTracks.length > 0) tracks = tracks.concat(vkTracks);
+
+          return onTrack(tracks, index, tracklist.length, current.track);
+        }));
+    });
+  };
+
+  getBatchSearch(payload.tracklist, onTrack).then(() => {
+    spinner.stop();
+  }).catch((err) => {
+    spinner.stop();
+    global.Logger.error(err);
+  });
 };
 
 export let updatePlaying = (status) => {

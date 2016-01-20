@@ -1,15 +1,11 @@
 import * as vk from 'vk-universal-api';
-import splitTracklist from 'split-tracklist';
 import {
   formatTrack
 }
 from './music-actions';
 import errorHandler from '../helpers/error-handler';
-import Promise from 'bluebird';
 
 const SEARCH_LIMIT = 1000;
-
-let formatTrackFull = (track) => formatTrack(track);
 
 let handleData = (result) => {
   return result.filter(obj => obj.artist && obj.title).map(obj => {
@@ -22,7 +18,7 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts={}) => {
-  Logger.screen.info('vk.com', `audio.search("${query}")`);
+  global.Logger.screen.info('vk.com', `audio.search("${query}")`);
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;
 
@@ -37,11 +33,19 @@ export let getSearch = (query, opts={}) => {
   return request.then(response => handleData(response.items));
 };
 
+
 export let getSearchWithArtist = (track, artist) => {
-  Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
+  global.Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
+  let query = artist + ' ' + track;
+  return getSearch(query);
+};
+
+export let getSearchWithArtistExact = (track, artist) => {
+  // TODO: need to fetch ALL results using pagination
+  global.Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
   let request = vk.method('audio.search', {
     count: SEARCH_LIMIT,
-    offset: 0,  
+    offset: 0,
     performer_only: 1,
     q: artist
   });

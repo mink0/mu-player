@@ -47,8 +47,8 @@ export let getSearch = (query, opts) => {
 };
 
 export let getSearchWithArtist = (track, artist) => {
-  global.Logger.screen.info(`soundcloud`, `search("${query}", "${artist}")`);
-  let query = artist + ' - ' + track;
+  global.Logger.screen.info(`soundcloud`, `search("${track}", "${artist}")`);
+  let query = artist + ' ' + track;
   return getSearch(query).then((tracks) => {
     return tracks.filter((obj) => {
       return (obj.title.toLowerCase().indexOf(track.toLowerCase()) !== -1 &&

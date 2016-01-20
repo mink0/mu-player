@@ -66,13 +66,13 @@ export let search = (data) => {
           fn: function() {
             let self = this;
             lfmActions.getTopTracks(self.artist).then((tracks) => {
-              Logger.screen.log('Last.fm found ' + tracks.track.length + ' track(s)');
+              global.Logger.screen.log('Last.fm found ' + tracks.track.length + ' track(s)');
               let tracklist = '';
               tracks.track.forEach((track) => {
                 tracklist += self.artist + ' - ' + track.name + '\n';
               });
 
-              playlist.search({
+              playlist.batchSearch({
                 type: 'tracklist',
                 tracklist: tracklist,
               });
