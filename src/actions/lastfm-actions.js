@@ -24,7 +24,7 @@ export let getSearch = (query) => {
   return Promise.join(
     getSearchTrack(query),
     getSearchArtist(query),
-    function(tracks, artists /*, artists/*, tags*/) {
+    function(tracks, artists/*, albums*/) {
       menu.tracks = tracks.trackmatches.track;
       menu.artists = artists.artistmatches.artist;
       return handleData(menu);
@@ -63,15 +63,37 @@ export let getTopTracks = (artist, limit=30) => {
   });
 };
 
+export let getTopAlbums = (artist, limit=100) => {
+  Logger.screen.info(`last.fm`, `topAlbums("${artist}")`);
+  return lfm.artistAsync.getTopAlbumsAsync({
+    artist: artist,
+    limit: limit
+  }).then((res) => {
+    if (res.album.length === 0)
+      throw new Error('Albums not found for "' + artist + '"');
+
+    return res.album;
+  });
+};
+
+export let getAlbumInfo = (artist, album) => {
+  Logger.screen.info(`last.fm`, `getAlbumInfo("${artist}", "${album}")`);
+  return lfm.albumAsync.getInfoAsync({
+    artist: artist,
+    album: album,
+  }).then((res) => res.tracks.track);
+};
+
 export let getSimilar = (artist) => {
   Logger.screen.info(`last.fm`, `getSimilar("${artist}")`);
   return lfm.artistAsync.getSimilarAsync({
     artist: artist,
     //limit: 50
-  }).then((artists) => {
-    if (artists.artist.length === 0)
+  }).then((res) => {
+    if (res.artist.length === 0)
       throw new Error('Similar artists not found for "' + artist + '"');
-    return artists.artist;
+
+    return res.artist;
   });
 };
 

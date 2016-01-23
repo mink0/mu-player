@@ -141,7 +141,7 @@ Playlist.prototype.sorter = function(tracks, opts) {
   };
 
   // tuning for top artists search
-  if (type === 'top10') {
+  if (type === 'batch') {
     WEIGHTS = {
       artistExact: 3,
       artistContains: 1,
@@ -237,7 +237,7 @@ Playlist.prototype.formatTrackTitle = function(track) {
 
   if (track.source) result = `[${track.source}] ` + result;
 
-  if (track.title) result += ` - ${  track.title}`;
+  if (track.title) result += ` - ${track.title}`;
 
   if (track.duration) {
     result += '{|}';

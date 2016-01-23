@@ -1,17 +1,10 @@
 import _ from 'lodash';
-import storage, {
-  LASTFM_SEARCH, VK_SEARCH, OPEN_VK
-}
-from './../storage/storage';
-
-// import Toast from './../tui/toast';
-import similarPrompt from './../tui/similar-prompt.js';
-
-// import * as vkActions from './../actions/vk-actions';
-// import * as scActions from './../actions/sc-actions';
+import storage from './../storage/storage';
+import similarPrompt from './../tui/similar-prompt';
+import listPrompt from './../tui/list-prompt';
 import * as lfmActions from './../actions/lastfm-actions';
-
 import * as playlist from './playlist-ctrl';
+import errorHandler from '../helpers/error-handler';
 
 let screen = null;
 let menuPane = null;
@@ -60,14 +53,14 @@ export let search = (data) => {
             });
           }
         },
-        'top10': {
+        'top': {
           name: 'Top tracks for ' + this.artist ,
           artist: this.artist,
           fn: function() {
             let self = this;
             let limit = storage.data.topTracks.results;
             lfmActions.getTopTracks(self.artist, limit).then((tracks) => {
-              Logger.screen.log('Last.fm found ' + tracks.track.length + ' track(s)');
+              Logger.screen.info('last.fm', 'found ' + tracks.track.length + ' track(s)');
               let tracklist = [];
               tracks.track.forEach((track) => {
                 tracklist.push({
@@ -83,15 +76,46 @@ export let search = (data) => {
             });
           }
         },
+        'albums': {
+          name: 'Top albums for ' + this.artist,
+          artist: this.artist, // save link for fn
+          fn: function() {
+            let self = this;
+            return lfmActions.getTopAlbums(this.artist).then((albums) => {
+              Logger.screen.info('last.fm', 'found ' + albums.length + ' album(s)');
+              return listPrompt(screen, albums, 'name').then((album) => {
+                return lfmActions.getAlbumInfo(this.artist, album).then((tracks) => {
+                  Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
+                  let tracklist = [];
+                  tracks.forEach((track) => {
+                    tracklist.push({
+                      artist: self.artist,
+                      track: track.name,
+                      album: album
+                    });
+                  });
+
+                  return playlist.batchSearch({
+                    type: 'tracklist',
+                    tracklist: tracklist,
+                  });
+                });
+              });
+            }).catch(errorHandler);
+          }
+        },
         'similar': {
           name: 'Similar artists for ' + this.artist,
           artist: this.artist, // save link for fn
           fn: function() {
             let self = this;
-            similarPrompt(screen, self.artist).then((artist) => {
-              qsearch.setValue(artist);
-              qsearch.emit('submit');
-            });
+            return lfmActions.getSimilar(this.artist).then((artists) => {
+              Logger.screen.info('last.fm', 'found ' + artists.length + ' artist(s)');
+              return listPrompt(screen, artists, 'name').then((artist) => {
+                qsearch.setValue(artist);
+                qsearch.emit('submit');
+              });
+            }).catch(errorHandler);
           }
         },
       };

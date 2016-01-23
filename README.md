@@ -6,10 +6,10 @@
 
   - Play ANY music for FREE from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
   - Explore new music with [last.fm](http://lastfm.com/) top tracks and similar artists search.
-  - Highest bitrates first: smart searching.
+  - Smart searching: highest bitrates first.
   - Low system requirements: mu-player will pump smooth even on your grandpa's notebook.
   - Mu-player will save your laptop battery. CPU load of in-browser playback comparing to MPD is HUGE.
-  - Mu-player work on both MAC OS and Linux.
+  - It works on both MAC OS and Linux.
 
 #### Why use mu-player instead of Google Music (or any other music service)?
   - You will get any music for FREE.
@@ -30,7 +30,7 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
   * Now you could run `mu` and setup credentials for lastfm.com, soundcloud.com and vk.com. We have tons of free music there but you need to register accounts first.
   * Run `mu` again and enjoy the music.
 
-Tested on OS X Yosemite, Ubuntu linux 14.04, 15.10, Linux Mint 17.3.
+Tested on OS X Yosemite, El Capitan; Ubuntu: 14.04, 15.10; Mint 17.x.
 
 ### Setup
   * Run `mu --setup` to edit your credentials.

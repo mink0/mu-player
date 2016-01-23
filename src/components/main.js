@@ -1,4 +1,4 @@
-import storage, { PAUSE, SHOW_HELP, FOCUS_RIGHT_PANE } from './../storage/storage';
+import storage, { PAUSE, SHOW_HELP } from './../storage/storage';
 
 import HelpBox from './../tui/help-box';
 import * as leftPane from './media-browser-ctrl';

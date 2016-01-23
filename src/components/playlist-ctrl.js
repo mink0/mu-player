@@ -169,7 +169,7 @@ let getBatchSearch = (tracklist, spinner) => {
   let limit = storage.data.topTracks.bitrateSearchLimit;
 
   let localError = (err) => {
-    errorHandler(err); // dispaly error
+    errorHandler(err); // display error
 
     apiDelay = apiDelay * 2;
     if (apiDelay > maxApiDelay) apiDelay = maxApiDelay;
@@ -198,8 +198,10 @@ let getBatchSearch = (tracklist, spinner) => {
           let sorted = playlist.sorter([].concat(vkTracks, scTracks), {
             track: current.track,
             artist: current.artist,
-            type: 'top10'
+            type: 'batch'
           });
+
+          sorted[0].title = (index + 1) + '. '+ sorted[0].title;
 
           if (typeof sorted[0] === 'object') playlist.appendPlaylist([sorted[0]]);
         });
@@ -216,7 +218,7 @@ export let batchSearch = (payload) => {
   stop();
 
   getBatchSearch(payload.tracklist, spinner).then(() => {
-    Logger.screen.log('Top tracks search complete!');
+    Logger.screen.log('Batch search complete!');
     spinner.stop();
   }).catch((err) => {
     errorHandler(err);

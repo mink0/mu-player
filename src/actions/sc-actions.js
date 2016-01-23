@@ -18,12 +18,14 @@ let handleData = (result) => {
   return result.filter(obj => obj.stream_url && obj.title).map(obj => {
     obj.source = 'sc';
     if (obj.title.indexOf('-') !== -1) {
-      obj.artist = obj.title.split('-')[0].trim();
-      obj.title = obj.title.substring(obj.title.indexOf('-') + 1).trim();
+      obj.artist = obj.title.split('-')[0];
+      obj.title = obj.title.substring(obj.title.indexOf('-') + 1);
     } else {
       obj.artist = obj.user.username.replace(/&amp;/g, '&');
       obj.title = obj.title.replace(/&amp;/g, '&');
     }
+    obj.artist = obj.artist.trim();
+    obj.title = obj.title.trim();
     obj.url = obj.stream_url + '?client_id=' + storage.data.scClientId;
     // obj.url = function() {
     //   return  req.getAsync({ url: obj.stream_url + '?client_id=' + storage.data.scClientId,

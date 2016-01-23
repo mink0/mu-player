@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import request from 'request';
 import Promise from 'bluebird';
+import storage from '../storage/storage';
 
 export let getRemoteAudioSize = (url, cb) => {
-  request.head(url, (err, res) => {
+  request.head({ url: url, timeout: storage.data.bitrateTimeout }, (err, res) => {
     if (err) return cb(err);
 
     if (res.statusCode !== 200)

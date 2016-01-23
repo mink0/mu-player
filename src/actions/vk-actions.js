@@ -10,8 +10,8 @@ const SEARCH_LIMIT = 1000;
 let handleData = (result) => {
   return result.filter(obj => obj.artist && obj.title).map(obj => {
     obj.source = 'vk';
-    obj.artist = obj.artist.replace(/&amp;/g, '&');
-    obj.title = obj.title.replace(/&amp;/g, '&');
+    obj.artist = obj.artist.replace(/&amp;/g, '&').trim();
+    obj.title = obj.title.replace(/&amp;/g, '&').trim();
 
     return obj;
   });
