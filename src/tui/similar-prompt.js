@@ -2,6 +2,7 @@ import blessed from 'blessed';
 import _ from 'lodash';
 import Promise from 'bluebird';
 import * as lfmActions from './../actions/lastfm-actions';
+import errorHandler from '../helpers/error-handler';
 
 export default (screen, artist) => {
   let layout;
@@ -53,18 +54,28 @@ export default (screen, artist) => {
 
   screen.blockEsc = true;
   list = blessed.list(listOpts);
+
   list.key(['escape', 'left', 'right', 'tab'], () => clear());
+  list.key(['pageup'], () => {
+    list.up(list.height);
+    screen.render();
+  });
+  list.key(['pagedown'], () => {
+    list.down(list.height);
+    screen.render();
+  });
+
 
   lfmActions.getSimilar(artist).then((artists) => {
-    global.Logger.screen.log('{green-fg}Found {/green-fg}' + artists.artist.length +
+    Logger.screen.info('Found: ', artists.length +
       ' similar artists for ' + artist);
-    list.setItems(_.pluck(artists.artist, 'name'));
+    list.setItems(_.pluck(artists, 'name'));
     layout = blessed.box(layoutOpts);
     layout.append(list);
     screen.saveFocus();
     list.focus();
     screen.render();
-  });
+  }).catch(errorHandler);
 
   return new Promise((resolve, reject) => {
     list.on('select', (selected, index) => {

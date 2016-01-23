@@ -1,6 +1,6 @@
 import blessed from 'blessed';
 
-export default (screen, message, lockKeys = true, label = 'Loading') => {
+export default (screen, message, lockKeys=true, label='') => {
   let spinner = blessed.loading({
     parent: screen,
     border: 'line',

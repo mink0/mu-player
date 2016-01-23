@@ -4,47 +4,21 @@
 
 ### Top Features
 
-  - Play ANY music for free from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
-  - Explore new music by [last.fm](http://lastfm.com/) top tracks and similar artists search.
-  - Search results with the highest bitrates first.
-  - Low system requirements. It will pump smooth even on your grandpa's notebook.
-  - Mu-player will definitely save your laptop battery. CPU load of in-browser playback comparing to MPD is HUGE.
+  - Play ANY music for FREE from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
+  - Explore new music with [last.fm](http://lastfm.com/) top tracks and similar artists search.
+  - Highest bitrates first: smart searching.
+  - Low system requirements: mu-player will pump smooth even on your grandpa's notebook.
+  - Mu-player will save your laptop battery. CPU load of in-browser playback comparing to MPD is HUGE.
+  - Mu-player work on both MAC OS and Linux.
+
+#### Why use mu-player instead of Google Music (or any other music service)?
+  - You will get any music for FREE.
+  - Mu-player will always try to find music with highest bitrate quality.
+  - Largest music databases in the Internet.
 
 You could use mu-player standalone or with any other full-featured MPD clients. See http://mpd.wikia.com/wiki/Clients for some greatness. For Ubuntu and Linux Mint [mpDris2](https://github.com/eonpatapon/mpDris2) is recommended. It will add native popups, multimedia keys support and playback control in a system tray.
 
-This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
-
-### Changelog
-    - Add Bitrate show on track-info
-    - Add Bitrate detection and smart sorting
-    - Add `PageUp`, `PageDown` key support
-    - Fix locked 'q' and 'esc' key bug
-  
-  * v0.3.0
-    - Total layout rewrite for proper support all terminals resolutions.
-    - Support for changing MPD connection parameters from config file
-    - Track metadata show
-    - Progressive track seek
-    - Fix long labels on track info
-    - Fix no track progress on linux sometimes
-    - Fix track-info playlist overlaping
-
-  * v0.2.0
-    - Better track seek
-    - Log scrolling via keyboard/mouse
-
-  * v0.1.3
-    - Bug fix
-
-  * v0.1.2
-    - Add playlist counter
-    - MPD connection error message
-
-  * v0.1.1
-    - Bug fixes
-
-  * v0.1.0
-    - Initial release
+This player is powered by amazing [blessed](https://github.com/chjj/blessed) library and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Install
   * First install [MPD](http://www.musicpd.org/). I recommend to use versions `0.19` and higher for `addtagid` functionality. Follow the http://mpd.wikia.com/wiki/Install for the instructions.
@@ -62,7 +36,7 @@ Tested on OS X Yosemite, Ubuntu linux 14.04, 15.10, Linux Mint 17.3.
   * Run `mu --setup` to edit your credentials.
 
 ### Config
-  * Config file is located in `~/.murc`.
+  * Config file is located in `~/.murc`. You could tweak some parameters there.
 
 ### Log
   * Log is located in `/tmp/mu.log`.

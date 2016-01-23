@@ -50,8 +50,7 @@ mpd.on('changed', function(system) {
 export let play = (url, id) => {
   mpd.playid(id, (err) => {
     if (err) return errorHandler(err);
-    metadata(url);
-    // FIX: mpd didn't send play event sometimes on linux 
+    // FIX: mpd didn't send play event sometimes on linux
     setTimeout(() => {
       mpd.emit('changed', 'player');
     }, 1000);
@@ -72,7 +71,7 @@ export let volumeUp = () => {
 
     let vol = parseInt(status.volume) + 2;
     if (vol > 100) vol = 100;
-    global.Logger.screen.log('{cyan-fg}Volume:{/cyan-fg} ' + vol + '%');
+    Logger.screen.log('{cyan-fg}Volume:{/cyan-fg} ' + vol + '%');
     mpd.setvol(vol);
   });
 };
@@ -83,7 +82,7 @@ export let volumeDown = () => {
 
     let vol = parseInt(status.volume) - 2;
     if (vol < 0) vol = 0;
-    global.Logger.screen.log('{cyan-fg}Volume:{/cyan-fg} ' + vol + '%');
+    Logger.screen.log('{cyan-fg}Volume:{/cyan-fg} ' + vol + '%');
     mpd.setvol(vol);
   });
 };
@@ -110,7 +109,7 @@ export let seekWithDelay = () => {
     clearTimeout(seekTimer);
     seekTimer = setTimeout(seek, SEEK_TIMEOUT);
 
-    global.Logger.screen.log('Seek to: ', seekPos >= 0 ?
+    Logger.screen.info('Seek to: ', seekPos >= 0 ?
       '+' + timeConvert(seekPos) : timeConvert(seekPos));
 
   }
@@ -119,21 +118,15 @@ export let seekWithDelay = () => {
 export let metadata = (url, cb=()=>{}) => {
   mpd.command('lsinfo', [url], (err, info) => {
     if (err) return cb(err);
-
-    for (var k in info) {
-      global.Logger.screen.log(`{cyan-fg}info{/cyan-fg} ${k}: ${info[k]}`);
-    }
-
-    return cb(null, info);
+    cb(null, info);
   });
-
 };
 
 function seek() {
-  global.Logger.screen.log('{cyan-fg}Seeking:{/cyan-fg} ', seekPos >= 0 ?
+  Logger.screen.status('Seeking:', seekPos >= 0 ?
     '+' + timeConvert(seekPos) : timeConvert(seekPos));
-  
-  let seekPosMpd = seekPos > 0 ? '+' + seekPos : '' + seekPos; 
+
+  let seekPosMpd = seekPos > 0 ? '+' + seekPos : '' + seekPos;
   mpd.seekcur(seekPosMpd, (err) => {
     if (err) return errorHandler(err);
 

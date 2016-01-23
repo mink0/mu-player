@@ -5,7 +5,7 @@ import storage, {
 from './../storage/storage';
 
 // import Toast from './../tui/toast';
-import SimilarPrompt from './../tui/similar-prompt.js';
+import similarPrompt from './../tui/similar-prompt.js';
 
 // import * as vkActions from './../actions/vk-actions';
 // import * as scActions from './../actions/sc-actions';
@@ -65,11 +65,15 @@ export let search = (data) => {
           artist: this.artist,
           fn: function() {
             let self = this;
-            lfmActions.getTopTracks(self.artist).then((tracks) => {
-              global.Logger.screen.log('Last.fm found ' + tracks.track.length + ' track(s)');
-              let tracklist = '';
+            let limit = storage.data.topTracks.results;
+            lfmActions.getTopTracks(self.artist, limit).then((tracks) => {
+              Logger.screen.log('Last.fm found ' + tracks.track.length + ' track(s)');
+              let tracklist = [];
               tracks.track.forEach((track) => {
-                tracklist += self.artist + ' - ' + track.name + '\n';
+                tracklist.push({
+                  artist: self.artist,
+                  track: track.name
+                });
               });
 
               playlist.batchSearch({
@@ -84,7 +88,7 @@ export let search = (data) => {
           artist: this.artist, // save link for fn
           fn: function() {
             let self = this;
-            SimilarPrompt(screen, self.artist).then((artist) => {
+            similarPrompt(screen, self.artist).then((artist) => {
               qsearch.setValue(artist);
               qsearch.emit('submit');
             });

@@ -5,8 +5,8 @@ var eventEmitter = new events.EventEmitter();
 
 var intel = require('intel');
 intel.addHandler(new intel.handlers.File('/tmp/mu.log'));
-global.Logger = intel;
-global.Logger.bottom = { log: function() {} }; // will be initialized soon
+Logger = intel;
+Logger.bottom = { log: function() {} }; // will be initialized soon
 
 var updateNotifier = require('update-notifier');
 var pkg = require('./package.json');

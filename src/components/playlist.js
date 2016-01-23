@@ -68,10 +68,10 @@ Playlist.prototype.mpdAdd = function(track) {
     // HACK: this tags don't streamed, so we have to add it manually
     // On some unicode chars this SPAM log with errors. So Logger.info is preferred.
     this.mpd.command('addtagid', [id.Id, 'artist', track.artist], (err, res) => {
-      if (err) global.Logger.info(err);
+      if (err) Logger.info(err);
     });
     this.mpd.command('addtagid', [id.Id, 'title', track.title], (err, res) => {
-      if (err) global.Logger.info(err);
+      if (err) Logger.info(err);
     });
   });
 };
@@ -117,9 +117,19 @@ Playlist.prototype.moveNext = function() {
   this.list.select(this.curIndex);
 };
 
-Playlist.prototype.sort = function(payload) {
+Playlist.prototype.sort = function(opts) {
+  let sorted = this.sorter(this.data, opts);
+  this.setPlaylist(sorted);
+  Logger.screen.log('Smart sorting was applied!');
+};
+
+Playlist.prototype.sorter = function(tracks, opts) {
   let vkTracks = [];
   let scTracks = [];
+  let type = opts.type || 'default';
+  let query = opts.query;
+  let artist = opts.artist;
+  let title = opts.track;
 
   let WEIGHTS = {
     artistExact: 3,
@@ -130,47 +140,54 @@ Playlist.prototype.sort = function(payload) {
     pos: 10
   };
 
+  // tuning for top artists search
+  if (type === 'top10') {
+    WEIGHTS = {
+      artistExact: 3,
+      artistContains: 1,
+      titleExact: 2,
+      titleContains: 1,
+      bitrate: 3,
+      pos: 1
+    };
+  }
+
   let calcWeight = (track) => {
     if (!track.hasOwnProperty('weight')) track.weight = 0;
 
     if (track.bitrate) track.weight += ((track.bitrate / 320) * WEIGHTS.bitrate);
 
     if (track.hasOwnProperty('artist')) {
-      if (payload.query) {
-        if (track.artist.trim().toLowerCase() === payload.query.trim().toLowerCase())
+      if (query) {
+        if (track.artist.trim().toLowerCase() === query.trim().toLowerCase())
           track.weight += WEIGHTS.artistExact;
-
-        if (track.artist.trim().toLowerCase().indexOf(payload.query.trim().toLowerCase()) !== -1)
-          track.weight += WEIGHTS.artistContains;
-      } else if (payload.artist) {
-        if (track.artist.trim().toLowerCase() === payload.artist.trim().toLowerCase())
+        else if (track.artist.trim().toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
+          track.weight += WEIGHTS.artistContains * (1 / (track.artist.trim().length - query.trim().length));
+      } else if (artist) {
+        if (track.artist.trim().toLowerCase() === artist.trim().toLowerCase())
           track.weight += WEIGHTS.artistExact;
-
-        if (track.artist.trim().toLowerCase().indexOf(payload.artist.trim().toLowerCase()) !== -1)
-          track.weight += WEIGHTS.artistContains;
+        else if (track.artist.trim().toLowerCase().indexOf(artist.trim().toLowerCase()) !== -1)
+          track.weight += WEIGHTS.artistContains * (1 / (track.artist.trim().length - artist.trim().length));
       }
     }
 
     if (track.hasOwnProperty('title')) {
-      if (payload.query) {
-        if (track.title.trim().toLowerCase() === payload.query.trim().toLowerCase())
+      if (query) {
+        if (track.title.trim().toLowerCase() === query.trim().toLowerCase())
           track.weight += WEIGHTS.titleExact;
-
-        if (track.title.trim().toLowerCase().indexOf(payload.query.trim().toLowerCase()) !== -1)
-          track.weight += WEIGHTS.titleContains;
-      } else if (payload.track) {
-        if (track.title.trim().toLowerCase() === payload.track.trim().toLowerCase())
+        else if (track.title.trim().toLowerCase().indexOf(query.trim().toLowerCase()) !== -1)
+          track.weight += WEIGHTS.titleContains * (1 / (track.title.trim().length - query.trim().length));
+      } else if (title) {
+        if (track.title.trim().toLowerCase() === title.trim().toLowerCase())
           track.weight += WEIGHTS.titleExact;
-
-        if (track.title.trim().toLowerCase().indexOf(payload.track.trim().toLowerCase()) !== -1)
-          track.weight += WEIGHTS.titleContains;
+        else if (track.title.trim().toLowerCase().indexOf(title.trim().toLowerCase()) !== -1)
+          track.weight += WEIGHTS.titleContains * (1 / (track.title.trim().length - title.trim().length));
       }
     }
-
   };
 
   // to calculate order weight
-  this.data.forEach((track) => {
+  tracks.forEach((track) => {
     calcWeight(track);
 
     if (track.source === 'vk') vkTracks.push(track);
@@ -185,13 +202,11 @@ Playlist.prototype.sort = function(payload) {
     track.weight += ((scTracks.length - index) / scTracks.length) * WEIGHTS.pos;
   });
 
-  let sorted = this.data.sort(function(a, b) {
+  let sorted = tracks.sort(function(a, b) {
     return parseFloat(b.weight, 10) - parseFloat(a.weight, 10);
   });
 
-  global.Logger.screen.log('Smart sorting applied!');
-
-  this.setPlaylist(sorted);
+  return sorted;
 };
 
 Playlist.prototype.removeDuplicates = function() {
@@ -213,6 +228,8 @@ Playlist.prototype.removeDuplicates = function() {
 };
 
 Playlist.prototype.formatTrackTitle = function(track) {
+  if (typeof track !== 'object') return 'Unknown track';
+
   if (track.label)
     return `{light-red-fg}${track.label}{/light-red-fg}`;
 

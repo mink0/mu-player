@@ -18,7 +18,7 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts={}) => {
-  global.Logger.screen.info('vk.com', `audio.search("${query}")`);
+  Logger.screen.info('vk.com', `audio.search("${query}")`);
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;
 
@@ -34,15 +34,15 @@ export let getSearch = (query, opts={}) => {
 };
 
 
-export let getSearchWithArtist = (track, artist) => {
-  global.Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
+export let getSearchWithArtist = (track, artist, opts) => {
+  Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
   let query = artist + ' ' + track;
-  return getSearch(query);
+  return getSearch(query, opts);
 };
 
 export let getSearchWithArtistExact = (track, artist) => {
   // TODO: need to fetch ALL results using pagination
-  global.Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
+  Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
   let request = vk.method('audio.search', {
     count: SEARCH_LIMIT,
     offset: 0,

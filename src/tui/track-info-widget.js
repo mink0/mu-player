@@ -140,6 +140,11 @@ TrackInfo.prototype.updateLabel = function() {
   this.setLabel(label);
 };
 
+TrackInfo.prototype.stop = function() {
+  this.status = 'stop';
+  this.hide();
+};
+
 TrackInfo.prototype.__proto__ = Box.prototype;
 
 TrackInfo.prototype.type = 'pbar';

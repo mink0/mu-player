@@ -147,6 +147,7 @@ export default (screen) => {
     height: 3,
     border: 'line',
     tags: true,
+    hidden: true,
     style: {
       border: {
         fg: 'brightblack'
@@ -173,6 +174,7 @@ export default (screen) => {
     width: '100%',
     align: 'left',
     inputOnFocus: true,
+    mouse: true,
     style: {
       bold: true,
       border: {
@@ -186,7 +188,7 @@ export default (screen) => {
   layout.bg.append(layout.leftPane);
   layout.bg.append(layout.rightPane);
 
-  // left pane  
+  // left pane
   layout.leftPane.append(layout.mediaTree);
   layout.leftPane.append(layout.logger);
 
@@ -216,6 +218,6 @@ export default (screen) => {
   // FIX: Hacky fix of overlaping playinfo and playlist
   layout.trackInfo.on('show', () => layout.playlist.height = '100%-2');
   layout.trackInfo.on('hide', () => layout.playlist.height = '100%');
-  
+
   return layout;
 };

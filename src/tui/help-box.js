@@ -48,6 +48,6 @@ export default (screen) => {
   lines.push('{right}{green-fg}Press any key to hide this window{/green-fg}{/right}');
 
   msg.display(lines.join('\n'), 0, function(err) {
-    global.Logger.error(err);
+    Logger.error(err);
   });
 };

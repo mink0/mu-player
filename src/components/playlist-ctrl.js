@@ -1,18 +1,14 @@
 import * as vkActions from './../actions/vk-actions';
 import * as scActions from './../actions/sc-actions';
-
 import Playlist from './playlist';
-
 import * as player from './../player/player-control';
-
 import loadingSpinner from '../tui/loading-spinner';
-
 import Promise from 'bluebird';
-import splitTracklist from 'split-tracklist';
 import {
   getRemoteBitrate
 }
 from '../actions/music-actions';
+import storage from '../storage/storage';
 
 let screen = null;
 let layout = null;
@@ -34,7 +30,7 @@ export let init = (_screen, _layout) => {
 };
 
 let errorHandler = (err) => {
-  global.Logger.error(err);
+  Logger.error(err);
   if (typeof err === 'object') {
     if (err.code == 14) {
       Logger.screen.error('VKontakte API limits reached');
@@ -58,6 +54,7 @@ let playCurrent = () => {
         urlFinded = true;
         (typeof url === 'function' ? url() : Promise.resolve(url)).then((url) => {
           player.play(url, id);
+          trackInfo.status = 'play';
         }).catch(errorHandler);
       } else {
         playlist.moveNext();
@@ -69,7 +66,7 @@ let playCurrent = () => {
 export let stop = () => {
   screen.title = ':mu';
   playlist.stop();
-  trackInfo.hide();
+  trackInfo.stop();
 };
 
 let appendTracks = (tracks) => {
@@ -78,9 +75,35 @@ let appendTracks = (tracks) => {
   return tracks;
 };
 
+let sortAndResumePlay = (sortQuery) => {
+  let status = trackInfo.status;
+  let cur = playlist.getCurrent();
+  playlist.sort(sortQuery);
+
+  let resumePlay = (system) => {
+    Logger.info(system);
+    if (system === 'playlist') {
+      let id = null;
+      for (var i = 0; i < playlist.data.length; i++) {
+        if (playlist.data[i].url === cur.url) {
+          id = playlist.data[i].mpdId;
+          break;
+        }
+      }
+      if (id !== null) player.play(cur.url, id);
+
+      playlist.mpd.removeListener('changed', resumePlay);
+    }
+  };
+
+  if (status === 'play') {
+    playlist.mpd.on('changed', resumePlay);
+  }
+};
+
 let loadBitrates = (tracks, spinner) => {
   let msg = 'Loading bitrates...';
-  global.Logger.screen.log(msg);
+  Logger.screen.log(msg);
   spinner.setContent(msg);
 
   let bitrates = [];
@@ -91,8 +114,8 @@ let loadBitrates = (tracks, spinner) => {
   });
 
   return Promise.all(bitrates).then(() => {
-    let msg = 'Bitrates successfully loaded!';
-    global.Logger.screen.log(msg);
+    let msg = 'Bitrates are loaded!';
+    Logger.screen.log(msg);
     spinner.setContent(msg);
     return tracks;
   });
@@ -101,7 +124,7 @@ let loadBitrates = (tracks, spinner) => {
 export let search = (payload) => {
   let sc;
   let vk;
-  let spinner = loadingSpinner(screen, 'Searching...', false);
+  let spinner = loadingSpinner(screen, 'Searching for tracks...', false, payload.query);
 
   stop();
 
@@ -125,11 +148,14 @@ export let search = (payload) => {
   // smart sorting
   Promise.all([vk, sc]).then(() => {
     let count = 0;
-    if (vk.isFulfilled()) count += vk.value().length;
-    if (sc.isFulfilled()) count += sc.value().length;
 
-    global.Logger.screen.log(`Found: ${count} result(s)`);
-    if (count > 1) playlist.sort(payload);
+    if (sc.isFulfilled() && Array.isArray(sc.value()))
+      count += sc.value().length;
+    if (vk.isFulfilled() && Array.isArray(vk.value()))
+      count += vk.value().length;
+
+    Logger.screen.log(`Found: ${count} result(s)`);
+    if (count > 1) sortAndResumePlay(payload);
     spinner.stop();
   }).catch((err) => {
     errorHandler(err);
@@ -137,62 +163,75 @@ export let search = (payload) => {
   });
 };
 
+let getBatchSearch = (tracklist, spinner) => {
+  let apiDelay = storage.data.topTracks.apiDelay;
+  let maxApiDelay = storage.data.topTracks.maxApiDelay;
+  let limit = storage.data.topTracks.bitrateSearchLimit;
+
+  let localError = (err) => {
+    errorHandler(err); // dispaly error
+
+    apiDelay = apiDelay * 2;
+    if (apiDelay > maxApiDelay) apiDelay = maxApiDelay;
+    Logger.screen.info('search', 'increasing delay - ', apiDelay + 'ms');
+  };
+
+  return Promise.reduce(tracklist, (total, current, index) => {
+    let delay = Promise.delay(apiDelay); // new unresolved delay promise
+
+    spinner.setLabel(`${index + 1} / ${tracklist.length}: ${current.track}`);
+    spinner.setContent('Searching for "' + current.track + '"...');
+    return delay.then(() => {
+      let sc = scActions.getSearchWithArtist(current.track, current.artist, { limit: 10 }).catch(localError);
+      let vk = vkActions.getSearchWithArtist(current.track, current.artist, { limit: limit }).catch(localError);
+
+      return Promise.all([sc, vk]).then((data) => {
+        let vkTracks = [];
+        let scTracks = [];
+
+        if (sc.isFulfilled() && Array.isArray(sc.value()) && sc.value().length > 0)
+          scTracks = sc.value();
+        if (vk.isFulfilled() && Array.isArray(vk.value()) && vk.value().length > 0)
+          vkTracks = vk.value();
+
+        return loadBitrates(vkTracks, spinner).then(() => {
+          let sorted = playlist.sorter([].concat(vkTracks, scTracks), {
+            track: current.track,
+            artist: current.artist,
+            type: 'top10'
+          });
+
+          if (typeof sorted[0] === 'object') playlist.appendPlaylist([sorted[0]]);
+        });
+      });
+    });
+  }, 0); // initial value for the reduce!
+};
+
 export let batchSearch = (payload) => {
+  let spinner = loadingSpinner(screen, 'Loading top tracks...', false);
+
   playlist.clearOnAppend = true;
 
-  let spinner = loadingSpinner(screen, 'Searching for tracks...', false);
+  stop();
 
-  let onTrack = (track, index, length, query) => {
-    playlist.appendPlaylist(track);
-    return spinner.setContent(`${index + 1} / ${length}: ${query}`);
-  };
-
-  let getBatchSearch = (text, onTrack) => {
-    let apiDelay = 350;
-    let maxApiDelay = 2000;
-    let tracklist = splitTracklist(text);
-    global.Logger.screen.log('getBatchSearch(', tracklist, ')');
-
-    return Promise.reduce(tracklist, (total, current, index) => {
-      let delay = Promise.delay(apiDelay); // new unresolved delay promise
-      return delay.then(Promise.join(
-        scActions.getSearch(current.track, {
-          limit: 1
-        }).catch(errorHandler),
-        vkActions.getSearch(current.track, {
-          limit: 1
-        }).catch((err) => {
-          global.Logger.error(err);
-          apiDelay = maxApiDelay;
-          //apiDelay = apiDelay >= maxApiDelay ? maxApiDelay: apiDelay * 2;
-          global.Logger.screen.log('vk.com paranoid throttling enabled: delay', apiDelay);
-        }),
-        function(scTracks, vkTracks) {
-          let tracks = [];
-          if (scTracks && scTracks.length > 0) tracks = tracks.concat(scTracks);
-          if (vkTracks && vkTracks.length > 0) tracks = tracks.concat(vkTracks);
-
-          return onTrack(tracks, index, tracklist.length, current.track);
-        }));
-    });
-  };
-
-  getBatchSearch(payload.tracklist, onTrack).then(() => {
+  getBatchSearch(payload.tracklist, spinner).then(() => {
+    Logger.screen.log('Top tracks search complete!');
     spinner.stop();
   }).catch((err) => {
+    errorHandler(err);
     spinner.stop();
-    global.Logger.error(err);
   });
 };
 
 export let updatePlaying = (status) => {
-  global.Logger.info(status);
+  Logger.info(status);
 
-  if (status.error) global.Logger.screen.error('MPD:', status.error);
+  if (status.error) Logger.screen.error('MPD:', status.error);
 
   if (status.state === 'play') {
     if (playlist.setCurrentById(status.songid) === null) {
-      global.Logger.screen.error('Playlist:', 'Can\'t find track with id', status.songid);
+      Logger.screen.error('Playlist:', 'Can\'t find track with id', status.songid);
       stop();
       return;
     }
@@ -206,9 +245,16 @@ export let updatePlaying = (status) => {
     // new song
     songid = status.songid;
     let cur = playlist.getCurrent();
-    global.Logger.info('Open: ', cur.url);
-    global.Logger.screen.info('Play:',
-      cur.artist, '-', cur.title, '[' + status.bitrate + ' kbps]');
+    Logger.info('Playing:', cur.url);
+    player.metadata(cur.url, (err, info) => {
+      if (err) return errorHandler(err);
+
+      for (var k in info) {
+        Logger.screen.info(`info`, `${k}: ${info[k]}`);
+      }
+    });
+
+    Logger.screen.status('Play:', cur.artist, '-', cur.title, '[' + status.bitrate + ' kbps]');
 
     screen.title = cur.artist + ' - ' + cur.title;
 

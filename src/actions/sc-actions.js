@@ -4,9 +4,6 @@ import Promise from 'bluebird';
 let sc = require('node-soundcloud');
 sc = Promise.promisifyAll(sc);
 
-import splitTracklist from 'split-tracklist';
-import { formatTrack } from './music-actions';
-
 sc.init({
   id: storage.data.scClientId,
   secret: storage.data.scSecret,
@@ -14,13 +11,19 @@ sc.init({
 });
 
 const SEARCH_LIMIT = 200;
-let formatTrackFull = (track) => formatTrack(track);
 
 let handleData = (result) => {
+  if (!Array.isArray(result)) return [];
+
   return result.filter(obj => obj.stream_url && obj.title).map(obj => {
     obj.source = 'sc';
-    obj.artist = obj.user.username.replace(/&amp;/g, '&');
-    obj.title = obj.title.replace(/&amp;/g, '&');
+    if (obj.title.indexOf('-') !== -1) {
+      obj.artist = obj.title.split('-')[0].trim();
+      obj.title = obj.title.substring(obj.title.indexOf('-') + 1).trim();
+    } else {
+      obj.artist = obj.user.username.replace(/&amp;/g, '&');
+      obj.title = obj.title.replace(/&amp;/g, '&');
+    }
     obj.url = obj.stream_url + '?client_id=' + storage.data.scClientId;
     // obj.url = function() {
     //   return  req.getAsync({ url: obj.stream_url + '?client_id=' + storage.data.scClientId,
@@ -34,9 +37,8 @@ let handleData = (result) => {
   });
 };
 
-export let getSearch = (query, opts) => {
-  global.Logger.screen.info(`soundcloud`, `search("${query}")`);
-  var opts = opts || {};
+export let getSearch = (query, opts={}) => {
+  Logger.screen.info(`soundcloud`, `search("${query}")`);
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;
 
@@ -46,10 +48,10 @@ export let getSearch = (query, opts) => {
   return request.then(response => handleData(response));
 };
 
-export let getSearchWithArtist = (track, artist) => {
-  global.Logger.screen.info(`soundcloud`, `search("${track}", "${artist}")`);
+export let getSearchWithArtist = (track, artist, opts) => {
+  Logger.screen.info(`soundcloud`, `search("${track}", "${artist}")`);
   let query = artist + ' ' + track;
-  return getSearch(query).then((tracks) => {
+  return getSearch(query, opts).then((tracks) => {
     return tracks.filter((obj) => {
       return (obj.title.toLowerCase().indexOf(track.toLowerCase()) !== -1 &&
         (obj.title.toLowerCase().indexOf(artist.toLowerCase()) !== -1 ||

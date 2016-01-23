@@ -32,7 +32,7 @@ export let getSearch = (query) => {
 };
 
 export let getSearchTrack = (query) => {
-  global.Logger.screen.info(`last.fm`, `trackSearch("${query}")`);
+  Logger.screen.info(`last.fm`, `trackSearch("${query}")`);
   return lfm.trackAsync.searchAsync({
     track: query,
     limit: limit
@@ -40,7 +40,7 @@ export let getSearchTrack = (query) => {
 };
 
 export let getSearchAlbum = (query) => {
-  global.Logger.screen.info(`last.fm`, `albumSearch("${query}")`);
+  Logger.screen.info(`last.fm`, `albumSearch("${query}")`);
   return lfm.albumAsync.searchAsync({
     album: query,
     limit: limit
@@ -48,31 +48,35 @@ export let getSearchAlbum = (query) => {
 };
 
 export let getSearchArtist = (query) => {
-  global.Logger.screen.info(`last.fm`, `artistSearch("${query}")`);
+  Logger.screen.info(`last.fm`, `artistSearch("${query}")`);
   return lfm.artistAsync.searchAsync({
     artist: query,
     limit: limit
   });
 };
 
-export let getTopTracks = (artist) => {
-  global.Logger.screen.info(`last.fm`, `topTracks("${artist}")`);
+export let getTopTracks = (artist, limit=30) => {
+  Logger.screen.info(`last.fm`, `topTracks("${artist}")`);
   return lfm.artistAsync.getTopTracksAsync({
     artist: artist,
-    limit: 30
+    limit: limit
   });
 };
 
 export let getSimilar = (artist) => {
-  global.Logger.screen.info(`last.fm`, `getSimilar("${artist}")`);
+  Logger.screen.info(`last.fm`, `getSimilar("${artist}")`);
   return lfm.artistAsync.getSimilarAsync({
     artist: artist,
     //limit: 50
+  }).then((artists) => {
+    if (artists.artist.length === 0)
+      throw new Error('Similar artists not found for "' + artist + '"');
+    return artists.artist;
   });
 };
 
 export let getSearchTag = (query) => {
-  global.Logger.screen.info(`last.fm`, `tagSearch("${query}")`);
+  Logger.screen.info(`last.fm`, `tagSearch("${query}")`);
   return lfm.tagAsync.searchAsync({
     tag: query,
     limit: limit

@@ -27,7 +27,7 @@ export default (screen, layout) => {
     layout.logger.log.apply(layout.logger, args);
   };
 
-  global.Logger.screen = layout.logger;
+  Logger.screen = layout.logger;
 
   storage.on(PAUSE, () => player.pause());
   storage.on(SHOW_HELP, () => HelpBox(screen));

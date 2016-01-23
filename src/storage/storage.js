@@ -2,15 +2,19 @@ var storage = require('dot-file-config')('.murc', {
   cloudSync: false
 });
 
-// console.log(storage);
-// process.exit(1)
-
+// defaults
 storage.data.vkLinks = storage.data.vkLinks || [];
 storage.data.gmLinks = storage.data.gmLinks || [];
 storage.data.fs = storage.data.fs || [];
 storage.data.mpd = storage.data.mpd || {
   host: 'localhost',
   port: '6600'
+};
+storage.data.topTracks = storage.data.topTracks || {
+  results: 30,
+  bitrateSearchLimit: 20,
+  apiDelay: 250,
+  maxApiDelay: 3000
 };
 
 import events from 'events';
