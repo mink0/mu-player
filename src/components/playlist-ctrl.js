@@ -201,9 +201,10 @@ let getBatchSearch = (tracklist, spinner) => {
             type: 'batch'
           });
 
-          sorted[0].title = (index + 1) + '. '+ sorted[0].title;
-
-          if (typeof sorted[0] === 'object') playlist.appendPlaylist([sorted[0]]);
+          if (typeof sorted[0] === 'object') {
+            sorted[0].title = (index + 1) + '. '+ sorted[0].title;
+            playlist.appendPlaylist([sorted[0]]);
+          }
         });
       });
     });

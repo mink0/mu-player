@@ -63,24 +63,24 @@ export let getTopTracks = (artist, limit=30) => {
   });
 };
 
-export let getTopAlbums = (artist, limit=100) => {
+export let getTopAlbums = (artist, limit) => {
   Logger.screen.info(`last.fm`, `topAlbums("${artist}")`);
   return lfm.artistAsync.getTopAlbumsAsync({
     artist: artist,
     limit: limit
   }).then((res) => {
-    if (res.album.length === 0)
-      throw new Error('Albums not found for "' + artist + '"');
-
-    return res.album;
+    // if (res.album.length === 0)
+    //   throw new Error('Albums not found for "' + artist + '"');
+    return res.album.filter(obj => obj.mbid);
   });
 };
 
-export let getAlbumInfo = (artist, album) => {
-  Logger.screen.info(`last.fm`, `getAlbumInfo("${artist}", "${album}")`);
+export let getAlbumInfo = (opts) => {
+  Logger.screen.info(`last.fm`, `getAlbumInfo("${opts.artist}", "${opts.album}", "${opts.mbid}")`);
   return lfm.albumAsync.getInfoAsync({
-    artist: artist,
-    album: album,
+    // artist: opts.artist,
+    // album: opts.album,
+    mbid: opts.mbid
   }).then((res) => res.tracks.track);
 };
 

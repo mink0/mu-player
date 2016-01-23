@@ -81,17 +81,21 @@ export let search = (data) => {
           artist: this.artist, // save link for fn
           fn: function() {
             let self = this;
-            return lfmActions.getTopAlbums(this.artist).then((albums) => {
+            return lfmActions.getTopAlbums(self.artist).then((albums) => {
               Logger.screen.info('last.fm', 'found ' + albums.length + ' album(s)');
-              return listPrompt(screen, albums, 'name').then((album) => {
-                return lfmActions.getAlbumInfo(this.artist, album).then((tracks) => {
+              return listPrompt(screen, albums, 'name', 'Choose the Album').then((album) => {
+                return lfmActions.getAlbumInfo({
+                  // artist: self.artist,
+                  // album: album.name,
+                  mbid: album.mbid
+                }).then((tracks) => {
                   Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
                   let tracklist = [];
                   tracks.forEach((track) => {
                     tracklist.push({
-                      artist: self.artist,
+                      artist: track.artist.name,
                       track: track.name,
-                      album: album
+                      album: album.name
                     });
                   });
 
@@ -111,8 +115,8 @@ export let search = (data) => {
             let self = this;
             return lfmActions.getSimilar(this.artist).then((artists) => {
               Logger.screen.info('last.fm', 'found ' + artists.length + ' artist(s)');
-              return listPrompt(screen, artists, 'name').then((artist) => {
-                qsearch.setValue(artist);
+              return listPrompt(screen, artists, 'name', 'Choose the Artist').then((artist) => {
+                qsearch.setValue(artist.name);
                 qsearch.emit('submit');
               });
             }).catch(errorHandler);
