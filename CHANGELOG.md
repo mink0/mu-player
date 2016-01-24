@@ -1,6 +1,10 @@
 # mu-player
 
 ### Changelog
+    - Add albums search
+    - Add search timeouts
+    - Fix halted searches
+
   * v0.4.0
     - Better soundcloud artist detection
     - Search code total rewrite: smart logic was implemented

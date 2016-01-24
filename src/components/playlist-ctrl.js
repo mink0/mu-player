@@ -125,6 +125,7 @@ export let search = (payload) => {
   let sc;
   let vk;
   let spinner = loadingSpinner(screen, 'Searching for tracks...', false, payload.query);
+  let timeout = storage.data.search.timeout;
 
   stop();
 
@@ -146,7 +147,7 @@ export let search = (payload) => {
   }
 
   // smart sorting
-  Promise.all([vk, sc]).then(() => {
+  Promise.all([vk, sc]).timeout(timeout).then(() => {
     let count = 0;
 
     if (sc.isFulfilled() && Array.isArray(sc.value()))
@@ -164,9 +165,10 @@ export let search = (payload) => {
 };
 
 let getBatchSearch = (tracklist, spinner) => {
-  let apiDelay = storage.data.topTracks.apiDelay;
-  let maxApiDelay = storage.data.topTracks.maxApiDelay;
-  let limit = storage.data.topTracks.bitrateSearchLimit;
+  let apiDelay = storage.data.batchSearch.apiDelay;
+  let maxApiDelay = storage.data.batchSearch.maxApiDelay;
+  let limit = storage.data.batchSearch.bitrateSearchLimit;
+  let timeout = storage.data.batchSearch.timeout;
 
   let localError = (err) => {
     errorHandler(err); // display error
@@ -182,8 +184,10 @@ let getBatchSearch = (tracklist, spinner) => {
     spinner.setLabel(`${index + 1} / ${tracklist.length}: ${current.track}`);
     spinner.setContent('Searching for "' + current.track + '"...');
     return delay.then(() => {
-      let sc = scActions.getSearchWithArtist(current.track, current.artist, { limit: 10 }).catch(localError);
-      let vk = vkActions.getSearchWithArtist(current.track, current.artist, { limit: limit }).catch(localError);
+      let sc = scActions.getSearchWithArtist(current.track, current.artist, { limit: 10 })
+        .timeout(timeout).catch(localError);
+      let vk = vkActions.getSearchWithArtist(current.track, current.artist, { limit: limit })
+        .timeout(timeout).catch(localError);
 
       return Promise.all([sc, vk]).then((data) => {
         let vkTracks = [];

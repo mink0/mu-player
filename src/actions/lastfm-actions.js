@@ -68,15 +68,34 @@ export let getTopAlbums = (artist, limit) => {
   return lfm.artistAsync.getTopAlbumsAsync({
     artist: artist,
     limit: limit
+  }).then(res => res.album.filter(obj => obj.mbid));
+};
+
+export let getTopAlbumsWithInfo = (artist, limit) => {
+  Logger.screen.info(`last.fm`, `topAlbums("${artist}")`);
+  return lfm.artistAsync.getTopAlbumsAsync({
+    artist: artist,
+    limit: limit
   }).then((res) => {
-    // if (res.album.length === 0)
-    //   throw new Error('Albums not found for "' + artist + '"');
-    return res.album.filter(obj => obj.mbid);
+    let albums = res.album.filter(obj => obj.mbid);
+    
+    let promises = [];
+    albums.forEach((album) => {
+      promises.push(getAlbumInfo({ mbid: album.mbid }));
+    });
+
+    return Promise.all(promises).then((data) => {
+      return data.map((album) => {
+        Logger.info(album);
+        if (album.releasedate) album.name = album.releasedate + ' - ' + album.name;
+        return album;
+      });
+    });
   });
 };
 
 export let getAlbumInfo = (opts) => {
-  Logger.screen.info(`last.fm`, `getAlbumInfo("${opts.artist}", "${opts.album}", "${opts.mbid}")`);
+  Logger.screen.info(`last.fm`, `getAlbumInfo("${opts.mbid}")`);
   return lfm.albumAsync.getInfoAsync({
     // artist: opts.artist,
     // album: opts.album,

@@ -5,7 +5,7 @@
 ### Top Features
 
   - Play ANY music for FREE from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
-  - Explore new music with [last.fm](http://lastfm.com/) top tracks and similar artists search.
+  - Explore new music with [last.fm](http://lastfm.com/) top tracks, similar artists, top albums search.
   - Smart searching: highest bitrates first.
   - Low system requirements: mu-player will pump smooth even on your grandpa's notebook.
   - Mu-player will save your laptop battery. CPU load of in-browser playback comparing to MPD is HUGE.

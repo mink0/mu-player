@@ -11,11 +11,15 @@ storage.data.mpd = storage.data.mpd || {
   host: 'localhost',
   port: '6600'
 };
-storage.data.topTracks = storage.data.topTracks || {
+storage.data.batchSearch = storage.data.batchSearch || {
+  timeout: 3000,
   results: 30,
   bitrateSearchLimit: 20,
   apiDelay: 250,
   maxApiDelay: 3000
+};
+storage.data.search = storage.data.batchSearch || {
+  timeout: 5000
 };
 
 import events from 'events';
