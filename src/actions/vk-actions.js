@@ -19,15 +19,20 @@ let handleData = (result) => {
 
 export let getSearch = (query, opts={}) => {
   Logger.screen.info('vk.com', `audio.search("${query}")`);
-  opts.limit = opts.limit || SEARCH_LIMIT;
-  opts.offset = opts.offset || 0;
+
+  let limit = opts.limit || SEARCH_LIMIT;
+  let offset = opts.offset || 0;
 
   let queryOpts = {
-    count: opts.limit,
-    offset: opts.offset * opts.limit,
+    count: limit,
+    offset: offset * limit,
     q: query,
     sort: 2
   };
+
+  // function doSearch() {
+  //   return vk.method('audio.search', queryOpts).timeout(2000).
+  // }
 
   let request = vk.method('audio.search', queryOpts);
   return request.then(response => handleData(response.items));

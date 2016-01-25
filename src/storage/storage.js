@@ -12,14 +12,14 @@ storage.data.mpd = storage.data.mpd || {
   port: '6600'
 };
 storage.data.batchSearch = storage.data.batchSearch || {
-  timeout: 3000,
+  timeout: 5000,
   results: 30,
   bitrateSearchLimit: 20,
-  apiDelay: 250,
+  apiDelay: 250, // 350
   maxApiDelay: 3000
 };
-storage.data.search = storage.data.batchSearch || {
-  timeout: 5000
+storage.data.search = storage.data.search || {
+  timeout: 10000
 };
 
 import events from 'events';

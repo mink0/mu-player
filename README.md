@@ -30,7 +30,7 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
   * Now you could run `mu` and setup credentials for lastfm.com, soundcloud.com and vk.com. We have tons of free music there but you need to register accounts first.
   * Run `mu` again and enjoy the music.
 
-Tested on OS X Yosemite, El Capitan; Ubuntu: 14.04, 15.10; Mint 17.x.
+Tested on OS X Yosemite, El Capitan; Ubuntu: 14.04, 15.10; Linux Mint 17.
 
 ### Setup
   * Run `mu --setup` to edit your credentials.

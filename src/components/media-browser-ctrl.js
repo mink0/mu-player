@@ -58,7 +58,7 @@ export let search = (data) => {
           artist: this.artist,
           fn: function() {
             let self = this;
-            let limit = storage.data.topTracks.results;
+            let limit = storage.data.batchSearch.results;
             lfmActions.getTopTracks(self.artist, limit).then((tracks) => {
               Logger.screen.info('last.fm', 'found ' + tracks.track.length + ' track(s)');
               let tracklist = [];

@@ -45,15 +45,15 @@ setupCredentials(cli.flags.setup).then(() => {
   layout.mediaTree.rows.key(['tab'], () => { layout.playlist.focus(); screen.render(); });
   layout.playlist.key(['tab'], () => { layout.qsearch.focus(); screen.render(); });
 
-  layout.playlist.key(['pageup'], () => { 
+  layout.playlist.key(['pageup'], () => {
     layout.playlist.up(layout.playlist.height - 2);
     screen.render();
   });
-  layout.playlist.key(['pagedown'], () => { 
+  layout.playlist.key(['pagedown'], () => {
     layout.playlist.down(layout.playlist.height - 2);
-    screen.render(); 
+    screen.render();
   });
-  
+
   layout.mediaTree.rows.key(['pageup'], () => {
     layout.mediaTree.rows.up(layout.mediaTree.rows.height);
     screen.render();
