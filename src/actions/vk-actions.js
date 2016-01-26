@@ -22,6 +22,9 @@ export let getSearch = (query, opts={}) => {
 
   let limit = opts.limit || SEARCH_LIMIT;
   let offset = opts.offset || 0;
+  let tryTimeout = opts.tryTimeout || 2000;
+  let tryAttempts = opts.tryAttempts || 5;
+  //let tryCount = ;
 
   let queryOpts = {
     count: limit,
@@ -29,6 +32,52 @@ export let getSearch = (query, opts={}) => {
     q: query,
     sort: 2
   };
+
+  return new Promise((resolve, reject) => {
+    let localError = (err) => {
+      if (--tryAttempts) return reject(err);
+
+      Logger.screen.info('vk.com', `retrying audio.search("${query}")`);
+      doSearch();
+    };
+
+    let done = (result) => {
+      Logger.screen.info('vk.com done:', result.items.length);
+
+      let out = handleData(result.items);
+
+      Promise.resolve(123).isFulfilled();
+
+      resolve(Promise.resolve(out));
+    };
+
+    let doSearch = () => {
+      vk.method('audio.search', queryOpts)
+        .timeout(tryTimeout)
+          .then((res) => done(res))
+            .catch((err) => localError(err));
+    };
+
+    doSearch();
+  });
+
+  // let request = vk.method('audio.search', queryOpts);
+  // return request.then(response => handleData(response.items));
+};
+
+export let getOldSearch = (query, opts={}) => {
+  Logger.screen.info('vk.com', `audio.search("${query}")`);
+
+  let limit = opts.limit || SEARCH_LIMIT;
+  let offset = opts.offset || 0;
+
+  let queryOpts = {
+    count: limit,
+    offset: offset * limit,
+    q: query,
+    sort: 2
+  };
+
 
   // function doSearch() {
   //   return vk.method('audio.search', queryOpts).timeout(2000).

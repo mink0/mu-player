@@ -150,8 +150,12 @@ export let search = (payload) => {
   Promise.all([vk, sc]).timeout(timeout).then(() => {
     let count = 0;
 
+    //Logger.info(vk);
+    Logger.info(vk.value().length);
+
     if (sc.isFulfilled() && Array.isArray(sc.value()))
       count += sc.value().length;
+
     if (vk.isFulfilled() && Array.isArray(vk.value()))
       count += vk.value().length;
 
