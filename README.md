@@ -5,8 +5,10 @@
 ### Top Features
 
   - Play ANY music for FREE from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
-  - Explore new music with [last.fm](http://lastfm.com/) top tracks, similar artists, top albums search.
-  - Smart searching: highest bitrates first.
+  - Explore new music with [last.fm](http://lastfm.com/) top tracks, similar artists and top albums search.
+  - Smart searching:
+    - bitrate detection for the highest bitrate music
+    - parallel queries, retries and timeouts to QUICKLY find ALL your music. The only limitation now is the API throttling.
   - Low system requirements: mu-player will pump smooth even on your grandpa's notebook.
   - Mu-player will save your laptop battery. CPU load of in-browser playback comparing to MPD is HUGE.
   - It works on both MAC OS and Linux.
@@ -36,7 +38,8 @@ Tested on OS X Yosemite, El Capitan; Ubuntu: 14.04, 15.10; Linux Mint 17.
   * Run `mu --setup` to edit your credentials.
 
 ### Config
-  * Config file is located in `~/.murc`. You could tweak some parameters there.
+  * Config file is located in `~/.murc`.
+  * You should tweak timeouts there for the best results with your Internet provider.
 
 ### Log
   * Log is located in `/tmp/mu.log`.

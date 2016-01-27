@@ -1,5 +1,5 @@
-import storage from './../storage/storage';
 import Promise from 'bluebird';
+import storage from '../storage/storage';
 
 let sc = require('node-soundcloud');
 sc = Promise.promisifyAll(sc);
@@ -40,6 +40,46 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts={}) => {
+  if (!opts.quite) Logger.screen.info('soundcloud', `audio.search("${query}")`);
+
+  let limit = opts.limit || SEARCH_LIMIT;
+  let offset = opts.offset || 0;
+  let tryTimeout = opts.tryTimeout || storage.data.search.timeout;
+  let tryAttempts = opts.tryAttempts || storage.data.search.retries;
+  let tryCounter = 0;
+
+  let queryOpts = {
+    limit: limit,
+    offset: offset * limit,
+    q: query,
+  };
+
+  return new Promise((resolve, reject) => {
+    let localError = (err) => {
+      if (tryCounter++ >= tryAttempts) return reject(err);
+
+      Logger.screen.info('soundcloud', `retrying audio.search(${query}) ...${tryCounter} of ${tryAttempts}`);
+      doSearch();
+    };
+
+    let done = (result) => {
+      if (!result) return localError(new Error('Unknown answer: ' + result));
+
+      resolve(Promise.resolve(handleData(result)));
+    };
+
+    let doSearch = () => {
+      sc.getAsync('/tracks', queryOpts)
+        .timeout(tryTimeout)
+           .then((res) => done(res))
+              .catch((err) => localError(err));
+    };
+
+    doSearch();
+  });
+};
+
+export let getSearchOld = (query, opts={}) => {
   Logger.screen.info(`soundcloud`, `search("${query}")`);
   opts.limit = opts.limit || SEARCH_LIMIT;
   opts.offset = opts.offset || 0;
@@ -53,6 +93,7 @@ export let getSearch = (query, opts={}) => {
 export let getSearchWithArtist = (track, artist, opts) => {
   Logger.screen.info(`soundcloud`, `search("${track}", "${artist}")`);
   let query = artist + ' ' + track;
+  opts.quite = true;
   return getSearch(query, opts).then((tracks) => {
     return tracks.filter((obj) => {
       return (obj.title.toLowerCase().indexOf(track.toLowerCase()) !== -1 &&

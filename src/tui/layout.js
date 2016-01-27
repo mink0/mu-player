@@ -46,7 +46,7 @@ export default (screen) => {
 
   layout.mediaTree = treeWidget({
     height: '80%+1',
-    label: 'Media',
+    label: 'Media Browser',
     border: 'line',
     tags: true,
     input: true,

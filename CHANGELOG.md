@@ -1,5 +1,6 @@
 # mu-player
-
+    - No more manual halted searches: timeouts and retries added. Tweak it in cinfig file.
+    - Top albums search
 ### Changelog
   * v0.4.0
     - Better soundcloud artist detection

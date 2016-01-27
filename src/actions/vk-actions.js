@@ -1,9 +1,7 @@
 import * as vk from 'vk-universal-api';
-import {
-  formatTrack
-}
-from './music-actions';
 import errorHandler from '../helpers/error-handler';
+import Promise from 'bluebird';
+import storage from '../storage/storage';
 
 const SEARCH_LIMIT = 1000;
 
@@ -18,13 +16,13 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts={}) => {
-  Logger.screen.info('vk.com', `audio.search("${query}")`);
+  if (!opts.quite) Logger.screen.info('vk.com', `audio.search("${query}")`);
 
   let limit = opts.limit || SEARCH_LIMIT;
   let offset = opts.offset || 0;
-  let tryTimeout = opts.tryTimeout || 2000;
-  let tryAttempts = opts.tryAttempts || 5;
-  //let tryCount = ;
+  let tryTimeout = opts.tryTimeout || storage.data.search.timeout;
+  let tryAttempts = opts.tryAttempts || storage.data.search.retries;
+  let tryCounter = 0;
 
   let queryOpts = {
     count: limit,
@@ -35,27 +33,23 @@ export let getSearch = (query, opts={}) => {
 
   return new Promise((resolve, reject) => {
     let localError = (err) => {
-      if (--tryAttempts) return reject(err);
+      if (tryCounter++ >= tryAttempts) return reject(err);
 
-      Logger.screen.info('vk.com', `retrying audio.search("${query}")`);
+      Logger.screen.info('vk.com', `retrying audio.search(${query}) ...${tryCounter} of ${tryAttempts}`);
       doSearch();
     };
 
     let done = (result) => {
-      Logger.screen.info('vk.com done:', result.items.length);
+      if (!result || !result.items) return localError(new Error('Unknown answer: ' + result));
 
-      let out = handleData(result.items);
-
-      Promise.resolve(123).isFulfilled();
-
-      resolve(Promise.resolve(out));
+      resolve(Promise.resolve(handleData(result.items)));
     };
 
     let doSearch = () => {
       vk.method('audio.search', queryOpts)
         .timeout(tryTimeout)
-          .then((res) => done(res))
-            .catch((err) => localError(err));
+           .then((res) => done(res))
+              .catch((err) => localError(err));
     };
 
     doSearch();
@@ -78,11 +72,6 @@ export let getOldSearch = (query, opts={}) => {
     sort: 2
   };
 
-
-  // function doSearch() {
-  //   return vk.method('audio.search', queryOpts).timeout(2000).
-  // }
-
   let request = vk.method('audio.search', queryOpts);
   return request.then(response => handleData(response.items));
 };
@@ -91,6 +80,7 @@ export let getOldSearch = (query, opts={}) => {
 export let getSearchWithArtist = (track, artist, opts) => {
   Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
   let query = artist + ' ' + track;
+  opts.quite = true;
   return getSearch(query, opts);
 };
 
@@ -119,96 +109,3 @@ export let getSearchWithArtistExact = (track, artist) => {
     return handleData(items);
   });
 };
-
-
-/*
-export let getProfileAudio = () => {
-  Logger.screen.log('getProfileAudio => ');
-  let request = vk.method('audio.get', { need_user: 1, count: count, offset: offset * count });
-  return request.then(response => {
-    response.items.forEach(track => {
-      profileAudious[track.artist + track.title] = true;
-    });
-
-    return response.items;
-  }).then(response => handleData(response));
-};
-
-export let getGroupAudio = (groupId, albumId) => {
-  Logger.screen.log('getGroupAudio => ', groupId, albumId);
-  let request = vk.method('audio.get', { need_user: 1, count: count, offset: offset * count, owner_id: groupId, album_id: albumId });
-  return request.then(response => handleData(response.items));
-};
-
-export let getWallAudio = (id) => {
-  Logger.screen.log('getWallAudio(%s)', id);
-  let request = vk.method('wall.getById', { posts: [id] }, { transformResponse: false });
-  return request.then((result) => {
-    let attachments = result.body.response[0].attachments.filter(a => a.type === 'audio').map(a => a.audio);
-    return handleData(attachments);
-  });
-};
-
-export let getRecommendations = () => {
-  Logger.screen.log('getRecommendations()');
-  return vk.method('audio.getRecommendations').then((response) => handleData(response.items));
-};
-
-export let getAlbums = () => {
-  Logger.screen.log('getAlbums()');
-  return vk.method('audio.getAlbums').then((response) => response.items);
-};
-
-
-export let addToProfile = (selected) => {
-  Logger.screen.log('addToProfile(%s)', selected);
-  return vk.method('audio.add', { audio_id: selected.aid , owner_id: selected.owner_id }).then((track) => {
-    selected.isAdded = true;
-    selected.trackTitleFull = formatTrackFull(selected);
-
-    return selected;
-  });
-};
-
-export let addOnTop = (selected) => {
-  Logger.screen.log('addOnTop(%s)', selected);
-  return vk.method('audio.get', { need_user: 1, count: 1 }).then((result) => {
-    let currentTopTrack = result.items[0];
-    return vk.method('audio.reorder', { audio_id: selected.aid, before: currentTopTrack.aid });
-  });
-};
-
-export let detectUrlType = (url) => {
-  let match = null;
-
-  let album = /.*vk.com\/audios([-\d]+)\?album_id=([\d]+)/;
-  match = album.exec(url);
-  if (match) {
-    return Promise.resolve({
-      type: 'audio',
-      owner_id: match[1],
-      album_id: match[2]
-    });
-  }
-
-  let wall = /.*vk.com\/wall([\S]+)/;
-  match = wall.exec(url);
-  if (match) {
-    return Promise.resolve({
-      type: 'wall',
-      id: match[1]
-    });
-  }
-
-  let community = /.*vk.com\/([\S]+)/;
-  match = community.exec(url);
-  if (match) {
-    return vk.method('utils.resolveScreenName', { screen_name: match[1] }).then((response) => {
-      return {
-        type: 'audio',
-        owner_id: (response.type === 'group' ? '-' : '') + response.object_id
-      };
-    });
-  }
-};
-*/

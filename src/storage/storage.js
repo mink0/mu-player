@@ -7,20 +7,22 @@ storage.data.vkLinks = storage.data.vkLinks || [];
 storage.data.gmLinks = storage.data.gmLinks || [];
 storage.data.fs = storage.data.fs || [];
 storage.data.bitrateTimeout = storage.data.bitrateTimeout || 2000;
-storage.data.mpd = storage.data.mpd || {
-  host: 'localhost',
-  port: '6600'
-};
-storage.data.batchSearch = storage.data.batchSearch || {
-  timeout: 5000,
-  results: 30,
-  bitrateSearchLimit: 20,
-  apiDelay: 250, // 350
-  maxApiDelay: 3000
-};
-storage.data.search = storage.data.search || {
-  timeout: 10000
-};
+
+storage.data.mpd = storage.data.mpd || {};
+storage.data.mpd.host = storage.data.mpd.host || 'localhost';
+storage.data.mpd.port = storage.data.mpd.port || 6600;
+
+storage.data.batchSearch = storage.data.batchSearch || {};
+storage.data.batchSearch.timeout = storage.data.batchSearch.timeout || 5000;
+storage.data.batchSearch.retries = storage.data.batchSearch.retries || 3;
+storage.data.batchSearch.results = storage.data.batchSearch.results || 30;
+storage.data.batchSearch.bitrateSearchLimit = storage.data.batchSearch.bitrateSearchLimit || 20;
+storage.data.batchSearch.apiDelay = storage.data.batchSearch.apiDelay || 250; // 350
+storage.data.batchSearch.maxApiDelay = storage.data.batchSearch.maxApiDelay || 3000;
+
+storage.data.search = storage.data.search || {};
+storage.data.search.timeout = storage.data.search.timeout || 5000;
+storage.data.search.retries = storage.data.search.retries || 5;
 
 import events from 'events';
 

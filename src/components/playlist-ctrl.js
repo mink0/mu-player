@@ -34,6 +34,8 @@ let errorHandler = (err) => {
   if (typeof err === 'object') {
     if (err.code == 14) {
       Logger.screen.error('VKontakte API limits reached');
+    // } else if (err.code === 'ETIMEDOUT') {
+    //   Logger.screen.err('ETIMEDOUT');
     } else if (err.cause) {
       Logger.screen.error('ERROR:', err.cause);
     } else {
@@ -110,7 +112,10 @@ let loadBitrates = (tracks, spinner) => {
   tracks.forEach((track) => {
     bitrates.push(getBitrateAsync(track.url, track.duration).then((bitrate) => {
       track.bitrate = bitrate;
-    }).catch(errorHandler));
+    }).catch((err) => {
+      if (err.code === 'ETIMEDOUT') errorHandler(new Error('BITRATE ETIMEDOUT: ' + track.url));
+      else errorHandler(err);
+    }));
   });
 
   return Promise.all(bitrates).then(() => {
@@ -125,42 +130,43 @@ export let search = (payload) => {
   let sc;
   let vk;
   let spinner = loadingSpinner(screen, 'Searching for tracks...', false, payload.query);
-  let timeout = storage.data.search.timeout;
+  let tryTimeout = storage.data.search.timeout;
+  let tryAttempts = storage.data.search.retries;
 
   stop();
 
   if (payload.type === 'search') {
     playlist.clearOnAppend = true;
-    sc = scActions.getSearch(payload.query).then(appendTracks);
-    vk = vkActions.getSearch(payload.query).then((tracks) => {
+    sc = scActions.getSearch(payload.query, {tryTimeout: tryTimeout, tryAttempts: tryAttempts}).then(appendTracks);
+    vk = vkActions.getSearch(payload.query, {tryTimeout: tryTimeout, tryAttempts: tryAttempts}).then((tracks) => {
       appendTracks(tracks);
       return loadBitrates(tracks, spinner);
     });
 
   } else if (payload.type === 'searchWithArtist') {
     playlist.clearOnAppend = true;
-    sc = scActions.getSearchWithArtist(payload.track, payload.artist).then(appendTracks);
-    vk = vkActions.getSearchWithArtist(payload.track, payload.artist).then((tracks) => {
+    sc = scActions.getSearchWithArtist(payload.track, payload.artist, {tryTimeout: tryTimeout, tryAttempts: tryAttempts}).then(appendTracks);
+    vk = vkActions.getSearchWithArtist(payload.track, payload.artist, {tryTimeout: tryTimeout, tryAttempts: tryAttempts}).then((tracks) => {
       appendTracks(tracks);
       return loadBitrates(tracks, spinner);
     });
   }
 
   // smart sorting
-  Promise.all([vk, sc]).timeout(timeout).then(() => {
+  Promise.all([vk, sc]).then(() => {
     let count = 0;
 
-    //Logger.info(vk);
-    Logger.info(vk.value().length);
+    //Logger.info(vk.value().length);
 
     if (sc.isFulfilled() && Array.isArray(sc.value()))
       count += sc.value().length;
-
     if (vk.isFulfilled() && Array.isArray(vk.value()))
       count += vk.value().length;
 
     Logger.screen.log(`Found: ${count} result(s)`);
+
     if (count > 1) sortAndResumePlay(payload);
+
     spinner.stop();
   }).catch((err) => {
     errorHandler(err);
@@ -172,7 +178,8 @@ let getBatchSearch = (tracklist, spinner) => {
   let apiDelay = storage.data.batchSearch.apiDelay;
   let maxApiDelay = storage.data.batchSearch.maxApiDelay;
   let limit = storage.data.batchSearch.bitrateSearchLimit;
-  let timeout = storage.data.batchSearch.timeout;
+  let tryAttempts = storage.data.batchSearch.retries;
+  let tryTimeout = storage.data.batchSearch.timeout;
 
   let localError = (err) => {
     errorHandler(err); // display error
@@ -188,10 +195,12 @@ let getBatchSearch = (tracklist, spinner) => {
     spinner.setLabel(`${index + 1} / ${tracklist.length}: ${current.track}`);
     spinner.setContent('Searching for "' + current.track + '"...');
     return delay.then(() => {
-      let sc = scActions.getSearchWithArtist(current.track, current.artist, { limit: 10 })
-        .timeout(timeout).catch(localError);
-      let vk = vkActions.getSearchWithArtist(current.track, current.artist, { limit: limit })
-        .timeout(timeout).catch(localError);
+      let sc = scActions.getSearchWithArtist(current.track, current.artist,
+        { limit: 10, tryTimeout: tryTimeout, tryAttempts: tryAttempts })
+          .catch(localError);
+      let vk = vkActions.getSearchWithArtist(current.track, current.artist,
+        { limit: limit, tryTimeout: tryTimeout, tryAttempts: tryAttempts })
+          .catch(localError);
 
       return Promise.all([sc, vk]).then((data) => {
         let vkTracks = [];

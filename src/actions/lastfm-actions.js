@@ -60,6 +60,11 @@ export let getTopTracks = (artist, limit=30) => {
   return lfm.artistAsync.getTopTracksAsync({
     artist: artist,
     limit: limit
+  }).then((res) => {
+    let out = res.track.filter(obj => obj.name);
+    if (out.length === 0) throw new Error('No tracks found for ' + artist);
+
+    return out;
   });
 };
 
@@ -68,7 +73,12 @@ export let getTopAlbums = (artist, limit) => {
   return lfm.artistAsync.getTopAlbumsAsync({
     artist: artist,
     limit: limit
-  }).then(res => res.album.filter(obj => obj.mbid));
+  }).then((res) => {
+    let out = res.album.filter(obj => obj.mbid);
+    if (out.length === 0) throw new Error('No albums found for ' + artist);
+
+    return out;
+  });
 };
 
 export let getTopAlbumsWithInfo = (artist, limit) => {
@@ -78,7 +88,7 @@ export let getTopAlbumsWithInfo = (artist, limit) => {
     limit: limit
   }).then((res) => {
     let albums = res.album.filter(obj => obj.mbid);
-    
+
     let promises = [];
     albums.forEach((album) => {
       promises.push(getAlbumInfo({ mbid: album.mbid }));

@@ -60,9 +60,9 @@ export let search = (data) => {
             let self = this;
             let limit = storage.data.batchSearch.results;
             lfmActions.getTopTracks(self.artist, limit).then((tracks) => {
-              Logger.screen.info('last.fm', 'found ' + tracks.track.length + ' track(s)');
+              Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
               let tracklist = [];
-              tracks.track.forEach((track) => {
+              tracks.forEach((track) => {
                 tracklist.push({
                   artist: self.artist,
                   track: track.name
@@ -73,7 +73,7 @@ export let search = (data) => {
                 type: 'tracklist',
                 tracklist: tracklist,
               });
-            });
+            }).catch(errorHandler);
           }
         },
         'albums': {
