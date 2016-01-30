@@ -13,6 +13,10 @@ function Playlist(plistPane, countPane) {
   this.counter = countPane;
 
   this.list.on('select', (item, index) => self.setCurrent(index));
+
+  this.list.key(['backspace', 'delete'], (ch, key) => {
+    this.removeItem(this.list.selected);
+  });
 }
 
 Playlist.prototype.setPlaylist = function(tracks) {
@@ -55,8 +59,13 @@ Playlist.prototype.addItems = function(tracks) {
   this.updateCounter();
 };
 
-Playlist.prototype.updateCounter = function() {
-  this.counter.setContent(`{bright-black-fg}${this.curIndex + 1}/${this.data.length}`);
+Playlist.prototype.updateCounter = function(index) {
+  let content = '{bright-black-fg}';
+  if (index !== undefined) content += `${index + 1}/`;
+  else content += '#/';
+  content += `${this.data.length}`;
+  this.counter.setContent(content);
+
   if (this.counter.hidden) this.counter.show();
 };
 
@@ -101,7 +110,7 @@ Playlist.prototype.setCurrent = function(index) {
   this.list.setItem(this.prevIndex, this.data[this.prevIndex].trackTitleFull);
   this.list.setItem(this.curIndex,
     '{yellow-fg}' + this.getCurrent().trackTitleFull + '{/yellow-fg}');
-  this.updateCounter();
+  this.updateCounter(index);
   this.list.render();
 };
 
@@ -110,6 +119,7 @@ Playlist.prototype.stop = function() {
 
   this.list.setItem(this.curIndex, this.data[this.prevIndex].trackTitleFull);
   this.list.render();
+  this.updateCounter();
 };
 
 Playlist.prototype.moveNext = function() {
@@ -209,6 +219,13 @@ Playlist.prototype.sorter = function(tracks, opts) {
   return sorted;
 };
 
+Playlist.prototype.removeItem = function(index) {
+  let deleted = this.data.splice(index, 1);
+  this.updateCounter();
+  this.list.removeItem(index);
+  this.mpd.deleteid(deleted[0].mpdId, errorHandler);
+};
+
 Playlist.prototype.removeDuplicates = function() {
   let out = {},
     arr = [];
@@ -227,17 +244,23 @@ Playlist.prototype.removeDuplicates = function() {
   this.data = arr;
 };
 
+let capitalize = function(str, lower=false) {
+  return (lower ? str.toLowerCase() : str).replace(/(?:^|\s)\S/g, function(a) {
+    return a.toUpperCase();
+  });
+};
+
 Playlist.prototype.formatTrackTitle = function(track) {
   if (typeof track !== 'object') return 'Unknown track';
 
   if (track.label)
     return `{light-red-fg}${track.label}{/light-red-fg}`;
 
-  let result = `{bold}${track.artist}{/bold}`;
+  let result = `{bold}${capitalize(track.artist, true)}{/bold}`;
 
   if (track.source) result = `[${track.source}] ` + result;
 
-  if (track.title) result += ` - ${track.title}`;
+  if (track.title) result += ` - ${capitalize(track.title)}`;
 
   if (track.duration) {
     result += '{|}';
@@ -250,6 +273,5 @@ Playlist.prototype.formatTrackTitle = function(track) {
 
   return result;
 };
-
 
 module.exports = Playlist;

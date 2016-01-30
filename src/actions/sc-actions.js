@@ -40,7 +40,7 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts={}) => {
-  if (!opts.quite) Logger.screen.info('soundcloud', `audio.search("${query}")`);
+  Logger.screen.info('soundcloud', `audio.search("${query}")`);
 
   let limit = opts.limit || SEARCH_LIMIT;
   let offset = opts.offset || 0;
@@ -91,9 +91,7 @@ export let getSearchOld = (query, opts={}) => {
 };
 
 export let getSearchWithArtist = (track, artist, opts) => {
-  Logger.screen.info(`soundcloud`, `search("${track}", "${artist}")`);
   let query = artist + ' ' + track;
-  opts.quite = true;
   return getSearch(query, opts).then((tracks) => {
     return tracks.filter((obj) => {
       return (obj.title.toLowerCase().indexOf(track.toLowerCase()) !== -1 &&

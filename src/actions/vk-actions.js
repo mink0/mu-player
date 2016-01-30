@@ -16,7 +16,7 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query, opts={}) => {
-  if (!opts.quite) Logger.screen.info('vk.com', `audio.search("${query}")`);
+  Logger.screen.info('vk.com', `audio.search("${query}")`);
 
   let limit = opts.limit || SEARCH_LIMIT;
   let offset = opts.offset || 0;
@@ -78,9 +78,7 @@ export let getOldSearch = (query, opts={}) => {
 
 
 export let getSearchWithArtist = (track, artist, opts) => {
-  Logger.screen.info('vk.com', `audio.search("${track}", "${artist}")`);
   let query = artist + ' ' + track;
-  opts.quite = true;
   return getSearch(query, opts);
 };
 

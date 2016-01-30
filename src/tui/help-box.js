@@ -19,7 +19,7 @@ export default (screen) => {
 
   var lines = [];
   var addHotkey = (key, description) => {
-    lines.push(_.padRight(key, 8) + '{yellow-fg}' + description + '{/yellow-fg}');
+    lines.push('{yellow-fg}' + _.padRight(key, 12) + '{/yellow-fg}' + description);
   };
 
   addHotkey('enter', 'play');
@@ -29,6 +29,7 @@ export default (screen) => {
   addHotkey('<', 'seek backward');
   addHotkey('+', 'volume up');
   addHotkey('-', 'volume down');
+  addHotkey('del, <-', 'remove track');
 
   lines.push('');
 

@@ -6,7 +6,7 @@ var storage = require('dot-file-config')('.murc', {
 storage.data.vkLinks = storage.data.vkLinks || [];
 storage.data.gmLinks = storage.data.gmLinks || [];
 storage.data.fs = storage.data.fs || [];
-storage.data.bitrateTimeout = storage.data.bitrateTimeout || 2000;
+storage.data.bitrateTimeout = storage.data.bitrateTimeout || 3000;
 
 storage.data.mpd = storage.data.mpd || {};
 storage.data.mpd.host = storage.data.mpd.host || 'localhost';

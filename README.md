@@ -39,7 +39,7 @@ Tested on OS X Yosemite, El Capitan; Ubuntu: 14.04, 15.10; Linux Mint 17.
 
 ### Config
   * Config file is located in `~/.murc`.
-  * You should tweak timeouts there for the best results with your Internet provider.
+  * You should tweak timeouts there for the best searching results with your Internet provider.
 
 ### Log
   * Log is located in `/tmp/mu.log`.
@@ -49,5 +49,3 @@ Tested on OS X Yosemite, El Capitan; Ubuntu: 14.04, 15.10; Linux Mint 17.
 
 ### Alternatives
 - https://github.com/ewnd9/badtaste
-- https://www.npmjs.com/package/vknplayer
-- https://www.npmjs.com/package/djesbe
