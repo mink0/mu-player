@@ -1,9 +1,10 @@
 # mu-player
 
 ### Changelog
+  * v0.5.0
     - Playlist: remove tracks
     - Track title capitalize
-    - No more manual halted searches: timeouts and retries added. Tweak it in cinfig file.
+    - No more halted searches: search retries added.
     - Top albums search
 
   * v0.4.0
