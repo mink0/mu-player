@@ -135,7 +135,7 @@ export let search = (payload) => {
 
   stop();
 
-  if (payload.type === 'search') {
+  if (payload.type === 'search' || payload.type === 'tagsearch') {
     playlist.clearOnAppend = true;
     sc = scActions.getSearch(payload.query, {tryTimeout: tryTimeout, tryAttempts: tryAttempts}).then(appendTracks);
     vk = vkActions.getSearch(payload.query, {tryTimeout: tryTimeout, tryAttempts: tryAttempts}).then((tracks) => {

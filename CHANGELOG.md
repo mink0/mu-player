@@ -1,5 +1,6 @@
 # mu-player
     - Search by tags: all searches started by `#` are tagsearch
+    - Some nasty bugs lastfmapi force me to switch to lastfm
     - Bug fixes
     - Stop batch search on ESC
 

@@ -41,8 +41,8 @@ export default (screen, layout) => {
       query = query.slice(1);
     }
 
-    rightPane.search({ type: 'search', query: query });
-    leftPane.search({ type: 'search', query: query });
+    rightPane.search({ type: type, query: query });
+    leftPane.search({ type: type, query: query });
   });
 
   layout.qsearch.setValue(storage.data.lastQuery || 'The Beatles');

@@ -20,6 +20,8 @@
 
 You could use mu-player standalone or with any other full-featured MPD clients. See http://mpd.wikia.com/wiki/Clients for some greatness. For Ubuntu and Linux Mint [mpDris2](https://github.com/eonpatapon/mpDris2) is recommended. It will add native popups, multimedia keys support and playback control in Unity/Cinnamon.
 
+[New]You could search by tags with `#` at the begining of your query. For the example type `#Disco` in search input.
+
 This player is powered by amazing [blessed](https://github.com/chjj/blessed) library and forked from tasty [badtaste](https://github.com/ewnd9/badtaste) player.
 
 ### Install

@@ -35,7 +35,7 @@
     "inquirer-question": "^1.1.1",
     "intel": "^1.0.2",
     "komponist": "^0.1.0",
-    "lastfmapi": "0.0.6",
+    "lastfm": "^0.9.2",
     "lodash": "^3.10.1",
     "meow": "^3.4.1",
     "node-soundcloud": "0.0.4",
