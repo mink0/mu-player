@@ -1,14 +1,16 @@
 # mu-player
-    - Search by tags: all searches started by `#` are tagsearch
-    - Some nasty bugs lastfmapi force me to switch to lastfm
-    - Bug fixes
-    - Stop batch search on ESC
 
 ### Changelog
+  * v0.6.0
+    - Search by the tags: all searches started by `#`
+    - Some nasty bugs lastfmapi force me to switch to lastfm
+    - Bug fixes
+    - Stop batch search on `esc` key
+
   * v0.5.0
     - Playlist: remove tracks
     - Track title capitalize
-    - No more halted searches: search retries added.
+    - No more halted searches: search retries added
     - Top albums search
 
   * v0.4.0
