@@ -156,11 +156,9 @@ export let search = (payload) => {
   Promise.all([vk, sc]).then(() => {
     let count = 0;
 
-    //Logger.info(vk.value().length);
-
-    if (sc.isFulfilled() && Array.isArray(sc.value()))
+    if (sc && sc.isFulfilled() && Array.isArray(sc.value()))
       count += sc.value().length;
-    if (vk.isFulfilled() && Array.isArray(vk.value()))
+    if (vk && vk.isFulfilled() && Array.isArray(vk.value()))
       count += vk.value().length;
 
     Logger.screen.log(`Found: ${count} result(s)`);
@@ -180,6 +178,9 @@ let getBatchSearch = (tracklist, spinner) => {
   let limit = storage.data.batchSearch.bitrateSearchLimit;
   let tryAttempts = storage.data.batchSearch.retries;
   let tryTimeout = storage.data.batchSearch.timeout;
+  let isUserStop = false;
+
+  spinner.once('destroy', () => isUserStop = true);
 
   let localError = (err) => {
     errorHandler(err); // display error
@@ -190,6 +191,8 @@ let getBatchSearch = (tracklist, spinner) => {
   };
 
   return Promise.reduce(tracklist, (total, current, index) => {
+    if (isUserStop) throw new Error('Stopped by User');
+
     let delay = Promise.delay(apiDelay); // new unresolved delay promise
 
     spinner.setLabel(`${index + 1} / ${tracklist.length}: ${current.track}`);
@@ -206,9 +209,9 @@ let getBatchSearch = (tracklist, spinner) => {
         let vkTracks = [];
         let scTracks = [];
 
-        if (sc.isFulfilled() && Array.isArray(sc.value()) && sc.value().length > 0)
+        if (sc && sc.isFulfilled() && Array.isArray(sc.value()) && sc.value().length > 0)
           scTracks = sc.value();
-        if (vk.isFulfilled() && Array.isArray(vk.value()) && vk.value().length > 0)
+        if (vk && vk.isFulfilled() && Array.isArray(vk.value()) && vk.value().length > 0)
           vkTracks = vk.value();
 
         return loadBitrates(vkTracks, spinner).then(() => {

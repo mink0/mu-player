@@ -34,7 +34,7 @@ export default (screen, message, lockKeys=true, label='') => {
   screen.key(['escape'], stop);
 
   // HACK: on spinner stop
-  spinner.on('hide', () => {
+  spinner.once('hide', () => {
     clear();
   });
 

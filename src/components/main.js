@@ -33,8 +33,16 @@ export default (screen, layout) => {
   storage.on(SHOW_HELP, () => HelpBox(screen));
 
   layout.qsearch.on('submit', () => {
-    rightPane.search({ type: 'search', query: layout.qsearch.value });
-    leftPane.search({ type: 'search', query: layout.qsearch.value });
+    let type = 'search';
+    let query = layout.qsearch.value.trim();
+
+    if (query[0] === '#') {
+      type = 'tagsearch';
+      query = query.slice(1);
+    }
+
+    rightPane.search({ type: 'search', query: query });
+    leftPane.search({ type: 'search', query: query });
   });
 
   layout.qsearch.setValue(storage.data.lastQuery || 'The Beatles');

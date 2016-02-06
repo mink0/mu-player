@@ -1,4 +1,7 @@
 # mu-player
+    - Search by tags: all searches started by `#` are tagsearch
+    - Bug fixes
+    - Stop batch search on ESC
 
 ### Changelog
   * v0.5.0

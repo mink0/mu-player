@@ -21,8 +21,16 @@ export let init = (_screen, _menuPane, _qsearch) => {
   });
 };
 
-export let search = (data) => {
-  lfmActions.getSearch(data.query).then((searchData) => {
+export let search = (payload) => {
+  let psearch;
+  if (payload.type === 'search')
+    psearch = lfmActions.getSearch(payload.query);
+  else if (payload.type === 'tagsearch')
+    psearch = lfmActions.getTagSearch(payload.query);
+  else
+    return errorHandler('Unknown search type');
+
+  psearch.then((searchData) => {
 
     function TrackItem(track, artist) {
       this.track = track;

@@ -12,6 +12,7 @@ lfm.trackAsync = Promise.promisifyAll(lfm.track);
 lfm.albumAsync = Promise.promisifyAll(lfm.album);
 lfm.artistAsync = Promise.promisifyAll(lfm.artist);
 lfm.tagAsync = Promise.promisifyAll(lfm.tag);
+//lfm.userAsync = Promise.promisifyAll(lfm.user);
 
 let limit = 10;
 
@@ -20,6 +21,7 @@ let handleData = (result) => {
 };
 
 export let getSearch = (query) => {
+  Logger.screen.info(`last.fm`, `search("${query}")`);
   let menu = {};
   return Promise.join(
     getSearchTrack(query),
@@ -27,6 +29,30 @@ export let getSearch = (query) => {
     function(tracks, artists/*, albums*/) {
       menu.tracks = tracks.trackmatches.track;
       menu.artists = artists.artistmatches.artist;
+      return handleData(menu);
+    });
+};
+
+export let getTagSearch = (query) => {
+  Logger.screen.info(`last.fm`, `tagSearch("${query}")`);
+  let menu = {};
+
+  // lfm.tag.getTopTracks({ tag: 'Disco' }, (err, topTracks) => {
+  //   if (err) Logger.info(err);
+
+  //   Logger.info('result', topTracks);
+  // });
+
+
+
+  return Promise.join(
+    getTracksByTag(query),
+    getArtistsByTag(query),
+    function(tracks, artists /*, albums*/ ) {
+      Logger.info(query, tracks);
+
+      menu.tracks = tracks.toptracks.track;
+      //menu.artists = artists.topartists.artist;
       return handleData(menu);
     });
 };
@@ -110,7 +136,10 @@ export let getAlbumInfo = (opts) => {
     // artist: opts.artist,
     // album: opts.album,
     mbid: opts.mbid
-  }).then((res) => res.tracks.track);
+  }).then((res) => {
+    Logger.info(res);
+    return res.tracks.track;
+  });
 };
 
 export let getSimilar = (artist) => {
@@ -126,10 +155,26 @@ export let getSimilar = (artist) => {
   });
 };
 
-export let getSearchTag = (query) => {
-  Logger.screen.info(`last.fm`, `tagSearch("${query}")`);
-  return lfm.tagAsync.searchAsync({
+export let getTracksByTag = (query, limit=10) => {
+  Logger.screen.info(`last.fm`, `getTracksByTag("${query}")`);
+  return lfm.tagAsync.getTopTracksAsync({
     tag: query,
+    limit: limit
+  });
+};
+
+export let getArtistsByTag = (query, limit=10) => {
+  Logger.screen.info(`last.fm`, `getArtistsByTag("${query}")`);
+  return lfm.tagAsync.getTopArtistsAsync({
+    tag: query,
+    limit: limit
+  });
+};
+
+export let getUserFavs = () => {
+  Logger.screen.info(`last.fm`, `getLoved()`);
+  return lfm.userAsync.getLovedTracksAsync({
+    user: 'minkolazer',
     limit: limit
   });
 };
