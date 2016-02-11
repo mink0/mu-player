@@ -4,8 +4,11 @@ import Promise from 'bluebird';
 import storage from '../storage/storage';
 
 const SEARCH_LIMIT = 1000;
+const NOTFOUND = 'VK:NotFound';
 
 let handleData = (result) => {
+  if (!Array.isArray(result) || result.length === 0) throw new Error(NOTFOUND);
+
   return result.filter(obj => obj.artist && obj.title).map(obj => {
     obj.source = 'vk';
     obj.artist = obj.artist.replace(/&amp;/g, '&').trim();
@@ -33,7 +36,7 @@ export let getSearch = (query, opts={}) => {
 
   return new Promise((resolve, reject) => {
     let localError = (err) => {
-      if (tryCounter++ >= tryAttempts) return reject(err);
+      if (tryCounter++ >= tryAttempts || err.message === NOTFOUND) return reject(err);
 
       Logger.screen.info('vk.com', `retrying audio.search(${query}) ...${tryCounter} of ${tryAttempts}`);
       doSearch();

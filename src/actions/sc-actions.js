@@ -11,9 +11,10 @@ sc.init({
 });
 
 const SEARCH_LIMIT = 200;
+const NOTFOUND = 'SC:NotFound';
 
 let handleData = (result) => {
-  if (!Array.isArray(result)) return [];
+  if (!Array.isArray(result) || result.length === 0) throw new Error(NOTFOUND);
 
   return result.filter(obj => obj.stream_url && obj.title).map(obj => {
     obj.source = 'sc';
@@ -56,7 +57,7 @@ export let getSearch = (query, opts={}) => {
 
   return new Promise((resolve, reject) => {
     let localError = (err) => {
-      if (tryCounter++ >= tryAttempts) return reject(err);
+      if (tryCounter++ >= tryAttempts || err.message === NOTFOUND) return reject(err);
 
       Logger.screen.info('soundcloud', `retrying audio.search(${query}) ...${tryCounter} of ${tryAttempts}`);
       doSearch();

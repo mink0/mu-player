@@ -20,7 +20,6 @@ export let getSearch = (query) => {
     getSearchTrack(query),
     getSearchArtist(query),
     function(tracks, artists /*, albums*/ ) {
-      Logger.info(tracks);
       menu.tracks = tracks.results.trackmatches.track;
       menu.artists = artists.results.artistmatches.artist;
       return handleData(menu);
@@ -138,7 +137,6 @@ export let getAlbumInfo = (opts) => {
       }
     });
   }).then((res) => {
-    Logger.info(res);
     return res.album.tracks.track;
   });
 };
