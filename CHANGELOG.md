@@ -1,6 +1,10 @@
 # mu-player
 
 ### Changelog
+  * v0.6.1
+    - Not found messages on batch search
+    - Stop search retrying when nothing found
+
   * v0.6.0
     - Search by the tags: all searches started by `#`
     - Some nasty bugs lastfmapi force me to switch to lastfm

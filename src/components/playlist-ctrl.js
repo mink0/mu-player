@@ -183,11 +183,16 @@ let getBatchSearch = (tracklist, spinner) => {
   spinner.once('destroy', () => isUserStop = true);
 
   let localError = (err) => {
-    errorHandler(err); // display error
+    if (err && err.message && err.message.indexOf(':NotFound') === -1) {
+      errorHandler(err);
 
-    apiDelay = apiDelay * 2;
-    if (apiDelay > maxApiDelay) apiDelay = maxApiDelay;
-    Logger.screen.info('search', 'increasing delay - ', apiDelay + 'ms');
+      apiDelay = apiDelay * 2;
+      if (apiDelay > maxApiDelay) apiDelay = maxApiDelay;
+
+      Logger.screen.info('search', 'increasing delay - ', apiDelay + 'ms');
+    } else {
+      Logger.screen.info(err.message, 'nothing found');
+    }
   };
 
   return Promise.reduce(tracklist, (total, current, index) => {
