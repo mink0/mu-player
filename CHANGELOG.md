@@ -1,6 +1,8 @@
 # mu-player
 
 ### Changelog
+    - Track info mouse click support
+
   * v0.6.1
     - Not found messages on batch search
     - Stop search retrying when nothing found

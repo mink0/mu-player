@@ -122,11 +122,18 @@ export let metadata = (url, cb=()=>{}) => {
   });
 };
 
-function seek() {
-  Logger.screen.status('Seeking:', seekPos >= 0 ?
-    '+' + timeConvert(seekPos) : timeConvert(seekPos));
+export let seek = (absSeek) => {
+  let seekPosMpd, text;
+  if (absSeek) {
+    seekPosMpd = absSeek;
+    text = timeConvert(seekPosMpd);
+  } else {
+    seekPosMpd = seekPos > 0 ? '+' + seekPos : '' + seekPos;
+    text = seekPos >= 0 ? '+' + timeConvert(seekPos) : timeConvert(seekPos);
+  }
 
-  let seekPosMpd = seekPos > 0 ? '+' + seekPos : '' + seekPos;
+  Logger.screen.status('Seeking:', text);
+
   mpd.seekcur(seekPosMpd, (err) => {
     if (err) return errorHandler(err);
 
@@ -135,6 +142,6 @@ function seek() {
     seekPos = 0;
     seekVal = SEEK_VALUE;
   });
-}
+};
 
 export let getMpdClient = () => mpd;

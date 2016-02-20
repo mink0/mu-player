@@ -1,5 +1,6 @@
 import blessed from 'blessed';
 import { timeConvert } from '../actions/music-actions';
+import * as player from '../player/player-control';
 
 let Node = blessed.Node;
 let Box = blessed.Box;
@@ -11,6 +12,7 @@ var pbarOpts = {
   height: 1,
   width: '100%-14',
   inputOnFocus: true,
+  mouse: true,
   pch: '>',
   bch: '.',
   style: {
@@ -87,6 +89,13 @@ TrackInfo.prototype.init = function(opts) {
   this.updateStatus();
 
   this.show();
+
+  // mouse click support
+  this.pbar.on('click', (data) => {
+    this.elapsed = this.pbar.value * 0.01 * this.duration;
+    player.seek(this.elapsed);
+    this.setProgress();
+  });
 };
 
 TrackInfo.prototype.setProgress = function(elapsed, seek) {
