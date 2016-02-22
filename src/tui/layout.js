@@ -213,7 +213,10 @@ export default (screen) => {
     layout.qsearch.style.fg = 'brightyellow';
     layout.qsearch.setValue(layout.qsearch.value.trim());
   });
-  layout.qsearch.on('blur', () => layout.qsearch.style.fg = 'brightwhite');
+  layout.qsearch.on('blur', () => {
+    layout.qsearch.style.fg = 'brightwhite';
+    //layout.qsearch.cancel();
+  });
 
   // FIX: Hacky fix of overlaping playinfo and playlist
   layout.trackInfo.on('show', () => layout.playlist.height = '100%-2');

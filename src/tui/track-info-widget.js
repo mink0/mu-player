@@ -18,7 +18,7 @@ var pbarOpts = {
   style: {
     fg: 'brightblack',
     bar: {
-      fg: 'white'
+      fg: 'black'
     }
   }
 };
@@ -71,6 +71,13 @@ function TrackInfo(options={}) {
   this.append(this.topRight);
   this.append(blessed.box(pbarPrefixOpts));
   this.append(blessed.box(pbarSuffixOpts));
+
+  // mouse click support
+  this.pbar.on('click', (data) => {
+    this.elapsed = this.pbar.value * 0.01 * this.duration;
+    player.seek(this.elapsed);
+    this.setProgress();
+  });
 }
 
 TrackInfo.prototype.init = function(opts) {
@@ -89,13 +96,6 @@ TrackInfo.prototype.init = function(opts) {
   this.updateStatus();
 
   this.show();
-
-  // mouse click support
-  this.pbar.on('click', (data) => {
-    this.elapsed = this.pbar.value * 0.01 * this.duration;
-    player.seek(this.elapsed);
-    this.setProgress();
-  });
 };
 
 TrackInfo.prototype.setProgress = function(elapsed, seek) {

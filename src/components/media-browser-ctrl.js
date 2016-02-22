@@ -16,7 +16,7 @@ export let init = (_screen, _menuPane, _qsearch) => {
   menuPane = _menuPane;
   qsearch = _qsearch;
 
-  menuPane.on('select', function(item) {
+  menuPane.on('select', (item) => {
     if (item.fn) item.fn();
   });
 };
