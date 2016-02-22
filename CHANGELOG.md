@@ -1,7 +1,8 @@
 # mu-player
 
 ### Changelog
-    - Track info mouse click support
+  * v0.6.2
+    - Progressbar mouse support
 
   * v0.6.1
     - Not found messages on batch search
