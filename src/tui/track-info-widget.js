@@ -13,12 +13,12 @@ var pbarOpts = {
   width: '100%-14',
   inputOnFocus: true,
   mouse: true,
-  pch: '>',
+  pch: '\u25AC', //'░',
   bch: '.',
   style: {
     fg: 'brightblack',
     bar: {
-      fg: 'black'
+      fg: 'white'
     }
   }
 };
