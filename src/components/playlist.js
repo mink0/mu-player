@@ -221,6 +221,9 @@ Playlist.prototype.sorter = function(tracks, opts) {
 
 Playlist.prototype.removeItem = function(index) {
   let deleted = this.data.splice(index, 1);
+
+  if (!deleted || !deleted[0].mpdId) return;
+
   this.updateCounter();
   this.list.removeItem(index);
   this.mpd.deleteid(deleted[0].mpdId, errorHandler);

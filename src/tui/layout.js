@@ -2,6 +2,7 @@ import blessed from 'blessed';
 
 import treeWidget from './tree-widget';
 import trackInfo from './track-info-widget';
+import autocomplete from './autocomplete';
 
 export default (screen) => {
   let layout = {};
@@ -167,7 +168,7 @@ export default (screen) => {
     content: '>',
   });
 
-  layout.qsearch = blessed.textbox({
+  layout.qsearch = autocomplete({
     bottom: 0,
     left: 2,
     height: 1,
@@ -215,7 +216,10 @@ export default (screen) => {
   });
   layout.qsearch.on('blur', () => {
     layout.qsearch.style.fg = 'brightwhite';
-    //layout.qsearch.cancel();
+    //layout.qsearch.cancel(); // emits bug with duplicate input
+  });
+  layout.playlist.on('click', () => {
+    layout.qsearch.cancel(); // mouse input bug fix
   });
 
   // FIX: Hacky fix of overlaping playinfo and playlist

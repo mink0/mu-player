@@ -12,16 +12,16 @@ let handleData = (result) => {
   return result;
 };
 
-export let getSearch = (query) => {
-  Logger.screen.info(`last.fm`, `search("${query}")`);
+export let getSearch = (query, limit=10) => {
+  //Logger.screen.info(`last.fm`, `search("${query}")`);
   let menu = {};
 
   return Promise.join(
-    getSearchTrack(query),
-    getSearchArtist(query),
+    getSearchTrack(query, limit),
+    getSearchArtist(query, limit),
     function(tracks, artists /*, albums*/ ) {
-      menu.tracks = tracks.results.trackmatches.track;
-      menu.artists = artists.results.artistmatches.artist;
+      if (tracks && tracks.results) menu.tracks = tracks.results.trackmatches.track;
+      if (artists && artists.results) menu.artists = artists.results.artistmatches.artist;
       return handleData(menu);
     });
 };

@@ -1,6 +1,10 @@
 # mu-player
 
 ### Changelog
+  * v0.7.0
+    - Search typeahed
+    - Bug fixes
+
   * v0.6.2
     - Progressbar mouse support
 

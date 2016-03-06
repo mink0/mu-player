@@ -39,9 +39,10 @@ setupCredentials(cli.flags.setup).then(() => {
 
   screen.key(['/', '?'], () => storage.emit(SHOW_HELP));
 
-  layout.qsearch.key(['left'], () => { layout.mediaTree.focus(); screen.render(); });
-  layout.qsearch.key(['right'], () => { layout.playlist.focus(); screen.render(); });
-  layout.qsearch.key(['tab'], () => { layout.mediaTree.focus(); screen.render(); });
+  layout.qsearch.key(['left'], () => { layout.qsearch.cancel(); layout.mediaTree.focus(); screen.render(); });
+  layout.qsearch.key(['right'], () => { layout.qsearch.cancel(); layout.playlist.focus(); screen.render(); });
+  layout.qsearch.key(['tab'], () => { layout.qsearch.cancel(); layout.mediaTree.focus(); screen.render(); });
+
   layout.mediaTree.rows.key(['tab'], () => { layout.playlist.focus(); screen.render(); });
   layout.playlist.key(['tab'], () => { layout.qsearch.focus(); screen.render(); });
 

@@ -24,6 +24,9 @@ storage.data.search = storage.data.search || {};
 storage.data.search.timeout = storage.data.search.timeout || 5000;
 storage.data.search.retries = storage.data.search.retries || 5;
 
+storage.data.qsearch = storage.data.qsearch || {};
+storage.data.qsearch.maxitems = storage.data.qsearch.maxitems || 7;
+
 import events from 'events';
 
 let EventEmitter = events.EventEmitter;
