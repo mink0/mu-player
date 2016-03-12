@@ -24,7 +24,8 @@ function Autocomplete(options) {
   this.source = options.source;
   this.delay = options.delay || 500;
   this.ts = 0;
-  this.sourceTimer = null;
+  this.pending = null;
+  this.queue = [];
   this.maxresults = options.maxresults || 7;
   this.placement = 'top';
 
@@ -62,26 +63,31 @@ Autocomplete.prototype._listener = function(ch, key) {
 
   if (['tab', 'escape', 'left', 'right'].indexOf(key.name) !== -1) return;
 
-  if (this.sourceTimer === null) {
+  if (!this.pending) {
     this.getItems(this.value);
   } else {
-    clearTimeout(this.sourceTimer);
-    this.sourceTimer = setTimeout(function() {
-      self.getItems();
-    }, Math.max(this.delay - (Date.now() - this.ts), 100));
+    this.queue.push(this.value);
   }
 };
 
 Autocomplete.prototype.getItems = function(text) {
   var self = this;
   var text = text || this.value;
+  var last;
 
   this.ts = Date.now();
+  this.pending = true;
+  //Logger.info(this.ts, 'searching', this.value);
   this.source(text, function(err, res) {
-    clearTimeout(self.sourceTimer);
     self.sourceTimer = setTimeout(function() {
-      self.sourceTimer = null;
-    }, self.delay);
+      if (self.queue.length > 0) {
+        // we will process only last value
+        last = self.queue[self.queue.length - 1];
+        self.queue.length = 0;
+        self.getItems(last);
+      }
+      self.pending = false;
+    }, Math.max(0, self.delay - (Date.now() - self.ts)));
 
     if (self.cmbox) {
       self.cmbox.destroy();
