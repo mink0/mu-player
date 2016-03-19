@@ -1,8 +1,11 @@
 # mu-player
 
 ### Changelog
+  * v0.7.1
+    - Search typeahed fix
+
   * v0.7.0
-    - Search typeahed
+    - Search typeahead
     - Bug fixes
 
   * v0.6.2

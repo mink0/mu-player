@@ -45,7 +45,7 @@ export let getTagSearch = (query) => {
 };
 
 export let getSearchTrack = (query, limit = 10) => {
-  Logger.screen.info(`last.fm`, `trackSearch("${query}")`);
+  //Logger.screen.info(`last.fm`, `trackSearch("${query}")`);
   return new Promise((resolve, reject) => {
     lfm.request('track.search', {
       track: query,
@@ -73,7 +73,7 @@ export let getSearchAlbum = (query, limit = 10) => {
 };
 
 export let getSearchArtist = (query, limit = 10) => {
-  Logger.screen.info(`last.fm`, `artistSearch("${query}")`);
+  //Logger.screen.info(`last.fm`, `artistSearch("${query}")`);
   return new Promise((resolve, reject) => {
     lfm.request('artist.search', {
       artist: query,
