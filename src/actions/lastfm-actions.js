@@ -141,7 +141,7 @@ export let getUserRecentTracks = (
     let out = res.recenttracks.track.filter(obj => obj.name).map((track) => {
       return {
         track: track.name,
-        artist: track.artist.name || 'Various Artists'
+        artist: track.artist['#text'] || 'Various Artists'
       };
     });
 
