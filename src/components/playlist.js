@@ -89,6 +89,10 @@ Playlist.prototype.getCurrent = function() {
   return this.data[this.curIndex % this.data.length];
 };
 
+Playlist.prototype.getSelected = function() {
+  return this.data[this.list.selected % this.data.length];
+};
+
 Playlist.prototype.setCurrentById = function(mpdId) {
   let index = null;
   for (var i = 0; i < this.data.length; i++) {
@@ -260,6 +264,8 @@ Playlist.prototype.formatTrackTitle = function(track) {
     return `{light-red-fg}${track.label}{/light-red-fg}`;
 
   let result = `{bold}${capitalize(track.artist, true)}{/bold}`;
+
+  if (track.index) result = `#${track.index}. ` + result;
 
   if (track.source) result = `[${track.source}] ` + result;
 

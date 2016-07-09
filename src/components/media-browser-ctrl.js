@@ -31,7 +31,6 @@ export let search = (payload) => {
     return errorHandler('Unknown search type');
 
   psearch.then((searchData) => {
-
     function TrackItem(track, artist) {
       this.track = track;
       this.artist = artist;
@@ -62,7 +61,7 @@ export let search = (payload) => {
           }
         },
         'top': {
-          name: 'Top tracks for ' + this.artist ,
+          name: 'Top tracks for ' + this.artist,
           artist: this.artist,
           fn: function() {
             let self = this;
@@ -147,6 +146,67 @@ export let search = (payload) => {
       children: {}
     };
 
+    menu.children.user = {
+      name: '{bold}{light-white-fg}User{/bold}{/light-white-fg}',
+      extended: false,
+      children: {
+        favs: {
+          name: 'Favorites',
+          children: {},
+          fn: function() {
+            let self = this;
+            let limit = storage.data.favs.results;
+            lfmActions.getUserFavs().then((tracks) => {
+              Logger.log(tracks);
+
+              Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
+
+              playlist.batchSearch({
+                type: 'tracklist',
+                tracklist: tracks,
+              });
+            }).catch(errorHandler);
+          }
+        },
+        top: {
+          name: 'Top tracks',
+          children: {},
+          fn: function() {
+            let self = this;
+            let limit = storage.data.favs.results;
+            lfmActions.getUserTopTracks().then((tracks) => {
+              Logger.log(tracks);
+
+              Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
+
+              playlist.batchSearch({
+                type: 'tracklist',
+                tracklist: tracks,
+              });
+            }).catch(errorHandler);
+          }
+        },
+        recent: {
+          name: 'Recent tracks',
+          children: {},
+          fn: function() {
+            let self = this;
+            let limit = storage.data.favs.results;
+            lfmActions.getUserRecentTracks().then((tracks) => {
+              Logger.log(tracks);
+
+              Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
+
+              playlist.batchSearch({
+                type: 'tracklist',
+                tracklist: tracks,
+              });
+            }).catch(errorHandler);
+          }
+        },
+      },
+    };
+
     for (var key in searchData) {
       rootKey = key.charAt(0).toUpperCase() + key.slice(1);
       menu.children[rootKey] = {
@@ -161,7 +221,6 @@ export let search = (payload) => {
 
     treeData = menu;
     renderPane();
-
   });
 };
 

@@ -1,18 +1,157 @@
 import LastFmNode from 'lastfm';
 import storage from './../storage/storage';
-
 import Promise from 'bluebird';
 
-export let lfm = new LastFmNode.LastFmNode({
-  api_key: storage.data.lfmApiKey,
-  secret: storage.data.lfmSecret
-});
+export var lfm = lfm;
 
 let handleData = (result) => {
   return result;
 };
 
-export let getSearch = (query, limit=10) => {
+export let init = () => {
+  lfm = new LastFmNode.LastFmNode({
+    api_key: storage.data.lfmApiKey,
+    secret: storage.data.lfmSecret
+  });
+};
+
+export let getTrackInfo = (track) => {
+  //Logger.screen.info(`last.fm`, `trackSearch("${query}")`);
+  return new Promise((resolve, reject) => {
+    lfm.request('track.getInfo', {
+      track: track.title,
+      artist: track.artist,
+      username: storage.data.favs.username,
+      autocorrect: 1,
+      handlers: {
+        success: resolve,
+        error: reject
+      }
+    });
+  });
+};
+
+export let love = (track, type = 'love') => {
+  Logger.screen.info(`last.fm`, `${type}("${track.title}, ${track.artist}")`);
+
+  if (!storage.data.lfmSessionKey) {
+    Logger.screen.error('You need to setup Last.FM Session Key first. Run `mu --setup` from console and get your session key.');
+    return Promise.resolve(false);
+  }
+
+  return new Promise((resolve, reject) => {
+    lfm.request('track.' + type, {
+      track: track.title,
+      artist: track.artist,
+      sk: storage.data.lfmSessionKey,
+      handlers: {
+        success: resolve,
+        error: reject
+      }
+    });
+  }).then((res) => {
+    Logger.screen.info('last.fm', type + ' successful');
+  });
+};
+
+export let favToggle = (track) => {
+  return getTrackInfo(track).then((res) => {
+    let type = res.track.userloved === '1' ? 'unlove' : 'love';
+    return love({
+      title: res.track.name,
+      artist: res.track.artist.name
+    }, type);
+  }).catch((err) => {
+    Logger.screen.error('last.fm', err);
+  });
+};
+
+export let getUserFavs = (username = storage.data.favs.username,
+  limit = storage.data.batchSearch.results) => {
+  Logger.screen.info(`last.fm`, `getLovedTracks(${username}, ${limit})`);
+  return new Promise((resolve, reject) => {
+    lfm.request('user.getLovedTracks', {
+      user: username,
+      limit: limit,
+      handlers: {
+        success: resolve,
+        error: reject
+      }
+    });
+  }).then((res) => {
+    let out = res.lovedtracks.track.filter(obj => obj.name).map((track) => {
+      return {
+        track: track.name,
+        artist: track.artist.name || 'Various Artists'
+      };
+    });
+
+    if (out.length === 0) throw new Error('No favorites found for ' + username);
+
+    return out;
+  });
+};
+
+
+export let getUserTopTracks = (
+  username = storage.data.favs.username,
+  period = '6month',
+  limit = storage.data.batchSearch.results
+) => {
+  Logger.screen.info(`last.fm`, `getUserTopTracks(${username}, ${period}, ${limit})`);
+  return new Promise((resolve, reject) => {
+    lfm.request('user.getTopTracks', {
+      user: username,
+      period: period,
+      limit: limit,
+      handlers: {
+        success: resolve,
+        error: reject
+      }
+    });
+  }).then((res) => {
+    let out = res.toptracks.track.filter(obj => obj.name).map((track) => {
+      return {
+        track: track.name,
+        artist: track.artist.name || 'Various Artists'
+      };
+    });
+
+    if (out.length === 0) throw new Error('No toptracks found for ' + username);
+
+    return out;
+  });
+};
+
+export let getUserRecentTracks = (
+  username = storage.data.favs.username,
+  limit = storage.data.batchSearch.results
+) => {
+  Logger.screen.info(`last.fm`, `getUserRecentTracks(${username}, ${limit})`);
+  return new Promise((resolve, reject) => {
+    lfm.request('user.getRecentTracks', {
+      user: username,
+      limit: limit,
+      handlers: {
+        success: resolve,
+        error: reject
+      }
+    });
+  }).then((res) => {
+    let out = res.recenttracks.track.filter(obj => obj.name).map((track) => {
+      return {
+        track: track.name,
+        artist: track.artist.name || 'Various Artists'
+      };
+    });
+
+    if (out.length === 0) throw new Error('No recenttracks found for ' + username);
+
+    return out;
+  });
+};
+
+export let getSearch = (query, limit = 10) => {
   //Logger.screen.info(`last.fm`, `search("${query}")`);
   let menu = {};
 
@@ -210,13 +349,5 @@ export let getArtistsByTag = (tag, limit = 10) => {
 //         return album;
 //       });
 //     });
-//   });
-// };
-
-// export let getUserFavs = () => {
-//   Logger.screen.info(`last.fm`, `getLoved()`);
-//   return lfm.userAsync.getLovedTracksAsync({
-//     user: 'minkolazer',
-//     limit: limit
 //   });
 // };

@@ -5,16 +5,18 @@ import setupCredentials from './helpers/credentials';
 import startApp from './components/main';
 import meow from 'meow';
 import * as player from '../src/player/player-control';
+import * as lfmActions from './actions/lastfm-actions';
+lfmActions.init();
 
 import storage, { VK_SEARCH, PAUSE, ADD_TO_PROFILE, SHOW_HELP, SWITCH_PANE,
   MOVE_TO_PLAYING, FOCUS_LEFT_PANE, FOCUS_RIGHT_PANE, LOCAL_SEARCH } from './storage/storage';
 
 let cli = meow(`
-  Usage
-    $ badtaste
+  Usage:
+    ./cli.js [options]
 
-  Options
-    --setup Setup vk and google music login credentials
+  Options:
+    --setup Setup login credentials
 `, {
   pkg: './../package.json'
 });
@@ -27,6 +29,7 @@ setupCredentials(cli.flags.setup).then(() => {
 
   screen.key(['space'], () => player.pause());
   screen.key(['s'], () => player.stop());
+  screen.key(['f'], () => player.favToggle());
 
   screen.key(['left'], () => layout.mediaTree.focus());
   screen.key(['right'], () => layout.playlist.focus());

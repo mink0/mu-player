@@ -30,6 +30,7 @@ export default (screen) => {
   addHotkey('+', 'volume up');
   addHotkey('-', 'volume down');
   addHotkey('del, <-', 'remove track');
+  addHotkey('f', 'Love track');
 
   lines.push('');
 

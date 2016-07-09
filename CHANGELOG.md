@@ -1,4 +1,5 @@
 # mu-player
+  * Add bookmarks via Last.FM loved tracks
 
 ### Changelog
   * v0.7.1

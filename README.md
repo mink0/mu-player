@@ -6,6 +6,7 @@
 
   - Play any music for free from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
   - Explore new music with [last.fm](http://lastfm.com/) top tracks, similar artists and top albums search.
+  - Bookmarks via Last.FM loved tracks
   - Smart searching:
     - bitrate detection for the highest bitrate music.
     - parallel queries, retries and timeouts to speed up searching. The only limitation now is the public API throttling.
@@ -31,7 +32,7 @@ This player is powered by amazing [blessed](https://github.com/chjj/blessed) lib
   * Install mu-player:
     - MAC OS X: `npm -g install mu-player`.
     - Ubuntu (Debian) Linux: `sudo npm -g install mu-player`.
-  * Now you could run `mu` and setup credentials for lastfm.com, soundcloud.com and vk.com. We have tons of free music there but you need to register accounts first.
+  * Now you could run `mu` and setup your credentials for lastfm.com, soundcloud.com and vk.com. We have tons of free music there but you need to register accounts first.
   * Run `mu` again and enjoy the music.
 
 For the last.fm audio scrobbling you could use [mpdas](https://github.com/hrkfdn/mpdas).

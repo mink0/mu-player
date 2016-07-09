@@ -47,6 +47,10 @@ mpd.on('changed', function(system) {
   }
 });
 
+export let favToggle = () => {
+  playlistCtrl.favToggle();
+};
+
 export let play = (url, id) => {
   mpd.playid(id, (err) => {
     if (err) return errorHandler(err);

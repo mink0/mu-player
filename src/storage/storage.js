@@ -20,6 +20,9 @@ storage.data.batchSearch.bitrateSearchLimit = storage.data.batchSearch.bitrateSe
 storage.data.batchSearch.apiDelay = storage.data.batchSearch.apiDelay || 250; // 350
 storage.data.batchSearch.maxApiDelay = storage.data.batchSearch.maxApiDelay || 3000;
 
+storage.data.favs = storage.data.favs || {};
+storage.data.favs.username = storage.data.favs.username || 'minkolazer';
+
 storage.data.search = storage.data.search || {};
 storage.data.search.timeout = storage.data.search.timeout || 5000;
 storage.data.search.retries = storage.data.search.retries || 5;

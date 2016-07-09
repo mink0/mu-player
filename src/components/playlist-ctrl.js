@@ -9,6 +9,7 @@ import {
 }
 from '../actions/music-actions';
 import storage from '../storage/storage';
+import * as lfmActions from './../actions/lastfm-actions';
 
 let screen = null;
 let layout = null;
@@ -63,6 +64,14 @@ let playCurrent = () => {
       }
     }
   }
+};
+
+export let favToggle = () => {
+  var track = playlist.getSelected();
+  lfmActions.favToggle({
+    title: track.title,
+    artist: track.artist
+  });
 };
 
 export let stop = () => {
@@ -227,7 +236,7 @@ let getBatchSearch = (tracklist, spinner) => {
           });
 
           if (typeof sorted[0] === 'object') {
-            sorted[0].title = (index + 1) + '. '+ sorted[0].title;
+            sorted[0].index = (index + 1);
             playlist.appendPlaylist([sorted[0]]);
           }
         });
