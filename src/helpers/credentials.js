@@ -19,7 +19,7 @@ export default (force) => {
       ' (' + lfmCredentials.getInfo() + ')' : '')] = lfmCredentials.dialog;
     result.choices['soundcloud.com credentials ' + (scCredentials.hasData() ?
       ' (' + scCredentials.getInfo() + ')' : '')] = scCredentials.dialog;
-    result.choices['Last.FM Session Key [onlyy needed to love tracks at Last.FM] ' + (favCredentials.hasData() ?
+    result.choices['Last.FM Session Key [for love/unlove tracks at Last.FM] ' + (favCredentials.hasData() ?
       ' (' + favCredentials.getInfo() + ')' : '')] = favCredentials.dialog;
 
     return result;

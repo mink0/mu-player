@@ -1,5 +1,6 @@
 import * as vk from 'vk-universal-api';
 import inquirer from 'inquirer-question';
+import open from 'open';
 
 import storage from './../storage/storage';
 
@@ -32,13 +33,16 @@ export let getInfo = () => {
 storage.vkHasData = hasData;
 
 export let dialog = () => {
+  open(authUrl);
+
   return inquirer.prompt([scClientId, scClientSecret]).then((credentials) => {
     storage.data.scClientId = credentials.scClientId;
     storage.data.scClientSecret = credentials.scClientSecret;
     storage.save();
-    //init();
+
     return Promise.resolve(true);
   }).catch((err) => {
-    console.log('wrong data');
+    console.log('Wrong data:');
+    console.log(err.message);
   });
 };

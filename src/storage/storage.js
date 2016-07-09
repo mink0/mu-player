@@ -1,4 +1,9 @@
-var storage = require('dot-file-config')('.murc', {
+import inquirer from 'inquirer-question';
+import Promise from 'bluebird';
+
+export const CONFIG_PATH = '.murc';
+
+let storage = require('dot-file-config')(CONFIG_PATH, {
   cloudSync: false
 });
 
@@ -29,6 +34,35 @@ storage.data.search.retries = storage.data.search.retries || 5;
 
 storage.data.qsearch = storage.data.qsearch || {};
 storage.data.qsearch.maxitems = storage.data.qsearch.maxitems || 7;
+
+export let updateConfig = () => {
+  var pkg = require('../../package.json');
+
+  // check version
+  if (!storage.isFirstRun && pkg.mu_player.updateConfig && storage.data.version !== pkg.version) {
+    return inquirer.prompt([{
+      name: 'setup',
+      type: 'confirm',
+      message: 'New version of mu-player has been detected!' +
+      '\nIn order to have all functionality you should remove your should' +
+      'run "mu --setup" and update your credentials.' +
+      '\n\nDo you want to setup credentials?'
+    }]).then((ans) => {
+      // if (ans.remove) {
+      //   fs.renameSync(storage.path, storage.path + '.old');
+      //   console.log('Old config file is stored at: ' + storage.path + '.old');
+      //   process.exit();
+      // }
+
+      storage.data.version = pkg.version;
+      storage.save();
+
+      return Promise.resolve(ans.setup);
+    });
+  } else {
+    return Promise.resolve(false);
+  }
+};
 
 import events from 'events';
 

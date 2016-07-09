@@ -8,8 +8,18 @@ import * as player from '../src/player/player-control';
 import * as lfmActions from './actions/lastfm-actions';
 lfmActions.init();
 
-import storage, { VK_SEARCH, PAUSE, ADD_TO_PROFILE, SHOW_HELP, SWITCH_PANE,
-  MOVE_TO_PLAYING, FOCUS_LEFT_PANE, FOCUS_RIGHT_PANE, LOCAL_SEARCH } from './storage/storage';
+import storage, {
+  updateConfig,
+  VK_SEARCH,
+  PAUSE,
+  ADD_TO_PROFILE,
+  SHOW_HELP,
+  SWITCH_PANE,
+  MOVE_TO_PLAYING,
+  FOCUS_LEFT_PANE,
+  FOCUS_RIGHT_PANE,
+  LOCAL_SEARCH
+} from './storage/storage';
 
 let cli = meow(`
   Usage:
@@ -21,62 +31,82 @@ let cli = meow(`
   pkg: './../package.json'
 });
 
-setupCredentials(cli.flags.setup).then(() => {
-  let screen = tui();
-  let layout = drawLayout(screen);
+updateConfig().then((setupConfig) => {
+  setupCredentials(cli.flags.setup || setupConfig).then(() => {
+    let screen = tui();
+    let layout = drawLayout(screen);
 
-  startApp(screen, layout);
+    startApp(screen, layout);
 
-  screen.key(['space'], () => player.pause());
-  screen.key(['s'], () => player.stop());
-  screen.key(['f'], () => player.favToggle());
+    screen.key(['space'], () => player.pause());
+    screen.key(['s'], () => player.stop());
+    screen.key(['f'], () => player.favToggle());
 
-  screen.key(['left'], () => layout.mediaTree.focus());
-  screen.key(['right'], () => layout.playlist.focus());
+    screen.key(['left'], () => layout.mediaTree.focus());
+    screen.key(['right'], () => layout.playlist.focus());
 
-  screen.key(['+', '='], () => player.volumeUp());
-  screen.key(['-', '_'], () => player.volumeDown());
+    screen.key(['+', '='], () => player.volumeUp());
+    screen.key(['-', '_'], () => player.volumeDown());
 
-  screen.key(['>', '.'], () => player.seekFwd());
-  screen.key(['<', ','], () => player.seekBwd());
+    screen.key(['>', '.'], () => player.seekFwd());
+    screen.key(['<', ','], () => player.seekBwd());
 
-  screen.key(['/', '?'], () => storage.emit(SHOW_HELP));
+    screen.key(['/', '?'], () => storage.emit(SHOW_HELP));
 
-  layout.qsearch.key(['left'], () => { layout.qsearch.cancel(); layout.mediaTree.focus(); screen.render(); });
-  layout.qsearch.key(['right'], () => { layout.qsearch.cancel(); layout.playlist.focus(); screen.render(); });
-  layout.qsearch.key(['tab'], () => { layout.qsearch.cancel(); layout.mediaTree.focus(); screen.render(); });
+    layout.qsearch.key(['left'], () => {
+      layout.qsearch.cancel();
+      layout.mediaTree.focus();
+      screen.render();
+    });
+    layout.qsearch.key(['right'], () => {
+      layout.qsearch.cancel();
+      layout.playlist.focus();
+      screen.render();
+    });
+    layout.qsearch.key(['tab'], () => {
+      layout.qsearch.cancel();
+      layout.mediaTree.focus();
+      screen.render();
+    });
 
-  layout.mediaTree.rows.key(['tab'], () => { layout.playlist.focus(); screen.render(); });
-  layout.playlist.key(['tab'], () => { layout.qsearch.focus(); screen.render(); });
+    layout.mediaTree.rows.key(['tab'], () => {
+      layout.playlist.focus();
+      screen.render();
+    });
+    layout.playlist.key(['tab'], () => {
+      layout.qsearch.focus();
+      screen.render();
+    });
 
-  layout.playlist.key(['pageup'], () => {
-    layout.playlist.up(layout.playlist.height - 2);
+    layout.playlist.key(['pageup'], () => {
+      layout.playlist.up(layout.playlist.height - 2);
+      screen.render();
+    });
+    layout.playlist.key(['pagedown'], () => {
+      layout.playlist.down(layout.playlist.height - 2);
+      screen.render();
+    });
+
+    layout.mediaTree.rows.key(['pageup'], () => {
+      layout.mediaTree.rows.up(layout.mediaTree.rows.height);
+      screen.render();
+    });
+    layout.mediaTree.rows.key(['pagedown'], () => {
+      layout.mediaTree.rows.down(layout.mediaTree.rows.height);
+      screen.render();
+    });
+
+    screen.key(['escape', 'q', 'C-c'], () => {
+      if (!screen.blockEsc) {
+        storage.data.lastQuery = layout.qsearch.getValue();
+        storage.save();
+        process.exit(0);
+      }
+    });
+
+    screen.title = ':mu';
+    process.title = ':mu';
+
     screen.render();
   });
-  layout.playlist.key(['pagedown'], () => {
-    layout.playlist.down(layout.playlist.height - 2);
-    screen.render();
-  });
-
-  layout.mediaTree.rows.key(['pageup'], () => {
-    layout.mediaTree.rows.up(layout.mediaTree.rows.height);
-    screen.render();
-  });
-  layout.mediaTree.rows.key(['pagedown'], () => {
-    layout.mediaTree.rows.down(layout.mediaTree.rows.height);
-    screen.render();
-  });
-
-  screen.key(['escape', 'q', 'C-c'], () => {
-    if (!screen.blockEsc) {
-      storage.data.lastQuery = layout.qsearch.getValue();
-      storage.save();
-      process.exit(0);
-    }
-  });
-
-  screen.title = ':mu';
-  process.title = ':mu';
-
-  screen.render();
 });

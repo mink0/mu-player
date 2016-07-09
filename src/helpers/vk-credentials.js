@@ -1,5 +1,6 @@
 import * as vk from 'vk-universal-api';
 import inquirer from 'inquirer-question';
+import open from 'open';
 
 import storage from './../storage/storage';
 
@@ -31,6 +32,8 @@ export let getUser = () => storage.data.vkUsername;
 storage.vkHasData = hasData;
 
 export let dialog = () => {
+  open(authUrl);
+
   return inquirer.prompt([token]).then((credentials) => {
     setupToken(credentials.url);
 
@@ -42,7 +45,8 @@ export let dialog = () => {
 
       init();
     }).catch((err) => {
-      console.log('wrong data');
+      console.log('Wrong data:');
+      console.log(err.message);
     });
   });
 };

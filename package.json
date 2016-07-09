@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/mink0/mu-player.git"
   },
+  "mu_player": {
+    "updateConfig": true
+  },
   "author": "minkolazer",
   "main": "cli.js",
   "bin": {

@@ -1,6 +1,7 @@
 import * as vk from 'vk-universal-api';
 import inquirer from 'inquirer-question';
 import storage from './../storage/storage';
+import open from 'open';
 
 let authUrl = 'http://www.last.fm/api/account/create';
 
@@ -31,20 +32,29 @@ let lfmSecret = {
 export let hasData = () => (typeof storage.data.lfmApiKey !== 'undefined' && typeof storage.data.lfmSecret !== 'undefined');
 export let init = () => hasData() ? Promise.resolve(true) : Promise.resolve(false);
 export let getInfo = () => {
-  return storage.data.lfmSecret + ' ' + storage.data.lfmApiKey;
+  return [
+    storage.data.favs.username,
+    storage.data.lfmSecret,
+    storage.data.lfmApiKey
+  ].join(' ');
 };
 
 storage.vkHasData = hasData;
 
 export let dialog = () => {
+  open(authUrl);
+
   return inquirer.prompt([lfmUser, lfmApiKey, lfmSecret]).then((credentials) => {
-    storage.data.favs = { username: credentials.lfmUser };
+    storage.data.favs = {
+      username: credentials.lfmUser
+    };
     storage.data.lfmSecret = credentials.lfmSecret;
     storage.data.lfmApiKey = credentials.lfmApiKey;
     storage.save();
 
     return Promise.resolve(true);
   }).catch((err) => {
-    console.log('wrong data');
+    console.log('Wrong data:');
+    console.log(err.message);
   });
 };
