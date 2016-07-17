@@ -1,10 +1,12 @@
 # mu-player
-  - Add bookmarks via Last.FM loved tracks
-  - Add love/unlove track via Last.FM
-  - Add recent tracks replay via Last.FM
-  - Add user recommended tracks (very simple)
 
 ### Changelog
+  * v0.8.0
+    - Add bookmarks via Last.FM loved tracks
+    - Add love/unlove track via Last.FM
+    - Add recent tracks play via Last.FM
+    - Add simple user recommended tracks (vk.com)
+
   * v0.7.1
     - Search typeahead fix
 

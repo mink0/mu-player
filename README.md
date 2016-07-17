@@ -6,7 +6,7 @@
 
   - Play any music for free from [vk.com](http://vk.com/) and [soundcloud.com](http://soundcloud.com/) using [Music Player Daemon](http://www.musicpd.org/).
   - Explore new music with [last.fm](http://lastfm.com/) top tracks, similar artists and top albums search.
-  - Bookmarks via Last.FM loved tracks
+  - Bookmarks via Last.FM
   - Smart searching:
     - bitrate detection for the highest bitrate music.
     - parallel queries, retries and timeouts to speed up searching. The only limitation now is the public API throttling.
