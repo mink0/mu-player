@@ -3,6 +3,7 @@ import storage from './../storage/storage';
 import similarPrompt from './../tui/similar-prompt';
 import listPrompt from './../tui/list-prompt';
 import * as lfmActions from './../actions/lastfm-actions';
+import * as vkActions from './../actions/vk-actions';
 import * as playlist from './playlist-ctrl';
 import errorHandler from '../helpers/error-handler';
 
@@ -175,7 +176,6 @@ export let search = (payload) => {
             let self = this;
             let limit = storage.data.favs.results;
             lfmActions.getUserTopTracks().then((tracks) => {
-              Logger.log(tracks);
 
               Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
 
@@ -186,6 +186,20 @@ export let search = (payload) => {
             }).catch(errorHandler);
           }
         },
+        recom: {
+          name: 'Recommended tracks',
+          children: {},
+          fn: function() {
+            let self = this;
+            let limit = storage.data.favs.results;
+            vkActions.getUserRecom({limit: 200}).then((tracks) => {
+
+              Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
+
+              playlist.setPlaylist(tracks);
+            }).catch(errorHandler);
+          }
+        },
         recent: {
           name: 'Recent tracks',
           children: {},
@@ -193,7 +207,6 @@ export let search = (payload) => {
             let self = this;
             let limit = storage.data.favs.results;
             lfmActions.getUserRecentTracks().then((tracks) => {
-              Logger.log(tracks);
 
               Logger.screen.info('last.fm', 'found ' + tracks.length + ' track(s)');
 

@@ -135,6 +135,14 @@ let loadBitrates = (tracks, spinner) => {
   });
 };
 
+export let setPlaylist = (tracks) => {
+  let spinner = loadingSpinner(screen, 'Loading tracks...', false);
+  playlist.clearOnAppend = true;
+  plistPane.focus();
+  appendTracks(tracks);
+  return loadBitrates(tracks, spinner).then(() => spinner.stop());
+};
+
 export let search = (payload) => {
   let sc;
   let vk;

@@ -62,6 +62,28 @@ export let getSearch = (query, opts={}) => {
   // return request.then(response => handleData(response.items));
 };
 
+export let getUserRecom = (opts={}) => {
+  Logger.screen.info('vk.com', `audio.getRecommendations()`);
+
+  if (!storage.data.vkToken) return Promise.resolve([]);
+
+  let vkUserId = storage.data.vkToken.match(/&user_id=([\d]+)/)[1];
+
+  let limit = opts.limit || SEARCH_LIMIT;
+  let offset = opts.offset || 0;
+
+  let queryOpts = {
+    count: limit,
+    offset: offset * limit,
+    user_id: vkUserId,
+    shuffle: 1,
+    sort: 2
+  };
+
+  let request = vk.method('audio.getRecommendations', queryOpts);
+  return request.then(response => handleData(response.items));
+};
+
 export let getOldSearch = (query, opts={}) => {
   Logger.screen.info('vk.com', `audio.search("${query}")`);
 
